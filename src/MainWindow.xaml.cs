@@ -23,6 +23,11 @@ public partial class MainWindow : Window
         var config = Configuration.Load();
 
         Framework.Verify(config);
+
+        TeleHealthReport.VisitStatsReport.Adder(config);
+        TeleHealthReport.VisitDetailsReport.Adder(config);
+        TeleHealthReport.MessageFailureReport.Adder(config);
+        TeleHealthReport.MessageDeliveryReport.Adder(config);
     }
 
     /// <summary>Stops the Tingen Muno application.</summary>

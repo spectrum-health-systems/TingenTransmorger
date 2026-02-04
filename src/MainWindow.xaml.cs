@@ -24,10 +24,7 @@ public partial class MainWindow : Window
 
         Framework.Verify(config);
 
-        TeleHealthReport.VisitStatsReport.Adder(config);
-        TeleHealthReport.VisitDetailsReport.Adder(config);
-        TeleHealthReport.MessageFailureReport.Adder(config);
-        TeleHealthReport.MessageDeliveryReport.Adder(config);
+        TeleHealthReport.TeleHealthReportProcessor.Process(config);
     }
 
     /// <summary>Stops the Tingen Muno application.</summary>

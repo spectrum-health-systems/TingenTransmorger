@@ -33,6 +33,7 @@ internal static class TransmorgerDatabase
             ["Patients"] = patients,
             ["Providers"] = providers,
             ["MeetingDetail"] = BuildMeetingDetailComponent(tmpDir, patients, providers),
+            ["MeetingError"] = BuildMeetingErrorComponent(tmpDir, patients, providers),
             ["Messaging"] = new List<object>(), // Placeholder for component 4
             ["Meetings"] = new List<object>() // Placeholder for component 5
         };
@@ -301,6 +302,127 @@ internal static class TransmorgerDatabase
         }
 
         return meetingDetailDict;
+    }
+
+    /// <summary>Builds the MeetingError component from Visit Stats Meeting Errors.</summary>
+    /// <param name="tmpDir">Directory containing source JSON files.</param>
+    /// <param name="patients">List of patient records for validation.</param>
+    /// <param name="providers">List of provider records for validation.</param>
+    /// <returns>Dictionary of meeting errors indexed by MeetingId.</returns>
+    private static Dictionary<string, object?> BuildMeetingErrorComponent(string tmpDir, List<Dictionary<string, object?>> patients, List<Dictionary<string, object?>> providers)
+    {
+        var meetingErrors = ReadJsonFile(tmpDir, "Visit_Stats-Meeting_Errors.json") as List<Dictionary<string, object?>>;
+
+        if (meetingErrors == null)
+        {
+            return new Dictionary<string, object?>();
+        }
+
+        var meetingErrorDict = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var validationErrors = new List<string>();
+
+        // Build lookup sets for validation
+        var patientNames = new HashSet<string>(patients.Select(p => GetStringValue(p, "PatientName") ?? ""), StringComparer.OrdinalIgnoreCase);
+        var patientIds = new HashSet<string>(patients.Select(p => GetStringValue(p, "PatientId") ?? ""), StringComparer.OrdinalIgnoreCase);
+        var providerNames = new HashSet<string>(providers.Select(p => GetStringValue(p, "ProviderName") ?? ""), StringComparer.OrdinalIgnoreCase);
+        var providerIds = new HashSet<string>(providers.Select(p => GetStringValue(p, "ProviderId") ?? "").Where(id => !string.IsNullOrWhiteSpace(id)), StringComparer.OrdinalIgnoreCase);
+
+        foreach (var error in meetingErrors)
+        {
+            var meetingId = GetStringValue(error, "Meeting ID") ?? GetStringValue(error, "MeetingId");
+
+            if (string.IsNullOrWhiteSpace(meetingId))
+            {
+                continue;
+            }
+
+            // Get fields for validation
+            var patientName = GetStringValue(error, "Client Name");
+            var patientId = GetStringValue(error, "Client MRN/Patient ID");
+            var providerNamesField = GetStringValue(error, "Provider Names");
+            var providerIdField = GetStringValue(error, "Provider Identifiers");
+
+            // Validate patient name
+            if (!string.IsNullOrWhiteSpace(patientName) && !patientNames.Contains(patientName))
+            {
+                validationErrors.Add($"MeetingId: {meetingId} | PatientName not found: {patientName}");
+            }
+
+            // Validate patient ID
+            if (!string.IsNullOrWhiteSpace(patientId) && !patientIds.Contains(patientId))
+            {
+                validationErrors.Add($"MeetingId: {meetingId} | PatientId not found: {patientId}");
+            }
+
+            // Validate provider names
+            if (!string.IsNullOrWhiteSpace(providerNamesField))
+            {
+                char delimiter = providerNamesField.Contains(';') ? ';' : ',';
+                var providerNamesList = providerNamesField.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
+                
+                foreach (var providerName in providerNamesList)
+                {
+                    // Try different name format variations
+                    var matched = providerNames.Contains(providerName) ||
+                                providerNames.Contains(ReverseNameParts(providerName)) ||
+                                providerNames.Contains(NormalizeProviderName(providerName));
+                    
+                    if (!matched)
+                    {
+                        validationErrors.Add($"MeetingId: {meetingId} | ProviderName not found: {providerName}");
+                    }
+                }
+            }
+
+            // Validate provider IDs
+            if (!string.IsNullOrWhiteSpace(providerIdField))
+            {
+                var providerIdsList = providerIdField.Split(',').Select(i => i.Trim()).Where(i => !string.IsNullOrWhiteSpace(i)).ToArray();
+                
+                foreach (var providerId in providerIdsList)
+                {
+                    if (!providerIds.Contains(providerId))
+                    {
+                        validationErrors.Add($"MeetingId: {meetingId} | ProviderId not found: {providerId}");
+                    }
+                }
+            }
+
+            // Create meeting error entry
+            var meetingError = new Dictionary<string, object?>
+            {
+                ["AttendeeId"] = GetStringValue(error, "Attendee ID"),
+                ["AttendeeType"] = GetStringValue(error, "Attendee Type"),
+                ["PatientName"] = patientName,
+                ["PatientId"] = patientId,
+                ["ProviderNames"] = providerNamesField,
+                ["ProviderId"] = providerIdField,
+                ["Duration"] = GetStringValue(error, "Duration"),
+                ["Browser"] = CombineNameAndVersion(
+                    GetStringValue(error, "Browser Name"),
+                    GetStringValue(error, "Browser Version")
+                ),
+                ["Os"] = CombineNameAndVersion(
+                    GetStringValue(error, "OS Name"),
+                    GetStringValue(error, "OS Version")
+                ),
+                ["Kind"] = GetStringValue(error, "Kind"),
+                ["Reason"] = GetStringValue(error, "Reason")
+            };
+
+            // Add to dictionary using MeetingId as key
+            // If multiple errors exist for the same meeting, this will keep the last one
+            // If you want to keep all errors, you'd need to use a List<Dictionary<string, object?>> instead
+            meetingErrorDict[meetingId] = meetingError;
+        }
+
+        // Write validation errors if any
+        if (validationErrors.Count > 0)
+        {
+            WriteErrorFile(tmpDir, "vsme-misc.error", validationErrors);
+        }
+
+        return meetingErrorDict;
     }
 
     /// <summary>Adds provider names from Visit Details Participant Details.</summary>

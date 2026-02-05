@@ -3,6 +3,7 @@
 
 using System.Windows;
 using TingenTransmorger.Core;
+using TingenTransmorger.Database;
 
 namespace TingenTransmorger;
 
@@ -26,7 +27,8 @@ public partial class MainWindow : Window
 
         // This is just during development.
         // Comment out if you don't want to rebuild all reports on each startup.
-        TeleHealthReport.ReportProcessor.Process(config.AdminDirectories["Import"], config.AdminDirectories["Tmp"]);
+        //TeleHealthReport.ReportProcessor.Process(config.AdminDirectories["Import"], config.AdminDirectories["Tmp"]);
+        TransmorgerDatabase.Build(config.AdminDirectories["Tmp"]);
     }
 
     /// <summary>Stops the Tingen Muno application.</summary>

@@ -36,7 +36,7 @@ internal static class MessageFailureReport
         });
 
         ReportUtility.WriteSummaryJson(tmpDir, "Message_Failure-Summary.json", summaryMetrics, summaryHeaders);
-        ReportUtility.WriteClientStatsJson(tmpDir, "Message_Failure-SMS_Stats.json", smsStatsByClient);
+        ReportUtility.WriteClientStatsJson(tmpDir, "Message_Failure-Sms_Stats.json", smsStatsByClient);
         ReportUtility.WriteClientStatsJson(tmpDir, "Message_Failure-Email_Stats.json", emailStatsByClient);
     }
 }

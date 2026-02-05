@@ -45,7 +45,10 @@ internal static class ReportUtility
         var grouped = statsByClient.Select(kvp => new Dictionary<string, object?>
         {
             ["Client Name"] = kvp.Key,
-            ["Records"] = DeduplicateRecords(kvp.Value)
+            ["Records"] = DeduplicateRecords(kvp.Value.Select(record => 
+                record.Where(field => !field.Key.Equals("Client Name", StringComparison.OrdinalIgnoreCase))
+                      .ToDictionary(field => field.Key, field => field.Value)
+            ).ToList())
         }).ToList();
 
         WriteJson(tmpDir, fileName, grouped);

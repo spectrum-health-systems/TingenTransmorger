@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <Folder Include="AppData\" />
-    <Folder Include="Database\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />

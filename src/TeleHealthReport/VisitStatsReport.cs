@@ -3,7 +3,7 @@
 
 namespace TingenTransmorger.TeleHealthReport;
 
-internal class VisitStatsReport
+internal static class VisitStatsReport
 {
     /// <summary>Processes Visit Stats reports containing summary metrics and meeting errors.</summary>
     /// <param name="importDir">Directory containing source Excel files.</param>
@@ -14,22 +14,22 @@ internal class VisitStatsReport
 
         (string, string)? summaryHeaders = null;
 
-        var meetingErrorsById = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
+        var meetingErrorsById   = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
         var meetingErrorHeaders = new List<string>();
 
         ReportProcessor.ProcessExcelFiles(importDir, "*Visit_Stats*.xlsx", (worksheet, sheetName) =>
         {
             if (sheetName.Equals("Summary", StringComparison.OrdinalIgnoreCase))
             {
-                ProcessWorksheet.ProcessSummarySheet(worksheet, summaryMetrics, ref summaryHeaders);
+                ReportWorksheet.SummarySheet(worksheet, summaryMetrics, ref summaryHeaders);
             }
             else if (sheetName.Equals("Meeting Errors", StringComparison.OrdinalIgnoreCase))
             {
-                ProcessWorksheet.ProcessKeyedSheet(worksheet, meetingErrorsById, meetingErrorHeaders, "Meeting ID", aggregateNumeric: true);
+                ReportWorksheet.KeyedSheet(worksheet, meetingErrorsById, meetingErrorHeaders, "Meeting ID", aggregateNumeric: true);
             }
         });
 
-        ReportProcessor.WriteSummaryJson(tmpDir, "Visit_Stats-Summary.json", summaryMetrics, summaryHeaders);
-        ReportProcessor.WriteKeyedJson(tmpDir, "Visit_Stats-Meeting_Errors.json", meetingErrorsById);
+        ReportUtility.WriteSummaryJson(tmpDir, "Visit_Stats-Summary.json", summaryMetrics, summaryHeaders);
+        ReportUtility.WriteKeyedJson(tmpDir, "Visit_Stats-Meeting_Errors.json", meetingErrorsById);
     }
 }

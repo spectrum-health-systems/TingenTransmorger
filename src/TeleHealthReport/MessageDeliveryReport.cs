@@ -4,7 +4,7 @@
 namespace TingenTransmorger.TeleHealthReport;
 
 /// <summary>Logic specific to the Message Delivery Excel reports.</summary>
-internal class MessageDeliveryReport
+internal static class MessageDeliveryReport
 {
     /// <summary>Processes Message Delivery reports containing delivery statistics.</summary>
     /// <param name="importDir">Directory containing source Excel files.</param>
@@ -18,10 +18,10 @@ internal class MessageDeliveryReport
         {
             if (sheetName.Equals("Message Delivery Stats", StringComparison.OrdinalIgnoreCase))
             {
-                ProcessWorksheet.ProcessFlatSheet(worksheet, allRecords, headers);
+                ReportWorksheet.FlatSheet(worksheet, allRecords, headers);
             }
         });
 
-        ReportProcessor.WriteFlatJson(tmpDir, "Message_Delivery-Message_Delivery_Stats.json", allRecords);
+        ReportUtility.WriteFlatJson(tmpDir, "Message_Delivery-Message_Delivery_Stats.json", allRecords);
     }
 }

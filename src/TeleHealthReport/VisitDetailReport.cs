@@ -13,7 +13,7 @@ internal static class VisitDetailReport
         var meetingDetailsById    = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
         var meetingDetailsHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        var participantDetailsByName  = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
+        var participantDetails        = new List<Dictionary<string, object?>>();
         var participantDetailsHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         ReportProcessor.ProcessExcelFiles(importDir, "*Visit_Details*.xlsx", (worksheet, sheetName) =>
@@ -24,11 +24,11 @@ internal static class VisitDetailReport
             }
             else if (sheetName.Equals("Participant Details", StringComparison.OrdinalIgnoreCase))
             {
-                ReportWorksheet.SimpleKeyedSheet(worksheet, participantDetailsByName, participantDetailsHeaders, "Participant Name");
+                ReportWorksheet.FlatSheet(worksheet, participantDetails, participantDetailsHeaders);
             }
         });
 
         ReportUtility.WriteKeyedJson(tmpDir, "Visit_Details-Meeting_Details.json", meetingDetailsById);
-        ReportUtility.WriteKeyedJson(tmpDir, "Visit_Details-Participant_Details.json", participantDetailsByName);
+        ReportUtility.WriteFlatJson(tmpDir, "Visit_Details-Participant_Details.json", participantDetails);
     }
 }

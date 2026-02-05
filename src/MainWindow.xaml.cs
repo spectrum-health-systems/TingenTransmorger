@@ -24,7 +24,7 @@ public partial class MainWindow : Window
 
         Framework.Verify(config);
 
-        TeleHealthReport.TeleHealthReportProcessor.Process(config);
+        TeleHealthReport.ReportProcessor.Process(config.AdminDirectories["Import"], config.AdminDirectories["Tmp"]);
     }
 
     /// <summary>Stops the Tingen Muno application.</summary>

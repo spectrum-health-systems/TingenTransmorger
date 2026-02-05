@@ -1,0 +1,370 @@
+VisitStats
+	Summary
+	MeetingErrors
+VisitDetail
+	MeetingDetails
+	ParticipantDetails
+MessageFailure
+	Summary
+	SmsStats
+	EmailStats
+MessageDelivery
+	MessageDeliveryStats
+
+
+
+## COMPONENT ONE: Summary information
+
+Create a new JSON-formatted file in the temporary directory named "transmorger.db". This is going to be the Transmorger database, and will contain all of the information Transmorger needs to function.
+
+There will be 5 components to transmorger.db:
+
+1. Summary information
+2. Client information
+3. Provider information
+4. Messaging details
+5. Meeting details
+
+First, let's tackle the first component: Summary information.
+
+Please create two seperate summaries:
+
+1. Visit Stats Summary, built using the "Visit_Details-Summary.json" file
+
+2. Message Failure Summary, built using the "Message_Failure-Summary.json" file
+
+
+
+## COMPONENT TWO, PART ONE: Patient name and ID
+
+Ok, now the second component of thransmorgifier.db: Client information.
+
+Actually, this should be "Patient information", so let's use the term "patient" instead of "client" when building the databse.
+
+This component is pretty complex, and will use data from multiple .json files, and we'll build this components in seperate steps. Ok?
+
+First, each patient name should have an entry in the database.
+
+The best place to get all of the patient names is probably Visit_Details-Participant_Details.json. If an entry in that file indicates that the "Participant Type" is "CLIENT", that's a patient, so add their PatientName in transmorger.db.
+
+PatientNames should be formatted like "Firstname Lastname", and any special characters should remain, and not be converted/escaped. For example: "Catherine O'Hara" and "Billy-Bob Thorton" should have the "'" and "-" (or any other special character) in their name, and not "\u2019", or whatever.
+
+The other piece of information that transmorger.db needs is the PatientId, which can be found in "MRN/PatientId"
+
+
+
+## COMPONENT TWO, PART TWO: Patient Messaging, Part One - The Groundwork
+
+Let's continue building the Patient component of transmorger.db, and focus on messages.
+
+We will use Message_Failure-Sms_Stats.json first.
+
+For each of the PatientNames (refered to as "Client Name") in Message_Failure-Sms_Stats:
+
+- If that PatientName also exists in transmorger.db, add the patient's PhoneNumber (refered to as "Phone Number") to transmorger.db.
+  Phone numbers should only be 10 digits and include only the Area Code and local phone number. Do not include "+" symbols, or a leading "1".
+  If a patient has mulitple phone numbers, they should be included
+  
+- If a PatientName exists in Message_Failure-Sms_Stats.json, but not transmorger.db, append the patient name to a file in the temporary directory named "mfss-missing-patient.error"
+
+Next, use Message_Failure-Email_Stats.json to find patient emial addresses.
+
+For each of the PatientNames (refered to as "Client Name") in Message_Failure-Email_Stats.json:
+
+- If that PatientName also exists in transmorger.db, add the patient's EmailAddress (refered to as "Email Address") to transmorger.db.
+  If an email address does not follow the standard "something@something.com" format, write the patient name and email address a file in the temporary directory named "mfes-invalid-email.error"
+  If a patient has mulitple email addresses, they should be included.
+  
+- If a PatientName exists in Message_Failure-Email_Stats.json, but not transmorger.db, append the patient name to a file in the temporary directory named "mfes-missing-patient.error"
+
+
+
+## COMPONENT TWO, PART THREE: Patient Messaging, Part Two - SMS Failures
+
+Let's continue to focus on messages.
+
+We will use Message_Failure-Sms_Stats.json first.
+
+The transmorger.db file contains a patient's phone number.
+
+Rename "Records" to "FailedMeeting".
+
+For each patient "FailedMeeting" in Message_Failure-Sms_Stats.json, attach the following to that phone number:
+
+- The "SmsErrorMessage" (referred to as "Error Message")
+- The "ScheduledStart" (referred to as "Scheduled Start Time")
+- The "ScheduledEnd" (referred to as "Scheduled End Time")
+- The "ProviderName" (referred to as "Provider Name")
+
+Keep in mind, there may be multiple FailedMeetings per patient phone number.
+
+
+
+## COMPONENT TWO, PART FOUR: Patient Messaging, Part Three - Email Failures
+
+Now let's do the same thing with email addresses.
+
+We will use Message_Failure-Email_Stats.json.
+
+The transmorger.db file contains a patient's email address(s).
+
+For each patient "FailedMeeting" in Message_Failure-Email_Stats.json, attach the following to that Email Address:
+
+- The "ErrorMessage" (referred to as "Error Message")
+- The "ScheduledStart" (referred to as "Scheduled Start Time")
+- The "ScheduledEnd" (referred to as "Scheduled End Time")
+- The "ProviderName" (referred to as "Provider Name")
+
+Keep in mind, there may be multiple FailedMeetings per patient email address.
+
+Let's also change the "SmsErrorMessage" to "ErrorMessage" on the phone side of things.
+
+
+## COMPONENT TWO, PART FIVE: Patient Messaging, Part Four - SMS Successes
+
+Let's continue to focus on messages.
+
+The transmorger.db file contains a patient's phone number, along with a list of "FailedMeetings".
+
+First, let's rename "FailedMeetings" in transmorger.db to "DeliveryFailure".
+
+Next, using "Message_Delivery-Message_Delivery_Stats.json", specifically entries that are Delivery Type "SMSMessage":
+
+If the sanitized "Phone Number" in "Message_Delivery-Message_Delivery_Stats.json" matches a patient's PhoneNumber in transmorger.db, and a "DeliverySuccess" section with:
+
+- The "DeliveryStatus" (referred to as "Delivery Status")
+- The "ErrorMessage" (referred to as "Error Message")
+- The "MessageType" (referred to as "Message Type")
+- The "DateSent" (referred to as "Date Sent")
+- The "TimeSent" (referred to as "Time Sent")
+
+Keep in mind, there may be multiple DeliverySuccess per patient phone number.
+
+
+## COMPONENT TWO, PART SIX: Patient Messaging, Part Five - Email Successes
+
+Now let's do the same thing for successful messages via email.
+
+The transmorger.db file contains a patient's email address(s), along with a list of "DeliveryFailure".
+
+Using "Message_Delivery-Message_Delivery_Stats.json", specifically entries that are Delivery Type "EmailMessage":
+
+If the "Email Address" in "Message_Delivery-Message_Delivery_Stats.json" matches a patient's EmailAddress in transmorger.db, and a "DeliverySuccess" section with:
+
+- The "DeliveryStatus" (referred to as "Delivery Status")
+- The "ErrorMessage" (referred to as "Error Message")
+- The "MessageType" (referred to as "Message Type")
+- The "DateSent" (referred to as "Date Sent")
+- The "TimeSent" (referred to as "Time Sent")
+
+Keep in mind, there may be multiple DeliverySuccess per patient email addresses.
+
+
+## COMPONENT TWO, PART SEVEN: Patient Meetings
+
+Now we will move on to meeting information.
+
+The transmorger.db file contains a section for "Patients" that has information like IDs, phhone numbers, etc.
+
+We are going to add a new section for "Meeting".
+
+The "Meeting" section may contain more than one meeting object, stored under the MeetingId.
+
+First, go through Visit_Details-Participant_Details.json, and for each object, if the "Participant Type" is "Client":
+
+- Find the PatientName in transmorger.db
+- Add the MeetingId (from "Meeting ID") from Visit_Details-Participant_Details.json to the "Meeting" section of the patient record in transmorger.db
+- Using that MeetingId:
+  - Add an "Arrived" property that combines the "Participant Arrived Date" and "Participant Arrived Time", for example: "11/04/2025 10:30AM"
+  - Add an "Dropped" property that combines the "Participant Dropped Date" and "Participant Dropped Time", for example: "11/04/2025 11:30AM"
+  - Add a "Duration" property (from "Participant Session Duration (minutes)")
+  - Add a "CheckInViaChat" property (from "Checked-in via Chat")
+  - Add a "CheckInWait" property (from "Check-in Waiting Time (Minutes)")
+  - Add a "WaitForCareTeamMember")" property (from "Waiting For Care Team Member (Minutes)")
+  - Add a "WaitForProvider" property (from "Waiting For Provider (Minutes)")
+  - Add a "CheckOutWait" property (from "Check-out Waiting Time (Minutes)")
+  - Add a "Rating" property (from "Participant Rating")
+  - Add a "Device" property (from "Device Type")
+  - Add a "Browser" property that combines "Browser Name" and "Browser Version", for example "MS-Edge-Chromium 142.0.0.0"
+  - Add a "Os" property that combines "Operating System Name" and "Operating System Version", for example: "Android 12.0.0"
+
+While you are parsing Visit_Details-Participant_Details.json:
+
+- If you find a phone number that does not exist in transmorger.db, append that phone number to a file in the temporary directory named "vspd-phone.error"
+- If you find an MRN/PatientId thatdoes not exist in transmorger.db, append that PatientId to a file in the temporary directory named "vspd-patid.error"
+
+
+## COMPONENT THREE, PART ONE: Provider name and ID
+
+Let's take a break from patient data, and focus on Providers for a minute.
+
+We are basically going to do what we did with patient data earlier, and get ProviderNames and ProviderIds.
+
+Let's start with Visit_Details-Participant_Details.json. If an entry in that file indicates that the "Participant Type" is "PROVIDER", that's a provider, so add their ProviderName in transmorger.db in a "Providers" section, just like the "Patients" section.
+
+If you find any provider names in Visit_Details-Participant_Details.json that do not exist in thransmorgifier.md, append the name to a file in the temporary directory named "vdpd-provider.error"
+
+Visit_Details-Participant_Details.json doesn't include the ProviderId, though, so we'll use Visit_Details-Meeting_Details.json. Each meeting details section in Visit_Details-Meeting_Details.json has a "Provider/Staff Names" component that contains the names of the provider(s). That same section will have a "Provider IDs" component. That's the ProviderId we are looking for.
+
+Put the ProviderName and ProviderId in transmorger.db.
+
+If you find any provider names in Visit_Details-Meeting_Details.json that do not exist in thransmorgifier.md, append the name to a file in the temporary directory named "vdmd-provider.error"
+
+
+## COMPONENT THREE, PART TWO: Provider MeetingIds
+
+Now let's add any MeetingIds associated with a ProviderName.
+
+Go through Visit_Stats-Meeting_Details.json, and for each Provider/Staff Names you find in a meeting, add that MeetingId to the Provider section in transmorger.json.
+
+Providers can have more than one associated MeetingId.
+
+If you find any MeetingIds in Visit_Stats-Meeting_Details.json that are not in transmorger.json, append the MeetingId to a file in the temporary directory named "vsmd-meetingid.error"
+
+
+## COMPONENT FOUR, PART ONE: Meeting Details
+
+We're almost done!
+
+Next up is putting together the Meeting data.
+
+Let's setup a new section in transmorger.json called "MeetingDetail", right next to "Summary", "Patients", and "Providers.
+
+Go through Visit_Stats-Meeting_Details.json, and for each meeting object, create a entry in MeetingDetail using the "MeetingId" (from Meeting ID) as the key.
+
+Then, for each MeetingId, add:
+
+- "AppointmentId" (from "Appointment ID")
+- "MeetingTitle" (from "Meeting Title")
+- "Workflow" (from "Workflow")
+- "Program" (from "Program")
+- "ServiceCode" (from "Service Code")
+- "ScheduledStart" (combined "Scheduled Start Date" and "Scheduled Start Time", for example: "12:30 PM")
+- "ScheduledEndDate" (combined "ScheduledEnd Date" and "Scheduled End Time", for example: "01:00 PM")
+- "ActualStart" (combined "Actual Start Date" and "Actual Start Time", for example: "12:30 PM")
+- "ActualEnd" (combined "Actual End Date" and "Actual End Time", for example: "12:33 PM")
+- "Duration" (from "Duration (Minutes)")
+- "Joins" (from "Meeting Joins")
+- "Status" (from "Meeting Status")
+- "CheckedInByFrontDesk" (from "Checked-in by Front Desk")
+- "EndedBy" (from "Meeting Ended By")
+- "InitiatedBy" (from "Meeting Initiated By")
+- "ScribeEnabled" (from "Scribe Enabled")
+- "ScribeConsentAcceptance" (from "Scribe Consent Acceptance")
+- "Participant Names" (from "Participant Names")
+- "ProviderNames" (from "Provider/Staff Names")
+- "ProviderIds" (from "Provider IDs")
+
+## COMPONENT FOUR, PART TWO: Meeting Errors
+
+The final step!
+
+Next up is putting together the Meeting Error data.
+
+Let's setup a new section in transmorger.json called "MeetingError", right next to "Summary", "Patients", "Providers", and "MeetingDetails"
+
+Go through Visit_Stats-Meeting_Errors.json, and for each meeting object, create a entry in MeetingError using the "MeetingId" (from Meeting ID) as the key.
+
+Then, for each MeetingId, add:
+
+- "AttendeeId" (from "Attendee ID")
+- "AttendeeType" (from "Attendee Type")
+- "PatientName" (from "Client Name")
+- "PatientId (from "Client MRN/Patient ID")
+- "ProviderNames" (from "Provider Names")
+- "ProviderId" (from "Provider Identifiers")
+- "Duration" (from "Duration")
+- "Browser" (combines "Browser Name" and "Browser Version", for example "MS-Edge-Chromium 142.0.0.0"
+- "Os" (combines "OS Name" and "OS Version", for example: "Android 12.0.0"
+- "Kind" (from "Kind")
+- "Reason" (from "Reason")
+
+If you find any of the following in Visit_Stats-Meeting_Errors.json that are not in transmorger.json, append the that value to a file in the temporary directory named "vsme-misc.error":
+
+- "PatientName"
+- "PatientId
+- "ProviderNames"
+- "ProviderId"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Let's take a break from patient data, and focus on Providers for a minute.
+
+We are basically going to do what we did with patient data earlier, and get ProviderNames and ProviderIds.
+
+Let's start with Visit_Details-Participant_Details.json. If an entry in that file indicates that the "Participant Type" is "PROVIDER", that's a provider, so add their ProviderName in transmorger.db in a "Providers" section, just like the "Patients" section.
+
+If you find any provider names in Visit_Details-Participant_Details.json that do not exist in thransmorgifier.md, append the name to a file in the temporary directory named "vdpd-provider.error"
+
+Visit_Details-Participant_Details.json doesn't include the ProviderId, though, so we'll use Visit_Details-Meeting_Details.json. Each meeting details section in Visit_Details-Meeting_Details.json has a "Provider/Staff Names" component that contains the names of the provider(s). That same section will have a "Provider IDs" component. That's the ProviderId we are looking for.
+
+Put the ProviderName and ProviderId in transmorger.db.
+
+If you find any provider names in Visit_Details-Meeting_Details.json that do not exist in thransmorgifier.md, append the name to a file in the temporary directory named "vdmd-provider.error"
+
+
+
+
+
+
+
+This component is pretty complex, and will use data from multiple .json files, and we'll build this components in seperate steps. Ok?
+
+First, each patient name should have an entry in the database.
+
+
+
+PatientNames should be formatted like "Firstname Lastname", and any special characters should remain, and not be converted/escaped. For example: "Catherine O'Hara" and "Billy-Bob Thorton" should have the "'" and "-" (or any other special character) in their name, and not "\u2019", or whatever.
+
+The other piece of information that transmorger.db needs is the PatientId, which can be found in "MRN/PatientId"
+
+The transmorger.db file contains a section for "Patients" that has information like IDs, phhone numbers, etc.
+
+We are going to add a new section for "Meeting".
+
+The "Meeting" section may contain more than one meeting object, stored under the MeetingId.
+
+First, go through Visit_Details-Participant_Details.json, and for each object, if the "Participant Type" is "Client":
+
+- Find the PatientName in transmorger.db
+- Add the MeetingId (from "Meeting ID") from Visit_Details-Participant_Details.json to the "Meeting" section of the patient record in transmorger.db
+- Using that MeetingId:
+  - Add an "Arrived" property that combines the "Participant Arrived Date" and "Participant Arrived Time", for example: "11/04/2025 10:30AM"
+  - Add an "Dropped" property that combines the "Participant Dropped Date" and "Participant Dropped Time", for example: "11/04/2025 11:30AM"
+  - Add a "Duration" property (from "Participant Session Duration (minutes)")
+  - Add a "CheckInViaChat" property (from "Checked-in via Chat")
+  - Add a "CheckInWait" property (from "Check-in Waiting Time (Minutes)")
+  - Add a "WaitForCareTeamMember")" property (from "Waiting For Care Team Member (Minutes)")
+  - Add a "WaitForProvider" property (from "Waiting For Provider (Minutes)")
+  - Add a "CheckOutWait" property (from "Check-out Waiting Time (Minutes)")
+  - Add a "Rating" property (from "Participant Rating")
+  - Add a "Device" property (from "Device Type")
+  - Add a "Browser" property that combines "Browser Name" and "Browser Version", for example "MS-Edge-Chromium 142.0.0.0"
+  - Add a "Os" property that combines "Operating System Name" and "Operating System Version", for example: "Android 12.0.0"
+
+While you are parsing Visit_Details-Participant_Details.json:
+
+- If you find a phone number that does not exist in transmorger.db, append that phone number to a file in the temporary directory named "vspd-phone.error"
+- If you find an MRN/PatientId thatdoes not exist in transmorger.db, append that PatientId to a file in the temporary directory named "vspd-patid.error"
+
+
+
+
+
+
+
+
+meeting numbers -> error file

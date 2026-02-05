@@ -22,28 +22,25 @@ internal static class TransmorgerDatabase
 
     /// <summary>Builds the complete transmorger.json file from processed JSON reports.</summary>
     /// <param name="tmpDir">Directory containing processed JSON files.</param>
-    internal static void Build(string tmpDir)
+    internal static void Build(string tmpDir, string masterDbDir)
     {
         // Cache all file reads at the top level to avoid redundant I/O operations
-        var participantDetails = ReadJsonFile(tmpDir, "Visit_Details-Participant_Details.json") as List<Dictionary<string, object?>>;
-        var meetingDetails = ReadJsonFile(tmpDir, "Visit_Details-Meeting_Details.json") as List<Dictionary<string, object?>>;
+        var participantDetails   = ReadJsonFile(tmpDir, "Visit_Details-Participant_Details.json") as List<Dictionary<string, object?>>;
+        var meetingDetails       = ReadJsonFile(tmpDir, "Visit_Details-Meeting_Details.json") as List<Dictionary<string, object?>>;
         var messageDeliveryStats = ReadJsonFile(tmpDir, "Message_Delivery-Message_Delivery_Stats.json") as List<Dictionary<string, object?>>;
-        
-        var patients = BuildPatientsComponent(tmpDir, participantDetails, messageDeliveryStats);
-        var providers = BuildProvidersComponent(tmpDir, participantDetails, meetingDetails);
-        
+        var patients             = BuildPatientsComponent(tmpDir, participantDetails, messageDeliveryStats);
+        var providers            = BuildProvidersComponent(tmpDir, participantDetails, meetingDetails);
+
         var database = new Dictionary<string, object?>
         {
-            ["Summary"] = BuildSummaryComponent(tmpDir),
-            ["Patients"] = patients,
-            ["Providers"] = providers,
+            ["Summary"]       = BuildSummaryComponent(tmpDir),
+            ["Patients"]      = patients,
+            ["Providers"]     = providers,
             ["MeetingDetail"] = BuildMeetingDetailComponent(tmpDir, meetingDetails, patients, providers),
-            ["MeetingError"] = BuildMeetingErrorComponent(tmpDir, patients, providers),
-            ["Messaging"] = new List<object>(), // Placeholder for component 4
-            ["Meetings"] = new List<object>() // Placeholder for component 5
+            ["MeetingError"]  = BuildMeetingErrorComponent(tmpDir, patients, providers),
         };
 
-        WriteDatabaseFile(tmpDir, database);
+        WriteDatabaseFile(tmpDir, masterDbDir, database);
     }
 
     /// <summary>Builds the Summary component containing Visit Stats and Message Failure summaries.</summary>
@@ -105,22 +102,16 @@ internal static class TransmorgerDatabase
             }
         }
 
-        // Step 2: Add phone numbers from SMS stats
         AddPhoneNumbersFromSmsStats(tmpDir, patientsByName);
 
-        // Step 3: Add email addresses from Email stats
         AddEmailAddressesFromEmailStats(tmpDir, patientsByName);
 
-        // Step 4: Add delivery success data from Message Delivery stats
         AddDeliverySuccessFromMessageDeliveryStats(tmpDir, patientsByName, messageDeliveryStats);
 
-        // Step 5: Add email delivery success data from Message Delivery stats
         AddEmailDeliverySuccessFromMessageDeliveryStats(tmpDir, patientsByName, messageDeliveryStats);
 
-        // Step 6: Add meetings from Participant Details
         AddMeetingsFromParticipantDetails(tmpDir, patientsByName, participantDetails);
 
-        // Step 7: Convert phone number dictionary and email address dictionary to proper format
         return patientsByName.Values.Select(patient =>
         {
             var phoneNumbersDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["PhoneNumbers"]!;
@@ -167,10 +158,8 @@ internal static class TransmorgerDatabase
     {
         var providersByName = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
 
-        // Step 1: Build base provider records from participant details
         AddProvidersFromParticipantDetails(providersByName, participantDetails);
 
-        // Step 2 & 3: Add provider IDs and meeting IDs from meeting details in one pass
         AddProviderDataFromMeetingDetails(tmpDir, providersByName, meetingDetails);
 
         // Step 4: Convert to list and return
@@ -212,11 +201,11 @@ internal static class TransmorgerDatabase
             }
 
             // Get provider and participant names for validation
-            var providerNamesField = GetStringValue(meeting, "Provider/Staff Names") 
+            var providerNamesField = GetStringValue(meeting, "Provider/Staff Names")
                                   ?? GetStringValue(meeting, "Provider/Staff Name")
                                   ?? GetStringValue(meeting, "Provider Names")
                                   ?? GetStringValue(meeting, "Staff Names");
-            
+
             var participantNamesField = GetStringValue(meeting, "Participant Names");
 
             // Validate provider names
@@ -224,7 +213,7 @@ internal static class TransmorgerDatabase
             {
                 char delimiter = providerNamesField.Contains(';') ? ';' : ',';
                 var providerNamesList = providerNamesField.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
-                
+
                 foreach (var providerName in providerNamesList)
                 {
                     if (!TryMatchProviderName(providerName, providerNames, out _))
@@ -240,7 +229,7 @@ internal static class TransmorgerDatabase
                 // Participant Names might contain multiple names separated by commas or semicolons
                 char delimiter = participantNamesField.Contains(';') ? ';' : ',';
                 var participantNamesList = participantNamesField.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
-                
+
                 foreach (var participantName in participantNamesList)
                 {
                     if (!patientNames.Contains(participantName))
@@ -357,7 +346,7 @@ internal static class TransmorgerDatabase
             {
                 char delimiter = providerNamesField.Contains(';') ? ';' : ',';
                 var providerNamesList = providerNamesField.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
-                
+
                 foreach (var providerName in providerNamesList)
                 {
                     if (!TryMatchProviderName(providerName, providerNames, out _))
@@ -371,7 +360,7 @@ internal static class TransmorgerDatabase
             if (!string.IsNullOrWhiteSpace(providerIdField))
             {
                 var providerIdsList = providerIdField.Split(',').Select(i => i.Trim()).Where(i => !string.IsNullOrWhiteSpace(i)).ToArray();
-                
+
                 foreach (var providerId in providerIdsList)
                 {
                     if (!providerIds.Contains(providerId))
@@ -514,7 +503,7 @@ internal static class TransmorgerDatabase
                 {
                     debugInfo.Add($"Original: [{providerName}] -> Matched: [{matchedName}] -> ID: [{providerId}]");
                     debugInfo.Add($"  MATCHED! Setting ID for [{matchedName}]");
-                    
+
                     // Set provider ID if not already set
                     if (provider["ProviderId"] == null && !string.IsNullOrWhiteSpace(providerId))
                     {
@@ -621,14 +610,14 @@ internal static class TransmorgerDatabase
     private static bool TryMatchProviderName(string providerName, HashSet<string> providerNames, out string? matchedName)
     {
         matchedName = null;
-        
+
         // Try as-is
         if (providerNames.Contains(providerName))
         {
             matchedName = providerName;
             return true;
         }
-        
+
         // Try reversed
         var reversed = ReverseNameParts(providerName);
         if (providerNames.Contains(reversed))
@@ -636,7 +625,7 @@ internal static class TransmorgerDatabase
             matchedName = reversed;
             return true;
         }
-        
+
         // Try normalized
         var normalized = NormalizeProviderName(providerName);
         if (providerNames.Contains(normalized))
@@ -644,7 +633,7 @@ internal static class TransmorgerDatabase
             matchedName = normalized;
             return true;
         }
-        
+
         return false;
     }
 
@@ -658,14 +647,14 @@ internal static class TransmorgerDatabase
     {
         provider = null;
         matchedName = null;
-        
+
         // Try as-is
         if (providersByName.TryGetValue(providerName, out provider))
         {
             matchedName = providerName;
             return true;
         }
-        
+
         // Try reversed
         var reversed = ReverseNameParts(providerName);
         if (providersByName.TryGetValue(reversed, out provider))
@@ -673,7 +662,7 @@ internal static class TransmorgerDatabase
             matchedName = reversed;
             return true;
         }
-        
+
         // Try normalized
         var normalized = NormalizeProviderName(providerName);
         if (providersByName.TryGetValue(normalized, out provider))
@@ -681,7 +670,7 @@ internal static class TransmorgerDatabase
             matchedName = normalized;
             return true;
         }
-        
+
         return false;
     }
 
@@ -1246,11 +1235,18 @@ internal static class TransmorgerDatabase
     /// <summary>Writes the complete database to transmorger.json.</summary>
     /// <param name="tmpDir">Output directory.</param>
     /// <param name="database">Complete database object to serialize.</param>
-    private static void WriteDatabaseFile(string tmpDir, Dictionary<string, object?> database)
+    private static void WriteDatabaseFile(string tmpDir, string masterDbDir, Dictionary<string, object?> database)
     {
-        var path = Path.Combine(tmpDir, "transmorger.json");
+        var jsonPath = Path.Combine(tmpDir, "transmorger.json");
         var json = JsonSerializer.Serialize(database, JsonOptions);
+        File.WriteAllText(jsonPath, json, Encoding.UTF8);
 
-        File.WriteAllText(path, json, Encoding.UTF8);
+        var dbTempPath = Path.Combine(tmpDir, "transmorger.db");
+        var db = JsonSerializer.Serialize(database);
+        File.WriteAllText(dbTempPath, db, Encoding.UTF8);
+
+        var masterDbPath = Path.Combine(masterDbDir, "transmorger.db");
+        File.Copy(dbTempPath, masterDbPath);
+
     }
 }

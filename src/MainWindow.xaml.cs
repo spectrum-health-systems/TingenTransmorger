@@ -1,5 +1,5 @@
-﻿// 260204_code
-// 260204_documentation
+﻿// 260205_code
+// 260205_documentation
 
 using System.Windows;
 using TingenTransmorger.Core;
@@ -25,10 +25,12 @@ public partial class MainWindow : Window
 
         Framework.Verify(config);
 
-        // This is just during development.
-        // Comment out if you don't want to rebuild all reports on each startup.
-        TeleHealthReport.ReportProcessor.Process(config.AdminDirectories["Import"], config.AdminDirectories["Tmp"]);
-        TransmorgerDatabase.Build(config.AdminDirectories["Tmp"]);
+        if (config.Mode.Trim().ToLower() == "admin")
+        {
+            TeleHealthReport.ReportProcessor.Process(config.AdminDirectories["Import"], config.AdminDirectories["Tmp"]);
+            TransmorgerDatabase.Build(config.AdminDirectories["Tmp"], config.StandardDirectories["MasterDb"]);
+        }
+
     }
 
     /// <summary>Stops the Tingen Muno application.</summary>

@@ -24,11 +24,15 @@ internal static class TransmorgerDatabase
     /// <param name="tmpDir">Directory containing processed JSON files.</param>
     internal static void Build(string tmpDir)
     {
+        var patients = BuildPatientsComponent(tmpDir);
+        var providers = BuildProvidersComponent(tmpDir);
+        
         var database = new Dictionary<string, object?>
         {
             ["Summary"] = BuildSummaryComponent(tmpDir),
-            ["Patients"] = BuildPatientsComponent(tmpDir),
-            ["Providers"] = BuildProvidersComponent(tmpDir),
+            ["Patients"] = patients,
+            ["Providers"] = providers,
+            ["MeetingDetail"] = BuildMeetingDetailComponent(tmpDir, patients, providers),
             ["Messaging"] = new List<object>(), // Placeholder for component 4
             ["Meetings"] = new List<object>() // Placeholder for component 5
         };
@@ -114,7 +118,7 @@ internal static class TransmorgerDatabase
         return patientsByName.Values.Select(patient =>
         {
             var phoneNumbersDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["PhoneNumbers"]!;
-            var deliverySuccessDict = patient.ContainsKey("PhoneNumberDeliverySuccess") 
+            var deliverySuccessDict = patient.ContainsKey("PhoneNumberDeliverySuccess")
                 ? (Dictionary<string, List<Dictionary<string, object?>>>)patient["PhoneNumberDeliverySuccess"]!
                 : new Dictionary<string, List<Dictionary<string, object?>>>();
 
@@ -131,8 +135,8 @@ internal static class TransmorgerDatabase
                 {
                     ["Number"] = kvp.Key,
                     ["DeliveryFailure"] = kvp.Value,
-                    ["DeliverySuccess"] = deliverySuccessDict.ContainsKey(kvp.Key) 
-                        ? deliverySuccessDict[kvp.Key] 
+                    ["DeliverySuccess"] = deliverySuccessDict.ContainsKey(kvp.Key)
+                        ? deliverySuccessDict[kvp.Key]
                         : new List<Dictionary<string, object?>>()
                 }).ToList(),
                 ["EmailAddresses"] = emailAddressesDict.Select(kvp => new Dictionary<string, object?>
@@ -161,12 +165,142 @@ internal static class TransmorgerDatabase
         // Step 2: Add provider IDs from meeting details
         AddProviderIdsFromMeetingDetails(tmpDir, providersByName);
 
-        // Step 3: Convert to list and return
+        // Step 3: Add meeting IDs from meeting details
+        AddMeetingsFromMeetingDetails(tmpDir, providersByName);
+
+        // Step 4: Convert to list and return
         return providersByName.Values.Select(provider => new Dictionary<string, object?>
         {
             ["ProviderName"] = provider["ProviderName"],
-            ["ProviderId"] = provider["ProviderId"]
+            ["ProviderId"] = provider["ProviderId"],
+            ["Meetings"] = (List<string>)provider["Meetings"]!
         }).ToList();
+    }
+
+    /// <summary>Builds the MeetingDetail component from Visit Details Meeting Details.</summary>
+    /// <param name="tmpDir">Directory containing source JSON files.</param>
+    /// <param name="patients">List of patient records for validation.</param>
+    /// <param name="providers">List of provider records for validation.</param>
+    /// <returns>Dictionary of meeting details indexed by MeetingId.</returns>
+    private static Dictionary<string, object?> BuildMeetingDetailComponent(string tmpDir, List<Dictionary<string, object?>> patients, List<Dictionary<string, object?>> providers)
+    {
+        var meetingDetails = ReadJsonFile(tmpDir, "Visit_Details-Meeting_Details.json") as List<Dictionary<string, object?>>;
+
+        if (meetingDetails == null)
+        {
+            return new Dictionary<string, object?>();
+        }
+
+        var meetingDetailDict = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var validationErrors = new List<string>();
+
+        // Build lookup sets for validation
+        var patientNames = new HashSet<string>(patients.Select(p => GetStringValue(p, "PatientName") ?? ""), StringComparer.OrdinalIgnoreCase);
+        var providerNames = new HashSet<string>(providers.Select(p => GetStringValue(p, "ProviderName") ?? ""), StringComparer.OrdinalIgnoreCase);
+
+        foreach (var meeting in meetingDetails)
+        {
+            var meetingId = GetStringValue(meeting, "Meeting ID") ?? GetStringValue(meeting, "MeetingId");
+
+            if (string.IsNullOrWhiteSpace(meetingId))
+            {
+                continue;
+            }
+
+            // Get provider and participant names for validation
+            var providerNamesField = GetStringValue(meeting, "Provider/Staff Names") 
+                                  ?? GetStringValue(meeting, "Provider/Staff Name")
+                                  ?? GetStringValue(meeting, "Provider Names")
+                                  ?? GetStringValue(meeting, "Staff Names");
+            
+            var participantNamesField = GetStringValue(meeting, "Participant Names");
+
+            // Validate provider names
+            if (!string.IsNullOrWhiteSpace(providerNamesField))
+            {
+                char delimiter = providerNamesField.Contains(';') ? ';' : ',';
+                var providerNamesList = providerNamesField.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
+                
+                foreach (var providerName in providerNamesList)
+                {
+                    // Try different name format variations
+                    var matched = providerNames.Contains(providerName) ||
+                                providerNames.Contains(ReverseNameParts(providerName)) ||
+                                providerNames.Contains(NormalizeProviderName(providerName));
+                    
+                    if (!matched)
+                    {
+                        validationErrors.Add($"MeetingId: {meetingId} | Provider not found: {providerName}");
+                    }
+                }
+            }
+
+            // Validate participant/patient names
+            if (!string.IsNullOrWhiteSpace(participantNamesField))
+            {
+                // Participant Names might contain multiple names separated by commas or semicolons
+                char delimiter = participantNamesField.Contains(';') ? ';' : ',';
+                var participantNamesList = participantNamesField.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
+                
+                foreach (var participantName in participantNamesList)
+                {
+                    if (!patientNames.Contains(participantName))
+                    {
+                        validationErrors.Add($"MeetingId: {meetingId} | Patient not found: {participantName}");
+                    }
+                }
+            }
+
+            // Create meeting detail entry
+            var meetingDetail = new Dictionary<string, object?>
+            {
+                ["AppointmentId"] = GetStringValue(meeting, "Appointment ID"),
+                ["MeetingTitle"] = GetStringValue(meeting, "Meeting Title"),
+                ["Workflow"] = GetStringValue(meeting, "Workflow"),
+                ["Program"] = GetStringValue(meeting, "Program"),
+                ["ServiceCode"] = GetStringValue(meeting, "Service Code"),
+                ["ScheduledStart"] = CombineDateAndTime(
+                    GetStringValue(meeting, "Scheduled Start Date"),
+                    GetStringValue(meeting, "Scheduled Start Time")
+                ),
+                ["ScheduledEnd"] = CombineDateAndTime(
+                    GetStringValue(meeting, "Scheduled End Date"),
+                    GetStringValue(meeting, "Scheduled End Time")
+                ),
+                ["ActualStart"] = CombineDateAndTime(
+                    GetStringValue(meeting, "Actual Start Date"),
+                    GetStringValue(meeting, "Actual Start Time")
+                ),
+                ["ActualEnd"] = CombineDateAndTime(
+                    GetStringValue(meeting, "Actual End Date"),
+                    GetStringValue(meeting, "Actual End Time")
+                ),
+                ["Duration"] = GetStringValue(meeting, "Duration (Minutes)"),
+                ["Joins"] = GetStringValue(meeting, "Meeting Joins"),
+                ["Status"] = GetStringValue(meeting, "Meeting Status"),
+                ["CheckedInByFrontDesk"] = GetStringValue(meeting, "Checked-in by Front Desk"),
+                ["EndedBy"] = GetStringValue(meeting, "Meeting Ended By"),
+                ["InitiatedBy"] = GetStringValue(meeting, "Meeting Initiated By"),
+                ["ScribeEnabled"] = GetStringValue(meeting, "Scribe Enabled"),
+                ["ScribeConsentAcceptance"] = GetStringValue(meeting, "Scribe Consent Acceptance"),
+                ["ParticipantNames"] = participantNamesField,
+                ["ProviderNames"] = providerNamesField,
+                ["ProviderIds"] = GetStringValue(meeting, "Provider IDs")
+                               ?? GetStringValue(meeting, "Provider ID")
+                               ?? GetStringValue(meeting, "Staff IDs")
+            };
+
+            // Add to dictionary using MeetingId as key
+            meetingDetailDict[meetingId] = meetingDetail;
+        }
+
+        // Write validation errors if any
+        if (validationErrors.Count > 0)
+        {
+            WriteErrorFile(tmpDir, "sdmd-misc.error", validationErrors);
+        }
+
+        return meetingDetailDict;
     }
 
     /// <summary>Adds provider names from Visit Details Participant Details.</summary>
@@ -184,7 +318,7 @@ internal static class TransmorgerDatabase
         foreach (var participant in participantDetails)
         {
             var participantType = GetStringValue(participant, "Participant Type");
-            
+
             if (!participantType?.Equals("PROVIDER", StringComparison.OrdinalIgnoreCase) == true)
             {
                 continue;
@@ -203,7 +337,8 @@ internal static class TransmorgerDatabase
                 providersByName[providerName] = new Dictionary<string, object?>
                 {
                     ["ProviderName"] = providerName,
-                    ["ProviderId"] = null  // Will be filled in from meeting details
+                    ["ProviderId"] = null,  // Will be filled in from meeting details
+                    ["Meetings"] = new List<string>()  // Will be filled in from meeting details
                 };
             }
         }
@@ -227,12 +362,12 @@ internal static class TransmorgerDatabase
         foreach (var meeting in meetingDetails)
         {
             // Try different possible field name variations
-            var providerNames = GetStringValue(meeting, "Provider/Staff Names") 
+            var providerNames = GetStringValue(meeting, "Provider/Staff Names")
                              ?? GetStringValue(meeting, "Provider/Staff Name")
                              ?? GetStringValue(meeting, "Provider Names")
                              ?? GetStringValue(meeting, "Staff Names");
-                             
-            var providerIds = GetStringValue(meeting, "Provider IDs") 
+
+            var providerIds = GetStringValue(meeting, "Provider IDs")
                            ?? GetStringValue(meeting, "Provider ID")
                            ?? GetStringValue(meeting, "Staff IDs");
 
@@ -247,7 +382,7 @@ internal static class TransmorgerDatabase
             // Split provider names - use semicolon first, then comma as fallback delimiter
             char delimiter = providerNames.Contains(';') ? ';' : ',';
             var namesList = providerNames.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
-                
+
             var idsList = providerIds.Split(',').Select(i => i.Trim()).Where(i => !string.IsNullOrWhiteSpace(i)).ToArray();
 
             debugInfo.Add($"Split Names: [{string.Join(" | ", namesList)}]");
@@ -369,6 +504,99 @@ internal static class TransmorgerDatabase
         return name;
     }
 
+    /// <summary>Adds meeting IDs to provider records from Visit Details Meeting Details.</summary>
+    /// <param name="tmpDir">Directory containing JSON files.</param>
+    /// <param name="providersByName">Dictionary of providers keyed by name.</param>
+    private static void AddMeetingsFromMeetingDetails(string tmpDir, Dictionary<string, Dictionary<string, object?>> providersByName)
+    {
+        var meetingDetails = ReadJsonFile(tmpDir, "Visit_Details-Meeting_Details.json") as List<Dictionary<string, object?>>;
+
+        if (meetingDetails == null)
+        {
+            return;
+        }
+
+        var unmatchedMeetingIds = new HashSet<string>();
+
+        foreach (var meeting in meetingDetails)
+        {
+            // Try different possible field name variations
+            var providerNames = GetStringValue(meeting, "Provider/Staff Names")
+                             ?? GetStringValue(meeting, "Provider/Staff Name")
+                             ?? GetStringValue(meeting, "Provider Names")
+                             ?? GetStringValue(meeting, "Staff Names");
+
+            var meetingId = GetStringValue(meeting, "Meeting ID")
+                         ?? GetStringValue(meeting, "MeetingId");
+
+            if (string.IsNullOrWhiteSpace(providerNames) || string.IsNullOrWhiteSpace(meetingId))
+            {
+                continue;
+            }
+
+            // Split provider names - use semicolon first, then comma as fallback delimiter
+            char delimiter = providerNames.Contains(';') ? ';' : ',';
+            var namesList = providerNames.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
+
+            bool meetingMatched = false;
+
+            // Match names with MeetingId
+            foreach (var providerName in namesList)
+            {
+                // Try to match provider name in different formats
+                Dictionary<string, object?>? provider = null;
+
+                // Try 1: As-is
+                if (providersByName.TryGetValue(providerName, out provider))
+                {
+                    // Match found
+                }
+                // Try 2: Reverse "LAST FIRST" to "FIRST LAST" format
+                else
+                {
+                    var reversedName = ReverseNameParts(providerName);
+                    if (providersByName.TryGetValue(reversedName, out provider))
+                    {
+                        // Match found
+                    }
+                    // Try 3: Normalize "LAST, FIRST" format
+                    else
+                    {
+                        var normalizedName = NormalizeProviderName(providerName);
+                        if (providersByName.TryGetValue(normalizedName, out provider))
+                        {
+                            // Match found
+                        }
+                    }
+                }
+
+                if (provider != null)
+                {
+                    var meetings = (List<string>)provider["Meetings"]!;
+                    
+                    // Only add if not already present
+                    if (!meetings.Contains(meetingId))
+                    {
+                        meetings.Add(meetingId);
+                    }
+                    
+                    meetingMatched = true;
+                }
+            }
+
+            // If no provider matched this meeting, track it as an error
+            if (!meetingMatched && !unmatchedMeetingIds.Contains(meetingId))
+            {
+                unmatchedMeetingIds.Add(meetingId);
+            }
+        }
+
+        if (unmatchedMeetingIds.Count > 0)
+        {
+            WriteErrorFile(tmpDir, "vsmd-meetingid.error", unmatchedMeetingIds.ToList());
+        }
+    }
+
     /// <summary>Adds phone numbers with failed meeting details to patient records from SMS stats.</summary>
     /// <param name="tmpDir">Directory containing JSON files.</param>
     /// <param name="patientsByName">Dictionary of patients keyed by name.</param>
@@ -417,7 +645,7 @@ internal static class TransmorgerDatabase
                         if (!string.IsNullOrEmpty(sanitizedPhone))
                         {
                             var phoneNumbersDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["PhoneNumbers"]!;
-                            
+
                             // Create failed meeting entry
                             var failedMeeting = new Dictionary<string, object?>
                             {
@@ -500,7 +728,7 @@ internal static class TransmorgerDatabase
                         if (IsValidEmail(emailAddress))
                         {
                             var emailAddressesDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["EmailAddresses"]!;
-                            
+
                             // Create failed meeting entry
                             var failedMeeting = new Dictionary<string, object?>
                             {
@@ -576,7 +804,7 @@ internal static class TransmorgerDatabase
         foreach (var record in deliveryStats)
         {
             var deliveryType = GetStringValue(record, "Delivery Type");
-            
+
             // Only process SMS messages
             if (!deliveryType?.Equals("SMSMessage", StringComparison.OrdinalIgnoreCase) == true)
             {
@@ -584,7 +812,7 @@ internal static class TransmorgerDatabase
             }
 
             var phoneNumber = GetStringValue(record, "Phone Number");
-            
+
             if (string.IsNullOrWhiteSpace(phoneNumber))
             {
                 continue;
@@ -600,15 +828,15 @@ internal static class TransmorgerDatabase
             if (phoneToPatientMap.TryGetValue(sanitizedPhone, out var patient))
             {
                 var phoneNumbersDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["PhoneNumbers"]!;
-                
+
                 // Ensure we have a DeliverySuccess list for this phone number
                 if (!patient.ContainsKey("PhoneNumberDeliverySuccess"))
                 {
                     patient["PhoneNumberDeliverySuccess"] = new Dictionary<string, List<Dictionary<string, object?>>>();
                 }
-                
+
                 var deliverySuccessDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["PhoneNumberDeliverySuccess"]!;
-                
+
                 if (!deliverySuccessDict.ContainsKey(sanitizedPhone))
                 {
                     deliverySuccessDict[sanitizedPhone] = new List<Dictionary<string, object?>>();
@@ -674,7 +902,7 @@ internal static class TransmorgerDatabase
         foreach (var record in deliveryStats)
         {
             var deliveryType = GetStringValue(record, "Delivery Type");
-            
+
             // Only process Email messages
             if (!deliveryType?.Equals("EmailMessage", StringComparison.OrdinalIgnoreCase) == true)
             {
@@ -682,7 +910,7 @@ internal static class TransmorgerDatabase
             }
 
             var emailAddress = GetStringValue(record, "Email Address");
-            
+
             if (string.IsNullOrWhiteSpace(emailAddress))
             {
                 continue;
@@ -692,15 +920,15 @@ internal static class TransmorgerDatabase
             if (emailToPatientMap.TryGetValue(emailAddress, out var patient))
             {
                 var emailAddressesDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["EmailAddresses"]!;
-                
+
                 // Ensure we have a DeliverySuccess list for this email address
                 if (!patient.ContainsKey("EmailAddressDeliverySuccess"))
                 {
                     patient["EmailAddressDeliverySuccess"] = new Dictionary<string, List<Dictionary<string, object?>>>();
                 }
-                
+
                 var deliverySuccessDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["EmailAddressDeliverySuccess"]!;
-                
+
                 if (!deliverySuccessDict.ContainsKey(emailAddress))
                 {
                     deliverySuccessDict[emailAddress] = new List<Dictionary<string, object?>>();

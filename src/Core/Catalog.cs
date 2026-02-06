@@ -5,14 +5,17 @@ namespace TingenTransmorger.Core;
 
 /// <summary>Pre-defined text blocks and message strings.</summary>
 /// <remarks>
-///     Centralized to keep the code clean, maintainable, and to facilitate modification of messages.<br/>
-///     <br/>
-///     The following types of blueprints are defined here:
-///     <list type="bullet">
-///         <item><b><c>   lst_</c></b> : A list of something</item>
-///         <item><b><c>msgbox_</c></b> : Message box string[] definitions</item>
-///         <item><b><c>msgtxt_</c></b> : Text string definitions</item>
-///     </list>
+/// <para>
+/// Centralized to keep the code clean, maintainable, and to facilitate modification of messages.
+/// </para>
+/// <para>
+/// The following types of blueprints are defined here:
+/// <list type="bullet">
+///     <item><b><c>   lst_</c></b> - A list of something</item>
+///     <item><b><c>msgbox_</c></b> - Message box string[] definitions</item>
+///     <item><b><c>msgtxt_</c></b> - Text string definitions</item>
+/// </list>
+/// </para>
 /// </remarks>
 class Catalog
 {

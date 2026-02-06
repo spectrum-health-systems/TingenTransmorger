@@ -47,6 +47,7 @@ public partial class MainWindow : Window
         }
 
         var localDbPath = Path.Combine(config.StandardDirectories["LocalDb"], "transmorger.db");
+
         TransMorgDb = TransmorgerDatabase.Load(localDbPath);
 
         rbtnByName.IsChecked = true;

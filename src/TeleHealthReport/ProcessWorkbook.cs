@@ -13,6 +13,9 @@ namespace TingenTransmorger.TeleHealthReport;
 
 internal class ProcessWorkbook
 {
+    /// <summary>
+    /// Excel data set configuration for reading Excel files.
+    /// </summary>
     private static readonly ExcelDataSetConfiguration ExcelConfig = new()
     {
         ConfigureDataTable = _ => new ExcelDataTableConfiguration { UseHeaderRow = true }

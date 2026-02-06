@@ -7,10 +7,18 @@ namespace TingenTransmorger.TeleHealthReport;
 
 internal static class ProcessWorksheet
 {
-    /// <summary>Processes summary sheets with key-value pairs, aggregating numeric values across files.</summary>
-    /// <param name="table">DataTable containing the summary sheet data.</param>
-    /// <param name="metrics">Dictionary to store aggregated metrics.</param>
-    /// <param name="headers">Optional tuple to capture column header names.</param>
+    /// <summary>
+    /// Processes summary sheets with key-value pairs, aggregating numeric values across files.
+    /// </summary>
+    /// <param name="table">
+    /// DataTable containing the summary sheet data.
+    /// </param>
+    /// <param name="metrics">
+    /// Dictionary to store aggregated metrics.
+    /// </param>
+    /// <param name="headers">
+    /// Optional tuple to capture column header names.
+    /// </param>
     internal static void Summary(DataTable table, Dictionary<string, double> metrics, ref (string, string)? headers)
     {
         if (table.Columns.Count < 2)
@@ -37,12 +45,24 @@ internal static class ProcessWorksheet
         }
     }
 
-    /// <summary>Processes sheets with a unique key column, optionally aggregating numeric values for duplicate keys.</summary>
-    /// <param name="table">DataTable containing the sheet data.</param>
-    /// <param name="dataById">Dictionary to store records keyed by the specified column.</param>
-    /// <param name="headers">List to track all column headers encountered.</param>
-    /// <param name="keyColumn">Name of the column to use as the unique key.</param>
-    /// <param name="aggregateNumeric">If true, numeric values are summed for duplicate keys.</param>
+    /// <summary>
+    /// Processes sheets with a unique key column, optionally aggregating numeric values for duplicate keys.
+    /// </summary>
+    /// <param name="table">
+    /// DataTable containing the sheet data.
+    /// </param>
+    /// <param name="dataById">
+    /// Dictionary to store records keyed by the specified column.
+    /// </param>
+    /// <param name="headers">
+    /// List to track all column headers encountered.
+    /// </param>
+    /// <param name="keyColumn">
+    /// Name of the column to use as the unique key.
+    /// </param>
+    /// <param name="aggregateNumeric">
+    /// If true, numeric values are summed for duplicate keys.
+    /// </param>
     internal static void Keyed(DataTable table, Dictionary<string, Dictionary<string, object?>> dataById, List<string> headers, string keyColumn, bool aggregateNumeric = false)
     {
         if (!table.Columns.Contains(keyColumn))
@@ -79,11 +99,21 @@ internal static class ProcessWorksheet
         }
     }
 
-    /// <summary>Processes sheets with a unique key column, keeping only the first occurrence of each key.</summary>
-    /// <param name="table">DataTable containing the sheet data.</param>
-    /// <param name="dataById">Dictionary to store records keyed by the specified column.</param>
-    /// <param name="headers">HashSet to track all column headers encountered.</param>
-    /// <param name="keyColumn">Name of the column to use as the unique key.</param>
+    /// <summary>
+    /// Processes sheets with a unique key column, keeping only the first occurrence of each key.
+    /// </summary>
+    /// <param name="table">
+    /// DataTable containing the sheet data.
+    /// </param>
+    /// <param name="dataById">
+    /// Dictionary to store records keyed by the specified column.
+    /// </param>
+    /// <param name="headers">
+    /// HashSet to track all column headers encountered.
+    /// </param>
+    /// <param name="keyColumn">
+    /// Name of the column to use as the unique key.
+    /// </param>
     internal static void SimpleKeyed(DataTable table, Dictionary<string, Dictionary<string, object?>> dataById, HashSet<string> headers, string keyColumn)
     {
         if (!table.Columns.Contains(keyColumn))
@@ -117,10 +147,18 @@ internal static class ProcessWorksheet
         }
     }
 
-    /// <summary>Processes sheets with client statistics, allowing multiple records per client.</summary>
-    /// <param name="table">DataTable containing the sheet data.</param>
-    /// <param name="statsByClient">Dictionary to store lists of records per client.</param>
-    /// <param name="headers">HashSet to track all column headers encountered.</param>
+    /// <summary>
+    /// Processes sheets with client statistics, allowing multiple records per client.
+    /// </summary>
+    /// <param name="table">
+    /// DataTable containing the sheet data.
+    /// </param>
+    /// <param name="statsByClient">
+    /// Dictionary to store lists of records per client.
+    /// </param>
+    /// <param name="headers">
+    /// HashSet to track all column headers encountered.
+    /// </param>
     internal static void ClientStats(DataTable table, Dictionary<string, List<Dictionary<string, object?>>> statsByClient, HashSet<string> headers)
     {
         if (!table.Columns.Contains("Client Name"))
@@ -157,10 +195,18 @@ internal static class ProcessWorksheet
         }
     }
 
-    /// <summary>Processes sheets as flat record lists, capturing all rows without keying or aggregation.</summary>
-    /// <param name="table">DataTable containing the sheet data.</param>
-    /// <param name="allRecords">List to store all records.</param>
-    /// <param name="headers">HashSet to track all column headers encountered.</param>
+    /// <summary>
+    /// Processes sheets as flat record lists, capturing all rows without keying or aggregation.
+    /// </summary>
+    /// <param name="table">
+    /// DataTable containing the sheet data.
+    /// </param>
+    /// <param name="allRecords">
+    /// List to store all records.
+    /// </param>
+    /// <param name="headers">
+    /// HashSet to track all column headers encountered.
+    /// </param>
     internal static void Flat(DataTable table, List<Dictionary<string, object?>> allRecords, HashSet<string> headers)
     {
         var tableColumns = new List<string>();

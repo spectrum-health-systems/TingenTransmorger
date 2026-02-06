@@ -7,9 +7,13 @@ using System.Text;
 namespace TingenTransmorger.TeleHealthReport;
 
 /// <summary>
-/// Processes TeleHealth Excel reports and converts them to JSON format.
+/// Entry class for processing TeleHealth reports.
 /// </summary>
 /// <remarks>
+/// <para>
+/// Processes TeleHealth Excel reports and converts them to JSON format.
+/// </para>
+/// <para>
 /// This processor handles four types of reports:
 /// <list type="bullet">
 ///     <item>Visit Stats - Summary and Meeting Errors</item>
@@ -17,6 +21,7 @@ namespace TingenTransmorger.TeleHealthReport;
 ///     <item>Message Failure - Summary, SMS Stats, and Email Stats</item>
 ///     <item>Message Delivery - Message Delivery Stats</item>
 /// </list>
+/// </para>
 /// </remarks>
 static class ReportProcessor
 {

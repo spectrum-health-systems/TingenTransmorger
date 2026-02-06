@@ -183,6 +183,28 @@ public class TransmorgerDatabase
         return meetingErrorObj.TryGetProperty(meetingId, out _);
     }
 
+    /// <summary>Gets meeting error information by MeetingId.</summary>
+    /// <param name="meetingId">The ID of the meeting.</param>
+    /// <returns>JsonElement containing the meeting error record with Kind and Reason, or null if not found.</returns>
+    public JsonElement? GetMeetingError(string meetingId)
+    {
+        if (!_hasData || string.IsNullOrWhiteSpace(meetingId))
+            return null;
+
+        if (!_jsonRoot.TryGetProperty("MeetingError", out var meetingErrorObj))
+            return null;
+
+        if (meetingErrorObj.ValueKind != JsonValueKind.Object)
+            return null;
+
+        if (meetingErrorObj.TryGetProperty(meetingId, out var meetingError))
+        {
+            return meetingError;
+        }
+
+        return null;
+    }
+
     /// <summary>Builds the complete transmorger.json file from processed JSON reports.</summary>
     /// <param name="tmpDir">Directory containing processed JSON files.</param>
     internal static void Build(string tmpDir, string masterDbDir)
@@ -1311,7 +1333,8 @@ public class TransmorgerDatabase
                 ["Os"] = CombineNameAndVersion(
                     GetStringValue(participant, "Operating System Name"),
                     GetStringValue(participant, "Operating System Version")
-                )
+                ),
+                ["QualityData"] = GetStringValue(participant, "Participant Meeting Quality Data")
             };
 
             // Add meeting to patient's meetings list

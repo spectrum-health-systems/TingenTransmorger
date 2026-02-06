@@ -144,6 +144,28 @@ public class TransmorgerDatabase
         return null;
     }
 
+    /// <summary>Gets meeting detail information by MeetingId.</summary>
+    /// <param name="meetingId">The ID of the meeting.</param>
+    /// <returns>JsonElement containing the meeting detail record, or null if not found.</returns>
+    public JsonElement? GetMeetingDetail(string meetingId)
+    {
+        if (!_hasData)
+            return null;
+
+        if (!_jsonRoot.TryGetProperty("MeetingDetail", out var meetingDetailObj))
+            return null;
+
+        if (meetingDetailObj.ValueKind != JsonValueKind.Object)
+            return null;
+
+        if (meetingDetailObj.TryGetProperty(meetingId, out var meetingDetail))
+        {
+            return meetingDetail;
+        }
+
+        return null;
+    }
+
     /// <summary>Builds the complete transmorger.json file from processed JSON reports.</summary>
     /// <param name="tmpDir">Directory containing processed JSON files.</param>
     internal static void Build(string tmpDir, string masterDbDir)
@@ -1257,7 +1279,7 @@ public class TransmorgerDatabase
                     GetStringValue(participant, "Participant Dropped Date"),
                     GetStringValue(participant, "Participant Dropped Time")
                 ),
-                ["Duration"] = GetStringValue(participant, "Participant Session Duration (minutes)"),
+                ["Duration"] = GetStringValue(participant, "Participant Session Duration (Minutes)"),
                 ["CheckInViaChat"] = GetStringValue(participant, "Checked-in via Chat"),
                 ["CheckInWait"] = GetStringValue(participant, "Check-in Waiting Time (Minutes)"),
                 ["WaitForCareTeamMember"] = GetStringValue(participant, "Waiting For Care Team Member (Minutes)"),

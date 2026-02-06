@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Windows;
 using TingenTransmorger.Core;
 using TingenTransmorger.Database;
+using TingenTransmorger.Models;
 
 namespace TingenTransmorger;
 
@@ -116,6 +117,7 @@ public partial class MainWindow : Window
         // Clear and hide details panel
         //txtDetailsPlaceholder.Visibility = Visibility.Visible;
         spnlPatientDetails.Visibility = Visibility.Collapsed;
+        spnlPatientMeetings.Visibility = Visibility.Collapsed;
     }
 
     /// <summary>Handles the search text changed event.</summary>
@@ -241,6 +243,7 @@ public partial class MainWindow : Window
             phoneNumbers.Add("No phone numbers on file");
         }
 
+        lblPatientPhoneValue.Content = string.Join(", ", phoneNumbers);
 
         // Display email addresses
         var emailAddresses = new List<string>();
@@ -267,6 +270,80 @@ public partial class MainWindow : Window
             emailAddresses.Add("No email addresses on file");
         }
 
+        lblPatientEmailValue.Content = string.Join(", ", emailAddresses);
+
+        // Display meetings
+        var meetingRows = new List<PatientMeetingRow>();
+        if (patientDetails.Value.TryGetProperty("Meetings", out var meetingsArray))
+        {
+            if (meetingsArray.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var meeting in meetingsArray.EnumerateArray())
+                {
+                    // Get MeetingId from Patients.Meetings
+                    var meetingId = meeting.TryGetProperty("MeetingId", out var meetingIdElem) 
+                        ? meetingIdElem.GetString() : null;
+
+                    if (string.IsNullOrWhiteSpace(meetingId))
+                    {
+                        continue;
+                    }
+
+                    // Get Arrived, Dropped, Duration from Patients.Meetings
+                    var arrived = meeting.TryGetProperty("Arrived", out var arrivedElem) 
+                        ? arrivedElem.GetString() : string.Empty;
+                    var dropped = meeting.TryGetProperty("Dropped", out var droppedElem) 
+                        ? droppedElem.GetString() : string.Empty;
+                    var duration = meeting.TryGetProperty("Duration", out var durationElem) 
+                        ? (durationElem.GetString() ?? string.Empty) : string.Empty;
+
+                    // Get ScheduledStart and Status from MeetingDetail
+                    var meetingDetail = TransMorgDb.GetMeetingDetail(meetingId);
+                    var scheduledStart = string.Empty;
+                    var status = string.Empty;
+
+                    if (meetingDetail != null)
+                    {
+                        scheduledStart = meetingDetail.Value.TryGetProperty("ScheduledStart", out var startElem) 
+                            ? startElem.GetString() : string.Empty;
+                        status = meetingDetail.Value.TryGetProperty("Status", out var statusElem) 
+                            ? statusElem.GetString() : string.Empty;
+                    }
+
+                    meetingRows.Add(new PatientMeetingRow
+                    {
+                        MeetingId = meetingId,
+                        Start = scheduledStart ?? string.Empty,
+                        Arrived = arrived ?? string.Empty,
+                        Dropped = dropped ?? string.Empty,
+                        Duration = duration ?? string.Empty,
+                        Status = status ?? string.Empty
+                    });
+                }
+            }
+        }
+
+        // Sort meetings by ScheduledStart descending (most recent first)
+        meetingRows = meetingRows
+            .OrderByDescending(m => m.Start)
+            .ToList();
+
+        // Update the header with the count
+        var meetingCount = meetingRows.Count;
+        txtMeetingsHeader.Text = $"{meetingCount} meeting{(meetingCount != 1 ? "s" : "")} found";
+
+        // Bind to DataGrid
+        dgPatientMeetings.ItemsSource = meetingRows;
+
+        // Show meetings section if there are meetings
+        if (meetingRows.Count > 0)
+        {
+            spnlPatientMeetings.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            spnlPatientMeetings.Visibility = Visibility.Collapsed;
+        }
     }
 
     /*

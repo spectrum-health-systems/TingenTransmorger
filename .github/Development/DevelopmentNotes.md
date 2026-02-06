@@ -1,10 +1,10 @@
 # Tingen Muno: Development Notes
 
-- [ ] Building the database when it exists in the master directory = error.
+- [X] Building the database when it exists in the master directory = error.
 - [ ] Getting latest master DB
 - [ ] Break up TransmorgerDatabase.cs
 - [ ] Clean up Database classes
-- [ ] Change version to vx.x.x.x
+- [X] Change version to vx.x.x.x
 
 ## Settings
 - [ ] Check for database updates at startup

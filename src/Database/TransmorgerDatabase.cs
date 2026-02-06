@@ -136,7 +136,7 @@ public class TransmorgerDatabase
             return new List<Dictionary<string, object?>>();
         }
 
-        var patientsByName = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
+        var patientsByName = new Dictionary<string, Dictionary<string, object?>>(participantDetails.Count, StringComparer.OrdinalIgnoreCase);
 
         // Step 1: Build base patient records from participant details
         foreach (var participant in participantDetails)
@@ -157,7 +157,7 @@ public class TransmorgerDatabase
             // Use PatientName as key for matching with Message Failure reports
             if (!patientsByName.ContainsKey(patientName))
             {
-                patientsByName[patientName] = new Dictionary<string, object?>
+                patientsByName[patientName] = new Dictionary<string, object?>(8)
                 {
                     ["PatientName"] = patientName,
                     ["PatientId"] = patientId,
@@ -178,41 +178,45 @@ public class TransmorgerDatabase
 
         AddMeetingsFromParticipantDetails(tmpDir, patientsByName, participantDetails);
 
-        return patientsByName.Values.Select(patient =>
+        var result = new List<Dictionary<string, object?>>(patientsByName.Count);
+        foreach (var patient in patientsByName.Values)
         {
             var phoneNumbersDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["PhoneNumbers"]!;
-            var deliverySuccessDict = patient.ContainsKey("PhoneNumberDeliverySuccess")
-                ? (Dictionary<string, List<Dictionary<string, object?>>>)patient["PhoneNumberDeliverySuccess"]!
-                : new Dictionary<string, List<Dictionary<string, object?>>>();
+            var deliverySuccessDict = patient.TryGetValue("PhoneNumberDeliverySuccess", out var pnds)
+                ? (Dictionary<string, List<Dictionary<string, object?>>>)pnds!
+                : new Dictionary<string, List<Dictionary<string, object?>>>(0);
 
             var emailAddressesDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["EmailAddresses"]!;
-            var emailDeliverySuccessDict = patient.ContainsKey("EmailAddressDeliverySuccess")
-                ? (Dictionary<string, List<Dictionary<string, object?>>>)patient["EmailAddressDeliverySuccess"]!
-                : new Dictionary<string, List<Dictionary<string, object?>>>();
+            var emailDeliverySuccessDict = patient.TryGetValue("EmailAddressDeliverySuccess", out var eads)
+                ? (Dictionary<string, List<Dictionary<string, object?>>>)eads!
+                : new Dictionary<string, List<Dictionary<string, object?>>>(0);
 
-            return new Dictionary<string, object?>
+            var patientResult = new Dictionary<string, object?>(6)
             {
                 ["PatientName"] = patient["PatientName"],
                 ["PatientId"] = patient["PatientId"],
-                ["PhoneNumbers"] = phoneNumbersDict.Select(kvp => new Dictionary<string, object?>
+                ["PhoneNumbers"] = phoneNumbersDict.Select(kvp => new Dictionary<string, object?>(3)
                 {
                     ["Number"] = kvp.Key,
                     ["DeliveryFailure"] = kvp.Value,
-                    ["DeliverySuccess"] = deliverySuccessDict.ContainsKey(kvp.Key)
-                        ? deliverySuccessDict[kvp.Key]
-                        : new List<Dictionary<string, object?>>()
+                    ["DeliverySuccess"] = deliverySuccessDict.TryGetValue(kvp.Key, out var successList)
+                        ? successList
+                        : new List<Dictionary<string, object?>>(0)
                 }).ToList(),
-                ["EmailAddresses"] = emailAddressesDict.Select(kvp => new Dictionary<string, object?>
+                ["EmailAddresses"] = emailAddressesDict.Select(kvp => new Dictionary<string, object?>(3)
                 {
                     ["Address"] = kvp.Key,
                     ["DeliveryFailure"] = kvp.Value,
-                    ["DeliverySuccess"] = emailDeliverySuccessDict.ContainsKey(kvp.Key)
-                        ? emailDeliverySuccessDict[kvp.Key]
-                        : new List<Dictionary<string, object?>>()
+                    ["DeliverySuccess"] = emailDeliverySuccessDict.TryGetValue(kvp.Key, out var successList)
+                        ? successList
+                        : new List<Dictionary<string, object?>>(0)
                 }).ToList(),
                 ["Meetings"] = (List<Dictionary<string, object?>>)patient["Meetings"]!
             };
-        }).ToList();
+            result.Add(patientResult);
+        }
+
+        return result;
     }
 
     /// <summary>Builds the Providers component from Visit Details participant and meeting data.</summary>
@@ -222,19 +226,25 @@ public class TransmorgerDatabase
     /// <returns>List of unique provider records.</returns>
     private static List<Dictionary<string, object?>> BuildProvidersComponent(string tmpDir, List<Dictionary<string, object?>>? participantDetails, List<Dictionary<string, object?>>? meetingDetails)
     {
-        var providersByName = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
+        var estimatedSize = (participantDetails?.Count ?? 0) + (meetingDetails?.Count ?? 0);
+        var providersByName = new Dictionary<string, Dictionary<string, object?>>(estimatedSize / 4, StringComparer.OrdinalIgnoreCase);
 
         AddProvidersFromParticipantDetails(providersByName, participantDetails);
 
         AddProviderDataFromMeetingDetails(tmpDir, providersByName, meetingDetails);
 
         // Step 4: Convert to list and return
-        return providersByName.Values.Select(provider => new Dictionary<string, object?>
+        var result = new List<Dictionary<string, object?>>(providersByName.Count);
+        foreach (var provider in providersByName.Values)
         {
-            ["ProviderName"] = provider["ProviderName"],
-            ["ProviderId"] = provider["ProviderId"],
-            ["Meetings"] = (List<string>)provider["Meetings"]!
-        }).ToList();
+            result.Add(new Dictionary<string, object?>(3)
+            {
+                ["ProviderName"] = provider["ProviderName"],
+                ["ProviderId"] = provider["ProviderId"],
+                ["Meetings"] = (List<string>)provider["Meetings"]!
+            });
+        }
+        return result;
     }
 
     /// <summary>Builds the MeetingDetail component from Visit Details Meeting Details.</summary>
@@ -247,15 +257,26 @@ public class TransmorgerDatabase
     {
         if (meetingDetails == null)
         {
-            return new Dictionary<string, object?>();
+            return new Dictionary<string, object?>(0);
         }
 
-        var meetingDetailDict = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var meetingDetailDict = new Dictionary<string, object?>(meetingDetails.Count, StringComparer.OrdinalIgnoreCase);
         var validationErrors = new List<string>();
 
         // Build lookup sets for validation
-        var patientNames = new HashSet<string>(patients.Select(p => GetStringValue(p, "PatientName") ?? ""), StringComparer.OrdinalIgnoreCase);
-        var providerNames = new HashSet<string>(providers.Select(p => GetStringValue(p, "ProviderName") ?? ""), StringComparer.OrdinalIgnoreCase);
+        var patientNames = new HashSet<string>(patients.Count, StringComparer.OrdinalIgnoreCase);
+        foreach (var p in patients)
+        {
+            var name = GetStringValue(p, "PatientName");
+            if (name != null) patientNames.Add(name);
+        }
+
+        var providerNames = new HashSet<string>(providers.Count, StringComparer.OrdinalIgnoreCase);
+        foreach (var p in providers)
+        {
+            var name = GetStringValue(p, "ProviderName");
+            if (name != null) providerNames.Add(name);
+        }
 
         foreach (var meeting in meetingDetails)
         {
@@ -278,7 +299,7 @@ public class TransmorgerDatabase
             if (!string.IsNullOrWhiteSpace(providerNamesField))
             {
                 char delimiter = providerNamesField.Contains(';') ? ';' : ',';
-                var providerNamesList = providerNamesField.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
+                var providerNamesList = providerNamesField.Split(delimiter, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
                 foreach (var providerName in providerNamesList)
                 {
@@ -294,7 +315,7 @@ public class TransmorgerDatabase
             {
                 // Participant Names might contain multiple names separated by commas or semicolons
                 char delimiter = participantNamesField.Contains(';') ? ';' : ',';
-                var participantNamesList = participantNamesField.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
+                var participantNamesList = participantNamesField.Split(delimiter, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
                 foreach (var participantName in participantNamesList)
                 {
@@ -306,7 +327,7 @@ public class TransmorgerDatabase
             }
 
             // Create meeting detail entry
-            var meetingDetail = new Dictionary<string, object?>
+            var meetingDetail = new Dictionary<string, object?>(20)
             {
                 ["AppointmentId"] = GetStringValue(meeting, "Appointment ID"),
                 ["MeetingTitle"] = GetStringValue(meeting, "Meeting Title"),
@@ -368,17 +389,32 @@ public class TransmorgerDatabase
 
         if (meetingErrors == null)
         {
-            return new Dictionary<string, object?>();
+            return new Dictionary<string, object?>(0);
         }
 
-        var meetingErrorDict = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var meetingErrorDict = new Dictionary<string, object?>(meetingErrors.Count, StringComparer.OrdinalIgnoreCase);
         var validationErrors = new List<string>();
 
         // Build lookup sets for validation
-        var patientNames = new HashSet<string>(patients.Select(p => GetStringValue(p, "PatientName") ?? ""), StringComparer.OrdinalIgnoreCase);
-        var patientIds = new HashSet<string>(patients.Select(p => GetStringValue(p, "PatientId") ?? ""), StringComparer.OrdinalIgnoreCase);
-        var providerNames = new HashSet<string>(providers.Select(p => GetStringValue(p, "ProviderName") ?? ""), StringComparer.OrdinalIgnoreCase);
-        var providerIds = new HashSet<string>(providers.Select(p => GetStringValue(p, "ProviderId") ?? "").Where(id => !string.IsNullOrWhiteSpace(id)), StringComparer.OrdinalIgnoreCase);
+        var patientNames = new HashSet<string>(patients.Count, StringComparer.OrdinalIgnoreCase);
+        var patientIds = new HashSet<string>(patients.Count, StringComparer.OrdinalIgnoreCase);
+        foreach (var p in patients)
+        {
+            var name = GetStringValue(p, "PatientName");
+            if (name != null) patientNames.Add(name);
+            var id = GetStringValue(p, "PatientId");
+            if (id != null) patientIds.Add(id);
+        }
+
+        var providerNames = new HashSet<string>(providers.Count, StringComparer.OrdinalIgnoreCase);
+        var providerIds = new HashSet<string>(providers.Count, StringComparer.OrdinalIgnoreCase);
+        foreach (var p in providers)
+        {
+            var name = GetStringValue(p, "ProviderName");
+            if (name != null) providerNames.Add(name);
+            var id = GetStringValue(p, "ProviderId");
+            if (!string.IsNullOrWhiteSpace(id)) providerIds.Add(id);
+        }
 
         foreach (var error in meetingErrors)
         {
@@ -411,7 +447,7 @@ public class TransmorgerDatabase
             if (!string.IsNullOrWhiteSpace(providerNamesField))
             {
                 char delimiter = providerNamesField.Contains(';') ? ';' : ',';
-                var providerNamesList = providerNamesField.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
+                var providerNamesList = providerNamesField.Split(delimiter, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
                 foreach (var providerName in providerNamesList)
                 {
@@ -425,7 +461,7 @@ public class TransmorgerDatabase
             // Validate provider IDs
             if (!string.IsNullOrWhiteSpace(providerIdField))
             {
-                var providerIdsList = providerIdField.Split(',').Select(i => i.Trim()).Where(i => !string.IsNullOrWhiteSpace(i)).ToArray();
+                var providerIdsList = providerIdField.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
                 foreach (var providerId in providerIdsList)
                 {
@@ -437,7 +473,7 @@ public class TransmorgerDatabase
             }
 
             // Create meeting error entry
-            var meetingError = new Dictionary<string, object?>
+            var meetingError = new Dictionary<string, object?>(10)
             {
                 ["AttendeeId"] = GetStringValue(error, "Attendee ID"),
                 ["AttendeeType"] = GetStringValue(error, "Attendee Type"),
@@ -523,9 +559,9 @@ public class TransmorgerDatabase
             return;
         }
 
-        var unmatchedProviders = new HashSet<string>();
-        var unmatchedMeetingIds = new HashSet<string>();
-        var debugInfo = new List<string>();
+        var unmatchedProviders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var unmatchedMeetingIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var debugInfo = new List<string>(meetingDetails.Count * 4);
 
         foreach (var meeting in meetingDetails)
         {
@@ -549,9 +585,8 @@ public class TransmorgerDatabase
 
             // Split provider names - use semicolon first, then comma as fallback delimiter
             char delimiter = providerNames.Contains(';') ? ';' : ',';
-            var namesList = providerNames.Split(delimiter).Select(n => n.Trim()).Where(n => !string.IsNullOrWhiteSpace(n)).ToArray();
-
-            var idsList = providerIds.Split(',').Select(i => i.Trim()).Where(i => !string.IsNullOrWhiteSpace(i)).ToArray();
+            var namesList = providerNames.Split(delimiter, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var idsList = providerIds.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             debugInfo.Add($"Split Names: [{string.Join(" | ", namesList)}]");
             debugInfo.Add($"Split IDs: [{string.Join(" | ", idsList)}]");
@@ -571,7 +606,7 @@ public class TransmorgerDatabase
                     debugInfo.Add($"  MATCHED! Setting ID for [{matchedName}]");
 
                     // Set provider ID if not already set
-                    if (provider["ProviderId"] == null && !string.IsNullOrWhiteSpace(providerId))
+                    if (provider!["ProviderId"] == null && !string.IsNullOrWhiteSpace(providerId))
                     {
                         provider["ProviderId"] = providerId;
                     }
@@ -590,10 +625,7 @@ public class TransmorgerDatabase
                 else
                 {
                     debugInfo.Add($"  NOT MATCHED. Available providers: [{string.Join(", ", providersByName.Keys.Take(5))}...]");
-                    if (!unmatchedProviders.Contains(providerName))
-                    {
-                        unmatchedProviders.Add($"{providerName} (tried all formats)");
-                    }
+                    unmatchedProviders.Add($"{providerName} (tried all formats)");
                 }
             }
 
@@ -1228,17 +1260,29 @@ public class TransmorgerDatabase
     /// <returns>10-digit phone number, or empty string if invalid.</returns>
     private static string SanitizePhoneNumber(string phoneNumber)
     {
-        // Remove all non-digit characters
-        var digits = new string(phoneNumber.Where(char.IsDigit).ToArray());
+        if (string.IsNullOrWhiteSpace(phoneNumber))
+            return string.Empty;
+
+        // Use Span to avoid allocations
+        Span<char> buffer = stackalloc char[phoneNumber.Length];
+        int digitCount = 0;
+
+        foreach (char c in phoneNumber)
+        {
+            if (char.IsDigit(c))
+            {
+                buffer[digitCount++] = c;
+            }
+        }
 
         // Remove leading '1' if present (country code)
-        if (digits.StartsWith("1") && digits.Length == 11)
+        if (digitCount == 11 && buffer[0] == '1')
         {
-            digits = digits.Substring(1);
+            return new string(buffer.Slice(1, 10));
         }
 
         // Return only if we have exactly 10 digits
-        return digits.Length == 10 ? digits : string.Empty;
+        return digitCount == 10 ? new string(buffer.Slice(0, 10)) : string.Empty;
     }
 
     /// <summary>Validates email address format.</summary>
@@ -1274,9 +1318,20 @@ public class TransmorgerDatabase
     /// <returns>Trimmed string value, or null if not found.</returns>
     private static string? GetStringValue(Dictionary<string, object?> dict, string key)
     {
-        if (dict.TryGetValue(key, out var value) && value != null)
+        if (dict.TryGetValue(key, out var value))
         {
-            return value.ToString()?.Trim();
+            if (value is string str)
+            {
+                return str.Trim();
+            }
+            else if (value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.String)
+            {
+                return jsonElement.GetString()?.Trim();
+            }
+            else if (value != null)
+            {
+                return value.ToString()?.Trim();
+            }
         }
         return null;
     }

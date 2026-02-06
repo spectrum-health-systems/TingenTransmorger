@@ -1,13 +1,13 @@
 {
-  "Mode": "Default",
+  "Mode": "admin",
   "CheckForDatabaseUpdateAtStartup": true,
   "ShowNullIdsInSearchResults": false,
   "StandardDirectories": {
-    "LocalDb": "C:\\IT\\csb\\dev\\github\\spectrum\\TingenMuno\\src\\bin\\Debug\\net10.0-windows\\AppData\\Database",
-    "MasterDb": "Z:\\Muno\\Database"
+    "LocalDb": "C:\\IT\\csb\\dev\\github\\spectrum\\TingenTransmorger\\src\\bin\\Debug\\net10.0-windows\\AppData\\Database",
+    "MasterDb": "Z:\\Transmorger\\Database"
   },
   "AdminDirectories": {
-    "Tmp": "C:\\IT\\csb\\dev\\github\\spectrum\\TingenMuno\\src\\bin\\Debug\\net10.0-windows\\AppData\\Tmp",
-    "Import": "Z:\\Muno\\Import"
+    "Tmp": "C:\\IT\\csb\\dev\\github\\spectrum\\TingenTransmorger\\src\\bin\\Debug\\net10.0-windows\\AppData\\Tmp",
+    "Import": "Z:\\Transmorger\\Import"
   }
 }

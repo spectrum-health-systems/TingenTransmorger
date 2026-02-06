@@ -12,86 +12,7 @@ namespace TingenTransmorger.Database;
 /// <summary>Builds the Transmorger database from processed report JSON files.</summary>
 public class TransmorgerDatabase
 {
-    //{
-    //    Summaries? Summary { get; set; }
-    //    List<Patients>? Patient { get; set; }
-    //    List<Providers>? Provider { get; set; }
-    //    Dictionary<string, MeetingDetails>? MeetingDetail { get; set; }
-    //    Dictionary<string, MeetingErrors>? MeetingError { get; set; }
 
-    //    internal class Summaries
-    //    {
-    //        object? VisitStats { get; set; }
-    //        object? MessageFailure { get; set; }
-    //    }
-
-    //    internal class Patients
-    //    {
-    //        string? PatientName { get; set; }
-    //        string? PatientId { get; set; }
-    //        List<PhoneNumbers>? PhoneNumbers { get; set; }
-    //        List<EmailAddresses>? EmailAddresses { get; set; }
-    //    }
-
-    //    internal class Providers
-    //    {
-    //        string? ProviderName { get; set; }
-    //        string? ProviderId { get; set; }
-    //        List<string>? Meetings { get; set; }
-    //    }
-
-    //    internal class PhoneNumbers
-    //    {
-    //        string PhoneNumber { get; set; }
-    //        List<Dictionary<string, object?>> DeliveryFailure { get; set; }
-    //        List<Dictionary<string, object?>> DeliverySuccess { get; set; }
-    //    }
-
-    //    internal class EmailAddresses
-    //    {
-    //        string EmailAddress { get; set; }
-    //        List<Dictionary<string, object?>> DeliveryFailure { get; set; }
-    //        List<Dictionary<string, object?>> DeliverySuccess { get; set; }
-    //    }
-
-    //    internal class MeetingDetails
-    //    {
-    //        public string? AppointmentId { get; set; }
-    //        public string? MeetingTitle { get; set; }
-    //        public string? Workflow { get; set; }
-    //        public string? Program { get; set; }
-    //        public string? ServiceCode { get; set; }
-    //        public string? ScheduledStart { get; set; }
-    //        public string? ScheduledEnd { get; set; }
-    //        public string? ActualStart { get; set; }
-    //        public string? ActualEnd { get; set; }
-    //        public string? Duration { get; set; }
-    //        public string? Joins { get; set; }
-    //        public string? Status { get; set; }
-    //        public string? CheckedInByFrontDesk { get; set; }
-    //        public string? EndedBy { get; set; }
-    //        public string? InitiatedBy { get; set; }
-    //        public string? ScribeEnabled { get; set; }
-    //        public string? ScribeConsentAcceptance { get; set; }
-    //        public string? ParticipantNames { get; set; }
-    //        public string? ProviderNames { get; set; }
-    //        public string? ProviderIds { get; set; }
-    //    }
-
-    //    internal class MeetingErrors
-    //    {
-    //        public string? AttendeeId { get; set; }
-    //        public string? AttendeeType { get; set; }
-    //        public string? PatientName { get; set; }
-    //        public string? PatientId { get; set; }
-    //        public string? ProviderNames { get; set; }
-    //        public string? ProviderId { get; set; }
-    //        public string? Duration { get; set; }
-    //        public string? Browser { get; set; }
-    //        public string? Os { get; set; }
-    //        public string? Kind { get; set; }
-    //        public string? Reason { get; set; }
-    //    }
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -113,7 +34,7 @@ public class TransmorgerDatabase
             localDb = Path.Combine(AppContext.BaseDirectory ?? Directory.GetCurrentDirectory(), "Database", "transmorger.db");
         }
 
-    
+
 
         // Resolve path: try as provided, then relative to application base directory
         var path = localDb;
@@ -144,18 +65,24 @@ public class TransmorgerDatabase
     /// <summary>Returns the VisitStats section from the loaded database as pretty JSON.</summary>
     public string GetSummaryVisitStatsJson()
     {
-        if (!_hasData) return string.Empty;
-        if (!_jsonRoot.TryGetProperty("Summary", out var summary)) return string.Empty;
-        if (!summary.TryGetProperty("VisitStats", out var visit)) return string.Empty; // Check for VisitStats
+        if (!_hasData)
+            return string.Empty;
+        if (!_jsonRoot.TryGetProperty("Summary", out var summary))
+            return string.Empty;
+        if (!summary.TryGetProperty("VisitStats", out var visit))
+            return string.Empty; // Check for VisitStats
         return JsonSerializer.Serialize(visit, JsonOptions);
     }
 
     /// <summary>Returns the MessageFailure section from the loaded database as pretty JSON.</summary>
     public string GetSummaryMessageFailureJson()
     {
-        if (!_hasData) return string.Empty;
-        if (!_jsonRoot.TryGetProperty("Summary", out var summary)) return string.Empty;
-        if (!summary.TryGetProperty("MessageFailure", out var mf)) return string.Empty; // Check for MessageFailure
+        if (!_hasData)
+            return string.Empty;
+        if (!_jsonRoot.TryGetProperty("Summary", out var summary))
+            return string.Empty;
+        if (!summary.TryGetProperty("MessageFailure", out var mf))
+            return string.Empty; // Check for MessageFailure
         return JsonSerializer.Serialize(mf, JsonOptions);
     }
 

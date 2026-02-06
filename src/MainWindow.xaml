@@ -21,22 +21,23 @@
                 FontSize="28"
                 FontWeight="Bold"
                 Text="Tingen Transmorger" />
-            <Button
+            <Label
                 x:Name="btnDatabaseSummary"
                 Width="420"
                 Height="44"
-                Margin="120,8,0,0"
+                Margin="100,8,0,0"
                 Padding="0,0,0,0"
                 VerticalAlignment="Top"
-                Content="Database 00/00/0000 - 00/00/0000"
-                FontSize="24"
+                Content="00/00/0000 - 00/00/0000"
+                VerticalContentAlignment="Center"
+                FontSize="20"
                 FontWeight="SemiBold">
-                <Button.Resources>
+                <Label.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="6" />
                     </Style>
-                </Button.Resources>
-            </Button>
+                </Label.Resources>
+            </Label>
             <Button
                 x:Name="btnSettings"
                 Width="32"

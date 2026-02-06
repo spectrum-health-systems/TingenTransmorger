@@ -12,13 +12,38 @@ namespace TingenTransmorger;
 public partial class MainWindow : Window
 {
     public TransmorgerDatabase TransMorgDb { get; set; }
+    private enum SearchMode { Patient, Provider, Meeting }
+    private SearchMode _searchMode = SearchMode.Patient;
 
     /// <summary>Entry method for Tingen Transmorger.</summary>
     public MainWindow()
     {
         InitializeComponent();
-
         StartApp();
+
+        // Wire search toggle button
+        btnSearchToggle.Click += BtnSearchToggle_Click;
+    }
+
+    private void BtnSearchToggle_Click(object? sender, RoutedEventArgs e)
+    {
+        // Cycle through Patient -> Provider -> Meeting
+        _searchMode = _searchMode switch
+        {
+            SearchMode.Patient => SearchMode.Provider,
+            SearchMode.Provider => SearchMode.Meeting,
+            SearchMode.Meeting => SearchMode.Patient,
+            _ => SearchMode.Patient
+        };
+
+        // Update button text
+        btnSearchToggle.Content = _searchMode switch
+        {
+            SearchMode.Patient => "Patient Search",
+            SearchMode.Provider => "Provider Search",
+            SearchMode.Meeting => "Meeting Search",
+            _ => "Patient Search"
+        };
     }
 
     /// <summary>Performs application startup tasks.</summary>

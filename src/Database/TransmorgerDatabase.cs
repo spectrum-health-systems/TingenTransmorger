@@ -86,6 +86,35 @@ public class TransmorgerDatabase
         return JsonSerializer.Serialize(mf, JsonOptions);
     }
 
+    /// <summary>Gets all patients from the database.</summary>
+    /// <returns>List of patient records with PatientName and PatientId.</returns>
+    public List<(string PatientName, string PatientId)> GetPatients()
+    {
+        var patients = new List<(string PatientName, string PatientId)>();
+
+        if (!_hasData)
+            return patients;
+
+        if (!_jsonRoot.TryGetProperty("Patients", out var patientsArray))
+            return patients;
+
+        if (patientsArray.ValueKind != JsonValueKind.Array)
+            return patients;
+
+        foreach (var patient in patientsArray.EnumerateArray())
+        {
+            var name = patient.TryGetProperty("PatientName", out var nameElem) ? nameElem.GetString() : null;
+            var id = patient.TryGetProperty("PatientId", out var idElem) ? idElem.GetString() : null;
+
+            if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(id))
+            {
+                patients.Add((name, id));
+            }
+        }
+
+        return patients;
+    }
+
     /// <summary>Builds the complete transmorger.json file from processed JSON reports.</summary>
     /// <param name="tmpDir">Directory containing processed JSON files.</param>
     internal static void Build(string tmpDir, string masterDbDir)

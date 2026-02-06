@@ -35,7 +35,7 @@ class Catalog
 
     internal static string[] msgbox_InvalidConfigurationSetting(string setting) =>
     [
-        $"Tingen Muno - File system error",
+        $"Tingen Transmorger - File system error",
         $"The {setting} configuration setting is undefined.{Environment.NewLine}" +
         $"{Environment.NewLine}" +
         $"Please set a valid {setting} value in the configuration file."
@@ -43,7 +43,7 @@ class Catalog
 
     internal static string[] msgbox_PathDoesNotExistWithCreatePrompt(string dirKey, string dirValue) =>
     [
-        $"Tingen Muno - File system error",
+        $"Tingen Transmorger - File system error",
         $"The {dirKey} path does not exist:{Environment.NewLine}" +
         $"{Environment.NewLine}" +
         $"{dirValue}{Environment.NewLine}" +

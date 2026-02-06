@@ -106,10 +106,74 @@ public partial class MainWindow : Window
                 btnSearchToggle.Content = "Patient Search";
                 break;
         }
+
+        // Clear search box and results when toggling
+        txbxSearch.Text = string.Empty;
+        lstbxSearchResults.Items.Clear();
+    }
+
+    /// <summary>Handles the search text changed event.</summary>
+    /// <remarks>
+    /// <para>
+    /// This method is called when the user types in the search text box.
+    /// It filters and displays results based on the current search mode and search type (by name or ID).
+    /// </para>
+    /// </remarks>
+    private void SearchTextChanged()
+    {
+        // Clear previous results
+        lstbxSearchResults.Items.Clear();
+
+        // Only search for patients when in Patient Search mode
+        if (btnSearchToggle.Content.ToString() != "Patient Search")
+        {
+            return;
+        }
+
+        var searchText = txbxSearch.Text?.Trim();
+
+        // Don't search if text is empty or too short
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return;
+        }
+
+        // Get all patients from the database
+        var allPatients = TransMorgDb.GetPatients();
+
+        // Filter patients based on search type
+        var filteredPatients = new List<(string PatientName, string PatientId)>();
+
+        if (rbtnByName.IsChecked == true)
+        {
+            // Search by name - case insensitive
+            filteredPatients = allPatients
+                .Where(p => p.PatientName.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(p => p.PatientName)
+                .ToList();
+        }
+        else if (rbtnById.IsChecked == true)
+        {
+            // Search by ID
+            filteredPatients = allPatients
+                .Where(p => p.PatientId.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(p => p.PatientName)
+                .ToList();
+        }
+
+        // Display results in the format "PatientName (PatientId)"
+        foreach (var patient in filteredPatients)
+        {
+            lstbxSearchResults.Items.Add($"{patient.PatientName} ({patient.PatientId})");
+        }
     }
 
     /*
      * EVENT HANDLERS
      */
     private void btnSearchToggle_Click(object? sender, RoutedEventArgs e) => SearchToggleClicked();
+
+    private void txbxSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) => SearchTextChanged();
+
+    private void rbtnSearch_Checked(object sender, RoutedEventArgs e) => SearchTextChanged();
 }

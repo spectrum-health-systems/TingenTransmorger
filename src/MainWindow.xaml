@@ -92,6 +92,7 @@
                                     Width="116"
                                     Margin="5,12,0,0"
                                     VerticalContentAlignment="Center"
+                                    Checked="rbtnSearch_Checked"
                                     Content="By name"
                                     FontSize="14" />
                                 <RadioButton
@@ -99,6 +100,7 @@
                                     Width="116"
                                     Margin="5,5,0,0"
                                     VerticalContentAlignment="Center"
+                                    Checked="rbtnSearch_Checked"
                                     Content="By ID"
                                     FontSize="14" />
                             </StackPanel>
@@ -111,7 +113,11 @@
                                 x:Name="txbxSearch"
                                 Width="260"
                                 Height="32"
-                                Margin="10,0,8,0">
+                                Margin="10,0,8,0"
+                                Padding="10,0,0,0"
+                                VerticalContentAlignment="Center"
+                                FontSize="16"
+                                TextChanged="txbxSearch_TextChanged">
                                 <TextBox.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="7" />

@@ -23,4 +23,15 @@ public class PatientMeetingRow
 
     /// <summary>Gets or sets the meeting status.</summary>
     public string Status { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets whether this meeting has an error in the MeetingError collection.</summary>
+    public bool HasError { get; set; }
+
+    /// <summary>Gets or sets whether this meeting has been cancelled.</summary>
+    public bool IsCancelled { get; set; }
+
+    /// <summary>Gets or sets whether this meeting has been completed.</summary>
+    public bool IsCompleted { get; set; }
 }
+
+

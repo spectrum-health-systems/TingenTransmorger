@@ -310,14 +310,55 @@ public partial class MainWindow : Window
                             ? statusElem.GetString() : string.Empty;
                     }
 
+                    // Replace any occurrence of "null" (case-insensitive) with a single "---"
+                    string ReplaceNull(string value)
+                    {
+                        if (string.IsNullOrWhiteSpace(value))
+                            return "---";
+                        
+                        // Replace all occurrences of "null" (case-insensitive) with a placeholder
+                        var result = System.Text.RegularExpressions.Regex.Replace(
+                            value, 
+                            @"\bnull\b", 
+                            "<<NULL>>", 
+                            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                        
+                        // Check if we had any replacements
+                        if (result.Contains("<<NULL>>"))
+                        {
+                            // If the entire string is just null markers (with possible whitespace/separators), return single "---"
+                            var cleanedResult = result.Replace("<<NULL>>", "").Trim().Trim(',').Trim(';').Trim();
+                            if (string.IsNullOrWhiteSpace(cleanedResult))
+                            {
+                                return "---";
+                            }
+                            
+                            // Otherwise replace all null markers with "---" 
+                            result = result.Replace("<<NULL>>", "---");
+                        }
+                        
+                        return string.IsNullOrWhiteSpace(result) ? "---" : result;
+                    }
+
+                    // Check if meeting has an error
+                    var hasError = TransMorgDb.HasMeetingError(meetingId);
+
+                    // Check status flags (case-insensitive)
+                    var statusLower = status?.ToLower() ?? string.Empty;
+                    var isCancelled = statusLower.Contains("cancel");
+                    var isCompleted = statusLower.Contains("complete");
+
                     meetingRows.Add(new PatientMeetingRow
                     {
                         MeetingId = meetingId,
-                        Start = scheduledStart ?? string.Empty,
-                        Arrived = arrived ?? string.Empty,
-                        Dropped = dropped ?? string.Empty,
-                        Duration = duration ?? string.Empty,
-                        Status = status ?? string.Empty
+                        Start = ReplaceNull(scheduledStart ?? string.Empty),
+                        Arrived = ReplaceNull(arrived ?? string.Empty),
+                        Dropped = ReplaceNull(dropped ?? string.Empty),
+                        Duration = ReplaceNull(duration ?? string.Empty),
+                        Status = ReplaceNull(status ?? string.Empty),
+                        HasError = hasError,
+                        IsCancelled = isCancelled,
+                        IsCompleted = isCompleted
                     });
                 }
             }
@@ -328,9 +369,39 @@ public partial class MainWindow : Window
             .OrderByDescending(m => m.Start)
             .ToList();
 
-        // Update the header with the count
-        var meetingCount = meetingRows.Count;
-        txtMeetingsHeader.Text = $"{meetingCount} meeting{(meetingCount != 1 ? "s" : "")} found";
+        // Count meetings by status
+        var totalCount = meetingRows.Count;
+        var completedCount = meetingRows.Count(m => m.IsCompleted);
+        var cancelledCount = meetingRows.Count(m => m.IsCancelled);
+        
+        // Count In-Progress, Expired, and Scheduled
+        var inProgressCount = 0;
+        var expiredCount = 0;
+        var scheduledCount = 0;
+        
+        foreach (var meeting in meetingRows)
+        {
+            var statusLower = meeting.Status?.ToLower() ?? string.Empty;
+            
+            // Skip already counted statuses
+            if (meeting.IsCompleted || meeting.IsCancelled)
+                continue;
+                
+            if (statusLower.Contains("in progress") || statusLower.Contains("in-progress"))
+                inProgressCount++;
+            else if (statusLower.Contains("expired"))
+                expiredCount++;
+            else if (statusLower.Contains("scheduled"))
+                scheduledCount++;
+        }
+
+        // Update the header with the detailed count using individual TextBlocks
+        txtMeetingsTotal.Text = $"{totalCount} MEETINGS";
+        txtMeetingsCompleted.Text = $"{completedCount} Completed";
+        txtMeetingsInProgress.Text = $"{inProgressCount} In-Progress";
+        txtMeetingsExpired.Text = $"{expiredCount} Expired";
+        txtMeetingsCancelled.Text = $"{cancelledCount} Cancelled";
+        txtMeetingsScheduled.Text = $"{scheduledCount} Scheduled";
 
         // Bind to DataGrid
         dgPatientMeetings.ItemsSource = meetingRows;

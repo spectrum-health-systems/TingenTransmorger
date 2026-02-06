@@ -166,6 +166,23 @@ public class TransmorgerDatabase
         return null;
     }
 
+    /// <summary>Checks if a meeting has an error in the MeetingError collection.</summary>
+    /// <param name="meetingId">The ID of the meeting to check.</param>
+    /// <returns>True if the meeting has an error, false otherwise.</returns>
+    public bool HasMeetingError(string meetingId)
+    {
+        if (!_hasData || string.IsNullOrWhiteSpace(meetingId))
+            return false;
+
+        if (!_jsonRoot.TryGetProperty("MeetingError", out var meetingErrorObj))
+            return false;
+
+        if (meetingErrorObj.ValueKind != JsonValueKind.Object)
+            return false;
+
+        return meetingErrorObj.TryGetProperty(meetingId, out _);
+    }
+
     /// <summary>Builds the complete transmorger.json file from processed JSON reports.</summary>
     /// <param name="tmpDir">Directory containing processed JSON files.</param>
     internal static void Build(string tmpDir, string masterDbDir)

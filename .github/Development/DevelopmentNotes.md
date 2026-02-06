@@ -2,6 +2,7 @@
 
 - [ ] Building the database when it exists in the master directory = error.
 - [ ] Getting latest master DB
+- [ ] Break up TransmorgerDatabase.cs
 - [ ] Clean up Database classes
 - [ ] Change version to vx.x.x.x
 

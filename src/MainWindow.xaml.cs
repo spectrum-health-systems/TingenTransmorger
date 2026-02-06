@@ -1,5 +1,5 @@
-﻿// 260205_code
-// 260205_documentation
+﻿// 260206_code
+// 260206_documentation
 
 using System.IO;
 using System.Windows;
@@ -12,39 +12,17 @@ namespace TingenTransmorger;
 public partial class MainWindow : Window
 {
     public TransmorgerDatabase TransMorgDb { get; set; }
-    private enum SearchMode { Patient, Provider, Meeting }
-    private SearchMode _searchMode = SearchMode.Patient;
 
     /// <summary>Entry method for Tingen Transmorger.</summary>
     public MainWindow()
     {
         InitializeComponent();
+
         StartApp();
-
-        // Wire search toggle button
-        btnSearchToggle.Click += BtnSearchToggle_Click;
     }
 
-    private void BtnSearchToggle_Click(object? sender, RoutedEventArgs e)
-    {
-        // Cycle through Patient -> Provider -> Meeting
-        _searchMode = _searchMode switch
-        {
-            SearchMode.Patient => SearchMode.Provider,
-            SearchMode.Provider => SearchMode.Meeting,
-            SearchMode.Meeting => SearchMode.Patient,
-            _ => SearchMode.Patient
-        };
 
-        // Update button text
-        btnSearchToggle.Content = _searchMode switch
-        {
-            SearchMode.Patient => "Patient Search",
-            SearchMode.Provider => "Provider Search",
-            SearchMode.Meeting => "Meeting Search",
-            _ => "Patient Search"
-        };
-    }
+
 
     /// <summary>Performs application startup tasks.</summary>
     private void StartApp()
@@ -62,7 +40,7 @@ public partial class MainWindow : Window
         var localDbPath = Path.Combine(config.StandardDirectories["LocalDb"], "transmorger.db");
         TransMorgDb = TransmorgerDatabase.Load(localDbPath);
 
-        var test =0;
+        rbtnByName.IsChecked = true;
     }
 
     /// <summary>Stops the Tingen Muno application.</summary>
@@ -82,4 +60,33 @@ public partial class MainWindow : Window
 
         Environment.Exit(0);
     }
+
+
+    /*
+     * EVENTS
+     */
+
+    private void SearchToggleClicked()
+    {
+        switch (btnSearchToggle.Content)
+
+        {
+            case "Patient Search":
+                btnSearchToggle.Content = "Provider Search";
+                break;
+
+            case "Provider Search":
+                btnSearchToggle.Content = "Meeting Search";
+                break;
+
+            case "Meeting Search":
+                btnSearchToggle.Content = "Patient Search";
+                break;
+        }
+    }
+
+    /*
+     * EVENT HANDLERS
+     */
+    private void btnSearchToggle_Click(object? sender, RoutedEventArgs e) => SearchToggleClicked();
 }

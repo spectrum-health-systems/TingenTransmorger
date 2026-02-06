@@ -1,5 +1,5 @@
-// 260205_code
-// 260205_documentation
+// 260206_code
+// 260206_documentation
 
 using System.IO;
 using System.Text;
@@ -268,14 +268,16 @@ public class TransmorgerDatabase
         foreach (var p in patients)
         {
             var name = GetStringValue(p, "PatientName");
-            if (name != null) patientNames.Add(name);
+            if (name != null)
+                patientNames.Add(name);
         }
 
         var providerNames = new HashSet<string>(providers.Count, StringComparer.OrdinalIgnoreCase);
         foreach (var p in providers)
         {
             var name = GetStringValue(p, "ProviderName");
-            if (name != null) providerNames.Add(name);
+            if (name != null)
+                providerNames.Add(name);
         }
 
         foreach (var meeting in meetingDetails)
@@ -401,9 +403,11 @@ public class TransmorgerDatabase
         foreach (var p in patients)
         {
             var name = GetStringValue(p, "PatientName");
-            if (name != null) patientNames.Add(name);
+            if (name != null)
+                patientNames.Add(name);
             var id = GetStringValue(p, "PatientId");
-            if (id != null) patientIds.Add(id);
+            if (id != null)
+                patientIds.Add(id);
         }
 
         var providerNames = new HashSet<string>(providers.Count, StringComparer.OrdinalIgnoreCase);
@@ -411,9 +415,11 @@ public class TransmorgerDatabase
         foreach (var p in providers)
         {
             var name = GetStringValue(p, "ProviderName");
-            if (name != null) providerNames.Add(name);
+            if (name != null)
+                providerNames.Add(name);
             var id = GetStringValue(p, "ProviderId");
-            if (!string.IsNullOrWhiteSpace(id)) providerIds.Add(id);
+            if (!string.IsNullOrWhiteSpace(id))
+                providerIds.Add(id);
         }
 
         foreach (var error in meetingErrors)
@@ -1367,7 +1373,12 @@ public class TransmorgerDatabase
         File.WriteAllText(dbTempPath, db, Encoding.UTF8);
 
         var masterDbPath = Path.Combine(masterDbDir, "transmorger.db");
+
+        if (File.Exists(masterDbPath))
+        {
+            File.Delete(masterDbPath);
+        }
+
         File.Copy(dbTempPath, masterDbPath);
     }
-
 }

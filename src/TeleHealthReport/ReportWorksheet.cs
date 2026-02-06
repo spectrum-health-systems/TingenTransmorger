@@ -1,50 +1,16 @@
-﻿// 260206_code
-// 260206_documentation
+﻿// 260205_code
+// 260205_documentation
 
 using System.Data;
 
 namespace TingenTransmorger.TeleHealthReport;
 
-/// <summary>
-/// Helper routines for converting Excel worksheet <see cref="DataTable"/> instances into
-/// in-memory structures used by the TeleHealth report processing pipeline.
-/// </summary>
-/// <remarks>
-/// This static class contains a small set of focused routines that take a single worksheet (represented as
-/// a <see cref="DataTable"/>) and transform its rows into one of several canonical shapes used by the rest of the
-/// pipeline:
-/// <list type="bullet">
-///     <item>    Summary sheets - Simple key/value pairs aggregated across files</item>
-///     <item>      Keyed sheets - Rows keyed by a unique column, optionally aggregating numeric fields</item>
-///     <item>SimpleKeyed sheets - Keep first row per key</item>
-///     <item>      Client stats - Multiple rows per client, grouped by client name</item>
-///     <item>       Flat sheets - Preserve every row as a record</item>
-/// </list>
-/// The routines intentionally work with basic .NET types (dictionaries, lists and primitive values)
-/// so the output can be serialized to JSON by <see cref="ReportUtility"/> without additional mapping.
-/// </remarks>
 internal static class ReportWorksheet
 {
-    /// <summary>
-    /// Processes a summary-style worksheet that contains metric/value pairs.
-    /// </summary>
-    /// <param name="table">
-    /// The <see cref="DataTable"/> representing the worksheet. The routine expects at least two columns where the
-    /// first column is the metric name and the second column contains numeric or parseable numeric values.
-    /// </param>
-    /// <param name="metrics">
-    /// A dictionary that will be updated with aggregated numeric values. Each metric name is used as the key. If a
-    /// metric already exists in the dictionary its numeric value is incremented by the parsed value from here.
-    /// </param>
-    /// <param name="headers">
-    /// Optional tuple used to capture the column header names from the first two columns. If <c>null</c> the method
-    /// sets this to the names of the first two columns (falling back to "Metric" / "Value").
-    /// </param>
-    /// <remarks>
-    /// - Rows with an empty or null metric name are ignored.<br/>
-    /// - Values that cannot be parsed as doubles are treated as zero (see <see cref="ReportUtility.ParseDoubleValue(object?)"/>).<br/>
-    /// - Calling this method repeatedly with the same tables will continue to accumulate totals in <paramref name="metrics"/>.
-    /// </remarks>
+    /// <summary>Processes summary sheets with key-value pairs, aggregating numeric values across files.</summary>
+    /// <param name="table">DataTable containing the summary sheet data.</param>
+    /// <param name="metrics">Dictionary to store aggregated metrics.</param>
+    /// <param name="headers">Optional tuple to capture column header names.</param>
     internal static void SummarySheet(DataTable table, Dictionary<string, double> metrics, ref (string, string)? headers)
     {
         if (table.Columns.Count < 2)
@@ -71,35 +37,12 @@ internal static class ReportWorksheet
         }
     }
 
-    /// <summary>
-    /// Processes worksheets where each row contains a unique identifier column and arbitrary additional columns.
-    /// </summary>
-    /// <param name="table">
-    /// The <see cref="DataTable"/> representing the worksheet.
-    /// </param>
-    /// <param name="dataById">
-    /// Output dictionary keyed by the string value found in the <paramref name="keyColumn"/>. Each value is a
-    /// dictionary mapping column names to their cell value (object). Existing entries are merged or replaced.
-    /// </param>
-    /// <param name="headers">
-    /// A mutable <see cref="List{T}"/> used to track ordered column headers encountered across processed tables. This
-    /// list will be extended with new column names found in the given table.
-    /// </param>
-    /// <param name="keyColumn">
-    /// The column name to use as the unique key for each row. Rows missing this column or with an empty key are
-    /// ignored.
-    /// </param>
-    /// <param name="aggregateNumeric">
-    /// When <c>true</c>, numeric columns are summed when duplicate keys are encountered. When <c>false</c>, the first
-    /// observed row for a key is kept and subsequent rows are ignored for that key.
-    /// </param>
-    /// <remarks>
-    /// - Uses <see cref="ReportUtility.UpdateHeaders(DataTable, ICollection{string})"/> to ensure <paramref name="headers"/>
-    ///   contains all columns present in the table.<br/>
-    /// - Builds row dictionaries with the capacity based on <paramref name="headers"/> to reduce reallocations.<br/>
-    /// - When aggregation is requested, numeric merging uses <see cref="ReportUtility.MergeRows"/> which preserves
-    ///   non-null values and sums numeric fields.
-    /// </remarks>
+    /// <summary>Processes sheets with a unique key column, optionally aggregating numeric values for duplicate keys.</summary>
+    /// <param name="table">DataTable containing the sheet data.</param>
+    /// <param name="dataById">Dictionary to store records keyed by the specified column.</param>
+    /// <param name="headers">List to track all column headers encountered.</param>
+    /// <param name="keyColumn">Name of the column to use as the unique key.</param>
+    /// <param name="aggregateNumeric">If true, numeric values are summed for duplicate keys.</param>
     internal static void KeyedSheet(DataTable table, Dictionary<string, Dictionary<string, object?>> dataById, List<string> headers, string keyColumn, bool aggregateNumeric = false)
     {
         if (!table.Columns.Contains(keyColumn))
@@ -136,28 +79,11 @@ internal static class ReportWorksheet
         }
     }
 
-    /// <summary>
-    /// Processes worksheets keyed by a unique column but keeps only the first row observed for each key.
-    /// </summary>
-    /// <param name="table">
-    /// The <see cref="DataTable"/> representing the worksheet.
-    /// </param>
-    /// <param name="dataById">
-    /// Output dictionary keyed by the string value found in the <paramref name="keyColumn"/>. Only the first row for
-    /// each key is stored.
-    /// </param>
-    /// <param name="headers">
-    /// A <see cref="HashSet{T}"/> used to track column headers across multiple tables. The set is updated with any new
-    /// columns from the current table.
-    /// </param>
-    /// <param name="keyColumn">The name of the column that uniquely identifies rows. Rows with no key are ignored.</param>
-    /// <remarks>
-    /// - The method obtains the table's column names via <see cref="ReportUtility.UpdateHeaders(DataTable, ICollection{string})"/>
-    ///   which returns a HashSet of the table's columns. The <paramref name="headers"/> set is then converted to an
-    ///   ordered list so the produced row dictionaries preserve a stable ordering for consumers that rely on header
-    ///   order.
-    /// - If multiple rows share a key only the first encountered row is inserted into <paramref name="dataById"/>.
-    /// </remarks>
+    /// <summary>Processes sheets with a unique key column, keeping only the first occurrence of each key.</summary>
+    /// <param name="table">DataTable containing the sheet data.</param>
+    /// <param name="dataById">Dictionary to store records keyed by the specified column.</param>
+    /// <param name="headers">HashSet to track all column headers encountered.</param>
+    /// <param name="keyColumn">Name of the column to use as the unique key.</param>
     internal static void SimpleKeyedSheet(DataTable table, Dictionary<string, Dictionary<string, object?>> dataById, HashSet<string> headers, string keyColumn)
     {
         if (!table.Columns.Contains(keyColumn))
@@ -191,26 +117,10 @@ internal static class ReportWorksheet
         }
     }
 
-    /// <summary>
-    /// Processes worksheets that contain client-specific records, grouping multiple rows by the "Client Name" column.
-    /// </summary>
-    /// <param name="table">
-    /// The <see cref="DataTable"/> representing the worksheet. The method expects a column named "Client Name".
-    /// </param>
-    /// <param name="statsByClient">
-    /// Output dictionary mapping client name strings to a list of record dictionaries for that client. Each record is a
-    /// dictionary of column name -> cell value and may include the "Client Name" field.
-    /// </param>
-    /// <param name="headers">
-    /// A <see cref="HashSet{T}"/> of column headers that will be extended with columns found in the table.The
-    /// resulting header set is used to produce uniform record dictionaries across clients.
-    /// </param>
-    /// <remarks>
-    /// - Rows without a value in the "Client Name" column are ignored.<br/>
-    /// - Each client key maps to a <see cref="List{T}"/> of dictionaries; callers should be prepared for clients with
-    ///   zero, one or many records.<br/>
-    /// - This method does not attempt to deduplicate client records; deduplication and serialization are handled by <see cref="ReportUtility"/>.
-    /// </remarks>
+    /// <summary>Processes sheets with client statistics, allowing multiple records per client.</summary>
+    /// <param name="table">DataTable containing the sheet data.</param>
+    /// <param name="statsByClient">Dictionary to store lists of records per client.</param>
+    /// <param name="headers">HashSet to track all column headers encountered.</param>
     internal static void ClientStatsSheet(DataTable table, Dictionary<string, List<Dictionary<string, object?>>> statsByClient, HashSet<string> headers)
     {
         if (!table.Columns.Contains("Client Name"))
@@ -247,27 +157,10 @@ internal static class ReportWorksheet
         }
     }
 
-    /// <summary>
-    /// Processes a worksheet as a flat list of records preserving every row.
-    /// </summary>
-    /// <param name="table">
-    /// The <see cref="DataTable"/> representing the worksheet.
-    /// </param>
-    /// <param name="allRecords">
-    /// A list that will receive one dictionary per row. Each dictionary maps column name -> cell value.
-    /// </param>
-    /// <param name="headers">
-    /// A <see cref="HashSet{T}"/> that will be updated with all column names present in the table so that downstream
-    /// consumers see a consistent set of headers across multiple flat tables.
-    /// </param>
-    /// <remarks>
-    /// - The method captures the table's column names in their original order and then produces record dictionaries
-    ///   that contain
-    ///   values for those columns. Any header present in <paramref name="headers"/> but not in the current row will be
-    ///   added to the row with a null value, ensuring all records share the same set of keys.<br/>
-    /// - Use <see cref="ReportUtility.DeduplicateRecords"/> after collection if duplicate rows must be removed before
-    ///   serialization.
-    /// </remarks>
+    /// <summary>Processes sheets as flat record lists, capturing all rows without keying or aggregation.</summary>
+    /// <param name="table">DataTable containing the sheet data.</param>
+    /// <param name="allRecords">List to store all records.</param>
+    /// <param name="headers">HashSet to track all column headers encountered.</param>
     internal static void FlatSheet(DataTable table, List<Dictionary<string, object?>> allRecords, HashSet<string> headers)
     {
         var tableColumns = new List<string>();

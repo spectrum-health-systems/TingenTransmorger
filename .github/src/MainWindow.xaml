@@ -21,28 +21,11 @@
                 FontSize="28"
                 FontWeight="Bold"
                 Text="Tingen Transmorger" />
-            <Label
-                x:Name="btnDatabaseSummary"
-                Width="420"
-                Height="44"
-                Margin="100,8,0,0"
-                Padding="0,0,0,0"
-                VerticalAlignment="Top"
-                Content="00/00/0000 - 00/00/0000"
-                VerticalContentAlignment="Center"
-                FontSize="20"
-                FontWeight="SemiBold">
-                <Label.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="6" />
-                    </Style>
-                </Label.Resources>
-            </Label>
             <Button
                 x:Name="btnSettings"
                 Width="32"
                 Height="32"
-                Margin="310,15,20,0"
+                Margin="850,15,20,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Content="S"
@@ -93,6 +76,7 @@
                                 Height="42"
                                 Margin="10,10,0,8"
                                 HorizontalAlignment="left"
+                                Click="btnSearchToggle_Click"
                                 Content="Patient Search"
                                 FontSize="18"
                                 FontWeight="SemiBold">
@@ -105,21 +89,24 @@
                             <StackPanel x:Name="spnlSearchByNameOrId" Orientation="Vertical">
                                 <RadioButton
                                     x:Name="rbtnByName"
-                                    Margin="5,12,0,0"
-                                    FontSize="14"
-                                    VerticalContentAlignment="Center"
                                     Width="116"
-                                    Content="By name" />
+                                    Margin="5,12,0,0"
+                                    VerticalContentAlignment="Center"
+                                    Content="By name"
+                                    FontSize="14" />
                                 <RadioButton
                                     x:Name="rbtnById"
-                                    VerticalContentAlignment="Center"
-                                    Margin="5,5,0,0"
-                                    FontSize="14"
                                     Width="116"
-                                    Content="By ID" />
+                                    Margin="5,5,0,0"
+                                    VerticalContentAlignment="Center"
+                                    Content="By ID"
+                                    FontSize="14" />
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel x:Name="spnlSearchBar" Margin="0,0,0,6" Orientation="Horizontal">
+                        <StackPanel
+                            x:Name="spnlSearchBar"
+                            Margin="0,0,0,6"
+                            Orientation="Horizontal">
                             <TextBox
                                 x:Name="txbxSearch"
                                 Width="260"

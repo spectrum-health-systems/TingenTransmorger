@@ -34,6 +34,16 @@ public partial class MainWindow : Window
     private string _currentPatientId = string.Empty;
 
     /// <summary>
+    /// Currently selected provider name.
+    /// </summary>
+    private string _currentProviderName = string.Empty;
+
+    /// <summary>
+    /// Currently selected provider ID.
+    /// </summary>
+    private string _currentProviderId = string.Empty;
+
+    /// <summary>
     /// SMS failure records for the current patient's phone numbers.
     /// </summary>
     private List<(string PhoneNumber, string ErrorMessage, string ScheduledStartTime)> _smsFailures = new();
@@ -275,12 +285,7 @@ public partial class MainWindow : Window
         // Clear previous results
         lstbxSearchResults.Items.Clear();
 
-        // Only search for patients when in Patient Search mode
-        if (btnSearchToggle.Content.ToString() != "Patient Search")
-        {
-            return;
-        }
-
+        var searchMode = btnSearchToggle.Content.ToString();
         var searchText = txbxSearch.Text?.Trim();
 
         // Don't search if text is empty or too short
@@ -295,6 +300,19 @@ public partial class MainWindow : Window
             return;
         }
 
+        if (searchMode == "Patient Search")
+        {
+            SearchPatients(searchText);
+        }
+        else if (searchMode == "Provider Search")
+        {
+            SearchProviders(searchText);
+        }
+    }
+
+    /// <summary>Searches for patients based on the search text.</summary>
+    private void SearchPatients(string searchText)
+    {
         // Get all patients from the database
         var allPatients = TransMorgDb.GetPatients();
 
@@ -325,11 +343,45 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>Searches for providers based on the search text.</summary>
+    private void SearchProviders(string searchText)
+    {
+        // Get all providers from the database
+        var allProviders = TransMorgDb.GetProviders();
+
+        // Filter providers based on search type
+        var filteredProviders = new List<(string ProviderName, string ProviderId)>();
+
+        if (rbtnByName.IsChecked == true)
+        {
+            // Search by name - case insensitive
+            filteredProviders = allProviders
+                .Where(p => p.ProviderName.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(p => p.ProviderName)
+                .ToList();
+        }
+        else if (rbtnById.IsChecked == true)
+        {
+            // Search by ID
+            filteredProviders = allProviders
+                .Where(p => p.ProviderId.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(p => p.ProviderName)
+                .ToList();
+        }
+
+        // Display results in the format "ProviderName (ProviderId)"
+        foreach (var provider in filteredProviders)
+        {
+            var displayId = provider.ProviderId == "N/A" ? "No ID" : provider.ProviderId;
+            lstbxSearchResults.Items.Add($"{provider.ProviderName} ({displayId})");
+        }
+    }
+
     /// <summary>Handles the selection changed event for the search results list.</summary>
     /// <remarks>
     /// <para>
-    /// This method is called when the user selects a patient from the search results.
-    /// It retrieves the full patient details and displays them in the details panel.
+    /// This method is called when the user selects a patient or provider from the search results.
+    /// It retrieves the full details and displays them in the details panel.
     /// </para>
     /// </remarks>
     private void SearchResultSelected()
@@ -340,10 +392,8 @@ public partial class MainWindow : Window
             return;
         }
 
-        // Hide placeholder and show patient details section
-        //txtDetailsPlaceholder.Visibility = Visibility.Collapsed;
-        spnlPatientDetails.Visibility = Visibility.Visible;
-
+        var searchMode = btnSearchToggle.Content.ToString();
+        
         // Get the selected item
         var selectedItem = lstbxSearchResults.SelectedItem as string;
         if (string.IsNullOrWhiteSpace(selectedItem))
@@ -351,18 +401,37 @@ public partial class MainWindow : Window
             return;
         }
 
-        // Parse the selected item to extract PatientName and PatientId
-        // Format is "PatientName (PatientId)"
+        // Parse the selected item to extract Name and ID
+        // Format is "Name (ID)"
         var lastParenIndex = selectedItem.LastIndexOf('(');
         if (lastParenIndex == -1)
         {
             return;
         }
 
-        var patientName = selectedItem.Substring(0, lastParenIndex).Trim();
-        var patientId = selectedItem.Substring(lastParenIndex + 1).TrimEnd(')').Trim();
+        var name = selectedItem.Substring(0, lastParenIndex).Trim();
+        var id = selectedItem.Substring(lastParenIndex + 1).TrimEnd(')').Trim();
 
-        // Store current patient info for use in other methods
+        if (searchMode == "Patient Search")
+        {
+            DisplayPatientDetails(name, id);
+        }
+        else if (searchMode == "Provider Search")
+        {
+            DisplayProviderDetails(name, id);
+        }
+    }
+
+    /// <summary>Displays patient details in the UI.</summary>
+    private void DisplayPatientDetails(string patientName, string patientId)
+    {
+        // Show patient details section
+        spnlPatientDetails.Visibility = Visibility.Visible;
+
+        // Set header to PATIENT
+        lblPatientHeader.Content = "PATIENT";
+
+        // Store current patient info
         _currentPatientName = patientName;
         _currentPatientId = patientId;
 
@@ -376,6 +445,10 @@ public partial class MainWindow : Window
         // Display patient name and ID
         lblPatientNameValue.Content = patientName;
         lblPatientIdValue.Content = patientId;
+
+        // Show phone and email sections
+        spnlPatientPhone.Visibility = Visibility.Visible;
+        spnlPatientEmail.Visibility = Visibility.Visible;
 
         // Display phone numbers
         var phoneNumbers = new List<string>();
@@ -648,6 +721,162 @@ public partial class MainWindow : Window
         spnlMeetingDetails.Visibility = Visibility.Collapsed;
     }
 
+    /// <summary>Displays provider details in the UI.</summary>
+    private void DisplayProviderDetails(string providerName, string providerId)
+    {
+        // Show provider details section
+        spnlPatientDetails.Visibility = Visibility.Visible;
+
+        // Set header to PROVIDER
+        lblPatientHeader.Content = "PROVIDER";
+
+        // Store current provider info
+        _currentProviderName = providerName;
+        _currentProviderId = providerId;
+
+        // Get provider details from database
+        var providerDetails = TransMorgDb.GetProviderDetails(providerName);
+        if (providerDetails == null)
+        {
+            return;
+        }
+
+        // Display provider name and ID
+        lblPatientNameValue.Content = providerName;
+        lblPatientIdValue.Content = providerId;
+
+        // Hide phone and email sections for providers
+        spnlPatientPhone.Visibility = Visibility.Collapsed;
+        spnlPatientEmail.Visibility = Visibility.Collapsed;
+
+        // Display meetings for this provider
+        var meetingRows = new List<PatientMeetingRow>();
+        if (providerDetails.Value.TryGetProperty("Meetings", out var meetingsElement))
+        {
+            if (meetingsElement.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var meetingIdElement in meetingsElement.EnumerateArray())
+                {
+                    var meetingId = meetingIdElement.GetString();
+                    if (string.IsNullOrWhiteSpace(meetingId))
+                        continue;
+
+                    // Get meeting details from MeetingDetail
+                    var meetingDetail = TransMorgDb.GetMeetingDetail(meetingId);
+                    if (meetingDetail == null)
+                        continue;
+
+                    // Get meeting information
+                    var scheduledStart = meetingDetail.Value.TryGetProperty("ScheduledStart", out var startElem)
+                        ? startElem.GetString() : string.Empty;
+                    var status = meetingDetail.Value.TryGetProperty("Status", out var statusElem)
+                        ? statusElem.GetString() : string.Empty;
+                    var duration = meetingDetail.Value.TryGetProperty("Duration", out var durationElem)
+                        ? durationElem.GetString() : string.Empty;
+
+                    // For providers, we don't have patient-specific arrival/drop times
+                    string ReplaceNull(string value)
+                    {
+                        if (string.IsNullOrWhiteSpace(value))
+                            return "---";
+
+                        var result = System.Text.RegularExpressions.Regex.Replace(
+                            value,
+                            @"\bnull\b",
+                            "<<NULL>>",
+                            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                        if (result.Contains("<<NULL>>"))
+                        {
+                            var cleanedResult = result.Replace("<<NULL>>", "").Trim().Trim(',').Trim(';').Trim();
+                            if (string.IsNullOrWhiteSpace(cleanedResult))
+                            {
+                                return "---";
+                            }
+                            result = result.Replace("<<NULL>>", "---");
+                        }
+
+                        return string.IsNullOrWhiteSpace(result) ? "---" : result;
+                    }
+
+                    // Check if meeting has an error
+                    var hasError = TransMorgDb.HasMeetingError(meetingId);
+
+                    // Check status flags
+                    var statusLower = status?.ToLower() ?? string.Empty;
+                    var isCancelled = statusLower.Contains("cancel");
+                    var isCompleted = statusLower.Contains("complete");
+
+                    meetingRows.Add(new PatientMeetingRow
+                    {
+                        MeetingId = meetingId,
+                        Start = ReplaceNull(scheduledStart ?? string.Empty),
+                        Arrived = "N/A",  // Not applicable for provider view
+                        Dropped = "N/A",  // Not applicable for provider view
+                        Duration = ReplaceNull(duration ?? string.Empty),
+                        Status = ReplaceNull(status ?? string.Empty),
+                        HasError = hasError,
+                        IsCancelled = isCancelled,
+                        IsCompleted = isCompleted
+                    });
+                }
+            }
+        }
+
+        // Sort meetings by ScheduledStart descending (most recent first)
+        meetingRows = meetingRows
+            .OrderByDescending(m => m.Start)
+            .ToList();
+
+        // Count meetings by status
+        var totalCount = meetingRows.Count;
+        var completedCount = meetingRows.Count(m => m.IsCompleted);
+        var cancelledCount = meetingRows.Count(m => m.IsCancelled);
+
+        var inProgressCount = 0;
+        var expiredCount = 0;
+        var scheduledCount = 0;
+
+        foreach (var meeting in meetingRows)
+        {
+            var statusLower = meeting.Status?.ToLower() ?? string.Empty;
+
+            if (meeting.IsCompleted || meeting.IsCancelled)
+                continue;
+
+            if (statusLower.Contains("in progress") || statusLower.Contains("in-progress"))
+                inProgressCount++;
+            else if (statusLower.Contains("expired"))
+                expiredCount++;
+            else if (statusLower.Contains("scheduled"))
+                scheduledCount++;
+        }
+
+        // Update the header with the detailed count
+        txtMeetingsTotal.Text = $"{totalCount} MEETINGS";
+        txtMeetingsCompleted.Text = $"{completedCount} Completed";
+        txtMeetingsInProgress.Text = $"{inProgressCount} In-Progress";
+        txtMeetingsExpired.Text = $"{expiredCount} Expired";
+        txtMeetingsCancelled.Text = $"{cancelledCount} Cancelled";
+        txtMeetingsScheduled.Text = $"{scheduledCount} Scheduled";
+
+        // Bind to DataGrid
+        dgPatientMeetings.ItemsSource = meetingRows;
+
+        // Show meetings section if there are meetings
+        if (meetingRows.Count > 0)
+        {
+            spnlPatientMeetings.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            spnlPatientMeetings.Visibility = Visibility.Collapsed;
+        }
+
+        // Hide meeting details until a meeting is selected
+        spnlMeetingDetails.Visibility = Visibility.Collapsed;
+    }
+
     /// <summary>Handles the selection changed event for the meetings DataGrid.</summary>
     /// <remarks>
     /// <para>
@@ -867,6 +1096,17 @@ public partial class MainWindow : Window
         txtPatientOs.Text = ReplaceNull(os);
         txtPatientBrowser.Text = ReplaceNull(browser);
         txtMeetingQualityData.Text = ReplaceNull(qualityData);
+
+        // Show/hide patient-specific meeting details based on current view mode
+        // If we're viewing a provider, hide the patient-specific section
+        if (lblPatientHeader.Content?.ToString() == "PROVIDER")
+        {
+            brdrMeetingDetailsPatient.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            brdrMeetingDetailsPatient.Visibility = Visibility.Visible;
+        }
 
         // Show the meeting details section
         spnlMeetingDetails.Visibility = Visibility.Visible;

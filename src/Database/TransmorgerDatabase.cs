@@ -115,6 +115,35 @@ public partial class TransmorgerDatabase
         return patients;
     }
 
+    /// <summary>Gets all providers from the database.</summary>
+    /// <returns>List of provider records with ProviderName and ProviderId.</returns>
+    public List<(string ProviderName, string ProviderId)> GetProviders()
+    {
+        var providers = new List<(string ProviderName, string ProviderId)>();
+
+        if (!_hasData)
+            return providers;
+
+        if (!_jsonRoot.TryGetProperty("Providers", out var providersArray))
+            return providers;
+
+        if (providersArray.ValueKind != JsonValueKind.Array)
+            return providers;
+
+        foreach (var provider in providersArray.EnumerateArray())
+        {
+            var name = provider.TryGetProperty("ProviderName", out var nameElem) ? nameElem.GetString() : null;
+            var id = provider.TryGetProperty("ProviderId", out var idElem) ? idElem.GetString() : null;
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                providers.Add((name, id ?? "N/A"));
+            }
+        }
+
+        return providers;
+    }
+
     /// <summary>Gets detailed information for a specific patient.</summary>
     /// <param name="patientName">The name of the patient.</param>
     /// <param name="patientId">The ID of the patient.</param>
@@ -138,6 +167,33 @@ public partial class TransmorgerDatabase
             if (name == patientName && id == patientId)
             {
                 return patient;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>Gets detailed information for a specific provider.</summary>
+    /// <param name="providerName">The name of the provider.</param>
+    /// <returns>JsonElement containing the full provider record, or null if not found.</returns>
+    public JsonElement? GetProviderDetails(string providerName)
+    {
+        if (!_hasData)
+            return null;
+
+        if (!_jsonRoot.TryGetProperty("Providers", out var providersArray))
+            return null;
+
+        if (providersArray.ValueKind != JsonValueKind.Array)
+            return null;
+
+        foreach (var provider in providersArray.EnumerateArray())
+        {
+            var name = provider.TryGetProperty("ProviderName", out var nameElem) ? nameElem.GetString() : null;
+
+            if (name == providerName)
+            {
+                return provider;
             }
         }
 

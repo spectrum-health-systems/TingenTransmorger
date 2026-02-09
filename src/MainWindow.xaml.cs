@@ -36,12 +36,12 @@ public partial class MainWindow : Window
     /// <summary>
     /// SMS failure records for the current patient's phone numbers.
     /// </summary>
-    private List<(string ErrorMessage, string ScheduledStartTime)> _smsFailures = new();
+    private List<(string PhoneNumber, string ErrorMessage, string ScheduledStartTime)> _smsFailures = new();
 
     /// <summary>
     /// Message delivery records for the current patient's phone numbers.
     /// </summary>
-    private List<(string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> _messageDeliveries = new();
+    private List<(string PhoneNumber, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> _messageDeliveries = new();
 
     /// <summary>
     /// Entry method for Tingen Transmorger.
@@ -869,8 +869,7 @@ public partial class MainWindow : Window
     /// <summary>Handles the phone details button click event.</summary>
     private void PhoneDetailsClicked()
     {
-        var messageSummaryWindow = new Database.MessageSummaryWindow();
-        messageSummaryWindow.SetMessageData(_smsFailures, _messageDeliveries);
+        var messageSummaryWindow = new Database.MessageSummaryWindow(_smsFailures, _messageDeliveries);
         messageSummaryWindow.Owner = this;
         messageSummaryWindow.ShowDialog();
     }

@@ -13,17 +13,15 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <!--  SMS Failures Section  -->
-                <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5" Margin="0,0,0,10" Padding="10">
-                    <StackPanel>
-                        <TextBlock FontSize="16" FontWeight="Bold" Text="SMS Failures" Margin="0,0,0,10"/>
-                        <DataGrid
-                            x:Name="dgSmsFailures"
-                            Height="200"
-                            MaxHeight="200"
+        <StackPanel>
+            <!--  Combined Messages Section  -->
+            <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="10">
+                <StackPanel>
+                    <TextBlock FontSize="16" FontWeight="Bold" Text="Message History (Most Recent First)" Margin="0,0,0,10"/>
+                    <DataGrid
+                            x:Name="dgMessages"
+                            Height="342"
+                            MaxHeight="480"
                             AutoGenerateColumns="False"
                             CanUserAddRows="False"
                             CanUserDeleteRows="False"
@@ -33,82 +31,86 @@
                             HeadersVisibility="Column"
                             IsReadOnly="True"
                             VerticalScrollBarVisibility="Auto">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn
-                                    Width="150"
-                                    Binding="{Binding ScheduledStartTime}"
-                                    Header="Scheduled Start Time" />
-                                <DataGridTextColumn
-                                    Width="*"
-                                    Binding="{Binding ErrorMessage}"
-                                    Header="Error Message" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </StackPanel>
-                </Border>
-
-                <!--  Message Deliveries Section  -->
-                <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5" Padding="10">
-                    <StackPanel>
-                        <TextBlock FontSize="16" FontWeight="Bold" Text="Message Deliveries" Margin="0,0,0,10"/>
-                        <DataGrid
-                            x:Name="dgMessageDeliveries"
-                            Height="250"
-                            MaxHeight="250"
-                            AutoGenerateColumns="False"
-                            CanUserAddRows="False"
-                            CanUserDeleteRows="False"
-                            CanUserReorderColumns="False"
-                            CanUserResizeColumns="True"
-                            CanUserResizeRows="False"
-                            HeadersVisibility="Column"
-                            IsReadOnly="True"
-                            VerticalScrollBarVisibility="Auto">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn
-                                    Width="100"
-                                    Binding="{Binding DateSent}"
-                                    Header="Date Sent" />
-                                <DataGridTextColumn
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsFailure}" Value="True">
+                                        <Setter Property="Background" Value="LightSalmon"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsFailure}" Value="False">
+                                        <Setter Property="Background" Value="LightGreen"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
                                     Width="80"
-                                    Binding="{Binding TimeSent}"
-                                    Header="Time Sent" />
-                                <DataGridTextColumn
+                                    Binding="{Binding MessageCategory}"
+                                    Header="Type" />
+                            <DataGridTextColumn
+                                    Width="110"
+                                    Binding="{Binding PhoneNumber}"
+                                    Header="Phone Number" />
+                            <DataGridTextColumn
+                                    Width="100"
+                                    Binding="{Binding Date}"
+                                    Header="Date" />
+                            <DataGridTextColumn
+                                    Width="80"
+                                    Binding="{Binding Time}"
+                                    Header="Time" />
+                            <DataGridTextColumn
                                     Width="120"
-                                    Binding="{Binding DeliveryStatus}"
-                                    Header="Delivery Status" />
-                                <DataGridTextColumn
+                                    Binding="{Binding Status}"
+                                    Header="Status" />
+                            <DataGridTextColumn
                                     Width="100"
                                     Binding="{Binding MessageType}"
                                     Header="Message Type" />
-                                <DataGridTextColumn
+                            <DataGridTextColumn
                                     Width="*"
                                     Binding="{Binding ErrorMessage}"
-                                    Header="Error Message" />
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-        </ScrollViewer>
+                                    Header="Error/Details" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
 
         <!--  Close Button  -->
-        <Button
-            x:Name="btnClose"
-            Grid.Row="1"
-            Width="100"
-            Height="35"
-            Margin="0,10,0,0"
-            HorizontalAlignment="Center"
-            Content="Close"
-            FontSize="14"
-            FontWeight="SemiBold"
-            Click="btnClose_Click">
-            <Button.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="5" />
-                </Style>
-            </Button.Resources>
-        </Button>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button
+                x:Name="btnDiagnostic"
+                Width="120"
+                Height="35"
+                Margin="0,10,10,0"
+                Content="Show Diagnostic"
+                FontSize="14"
+                FontWeight="SemiBold"
+                Click="btnDiagnostic_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5" />
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button
+                x:Name="btnClose"
+                Width="100"
+                Height="35"
+                Margin="0,10,0,0"
+                Content="Close"
+                FontSize="14"
+                FontWeight="SemiBold"
+                Click="btnClose_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5" />
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
     </Grid>
 </Window>
+

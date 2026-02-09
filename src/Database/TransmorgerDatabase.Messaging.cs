@@ -8,242 +8,204 @@ namespace TingenTransmorger.Database;
 /// <summary>Partial class for TransmorgerDatabase to add SMS tracking methods.</summary>
 public partial class TransmorgerDatabase
 {
-    /// <summary>Gets SMS failure records for a specific phone number.</summary>
+    /// <summary>Gets SMS failure records for a specific phone number by searching all patients.</summary>
     /// <param name="phoneNumber">The normalized 10-digit phone number to search for.</param>
-    /// <returns>A list of SMS failure records with Error Message and Scheduled Start Time.</returns>
-    public List<(string ErrorMessage, string ScheduledStartTime)> GetSmsFailureStats(string phoneNumber)
+    /// <returns>A list of SMS failure records with Phone Number, Error Message and Scheduled Start Time.</returns>
+    public List<(string PhoneNumber, string ErrorMessage, string ScheduledStartTime)> GetSmsFailureStats(string phoneNumber)
     {
-        var results = new List<(string, string)>();
+        var results = new List<(string, string, string)>();
         
         if (!_hasData || string.IsNullOrWhiteSpace(phoneNumber))
             return results;
 
-        // Navigate to Summary first
-        if (!_jsonRoot.TryGetProperty("Summary", out var summary))
+        // Get the Patients array from the root
+        if (!_jsonRoot.TryGetProperty("Patients", out var patients))
         {
-            System.Diagnostics.Debug.WriteLine("Summary property not found in database root");
+            System.Diagnostics.Debug.WriteLine("Patients property not found in database root");
             return results;
         }
 
-        if (!summary.TryGetProperty("MessageFailure", out var messageFailure))
+        if (patients.ValueKind != JsonValueKind.Array)
         {
-            System.Diagnostics.Debug.WriteLine("MessageFailure property not found in Summary");
-            return results;
-        }
-        
-       // MessageFailure is directly the SmsStats array
-       if (messageFailure.ValueKind != JsonValueKind.Array)
-        {
-           System.Diagnostics.Debug.WriteLine($"MessageFailure is not an array, it's a {messageFailure.ValueKind}");
+            System.Diagnostics.Debug.WriteLine($"Patients is not an array, it's a {patients.ValueKind}");
             return results;
         }
 
-       System.Diagnostics.Debug.WriteLine($"MessageFailure (SmsStats) array has {messageFailure.GetArrayLength()} clients");
+        System.Diagnostics.Debug.WriteLine($"Searching {patients.GetArrayLength()} patients for phone number {phoneNumber}");
 
-       foreach (var client in messageFailure.EnumerateArray())
+        // Iterate through all patients
+        foreach (var patient in patients.EnumerateArray())
         {
-            if (!client.TryGetProperty("Records", out var records))
-            {
-                System.Diagnostics.Debug.WriteLine("Client has no Records property");
-                continue;
-            }
-
-            if (records.ValueKind != JsonValueKind.Array)
+            // Check if patient has PhoneNumbers array
+            if (!patient.TryGetProperty("PhoneNumbers", out var phoneNumbers))
                 continue;
 
-            System.Diagnostics.Debug.WriteLine($"  Client has {records.GetArrayLength()} records");
+            if (phoneNumbers.ValueKind != JsonValueKind.Array)
+                continue;
 
-            foreach (var record in records.EnumerateArray())
+            // Check each phone number
+            foreach (var phoneEntry in phoneNumbers.EnumerateArray())
             {
-                // Debug: Show all property names in this record
-                var propertyNames = new List<string>();
-                foreach (var prop in record.EnumerateObject())
+                // Get the phone number
+                if (!phoneEntry.TryGetProperty("Number", out var numberElement))
+                    continue;
+
+                var phoneNumberFromJson = numberElement.GetString();
+                if (string.IsNullOrWhiteSpace(phoneNumberFromJson))
+                    continue;
+
+                // Normalize the phone number from JSON (remove non-digits and leading 1)
+                var normalizedPhoneFromJson = new string(phoneNumberFromJson.Where(char.IsDigit).ToArray());
+                if (normalizedPhoneFromJson.Length == 11 && normalizedPhoneFromJson[0] == '1')
                 {
-                    propertyNames.Add(prop.Name);
+                    normalizedPhoneFromJson = normalizedPhoneFromJson.Substring(1);
                 }
-                System.Diagnostics.Debug.WriteLine($"    Record properties: {string.Join(", ", propertyNames)}");
 
-                if (record.TryGetProperty("To ", out var toElement))
+                // Check if this phone number matches
+                if (normalizedPhoneFromJson != phoneNumber)
+                    continue;
+
+                System.Diagnostics.Debug.WriteLine($"Found matching phone number: {phoneNumberFromJson}");
+
+                // Get DeliveryFailure array
+                if (!phoneEntry.TryGetProperty("DeliveryFailure", out var deliveryFailures))
+                    continue;
+
+                if (deliveryFailures.ValueKind != JsonValueKind.Array)
+                    continue;
+
+                System.Diagnostics.Debug.WriteLine($"  Found {deliveryFailures.GetArrayLength()} delivery failures");
+
+                // Extract each failure record
+                foreach (var failure in deliveryFailures.EnumerateArray())
                 {
-                    var toNumber = toElement.GetString();
-                    System.Diagnostics.Debug.WriteLine($"    To field value: '{toNumber}'");
+                    var errorMessage = failure.TryGetProperty("ErrorMessage", out var errElem)
+                        ? errElem.GetString() ?? string.Empty
+                        : string.Empty;
                     
-                    if (!string.IsNullOrWhiteSpace(toNumber))
-                    {
-                        // Normalize the phone number from JSON (remove non-digits and leading 1)
-                        var normalizedToNumber = new string(toNumber.Where(char.IsDigit).ToArray());
-                        if (normalizedToNumber.Length == 11 && normalizedToNumber[0] == '1')
-                        {
-                            normalizedToNumber = normalizedToNumber.Substring(1);
-                        }
+                    var scheduledStart = failure.TryGetProperty("ScheduledStart", out var startElem)
+                        ? startElem.GetString() ?? string.Empty
+                        : string.Empty;
 
-                        System.Diagnostics.Debug.WriteLine($"    Comparing normalized '{normalizedToNumber}' with '{phoneNumber}'");
+                    // Format the phone number for display
+                    var formattedPhone = normalizedPhoneFromJson.Length == 10
+                        ? $"{normalizedPhoneFromJson.Substring(0, 3)}-{normalizedPhoneFromJson.Substring(3, 3)}-{normalizedPhoneFromJson.Substring(6, 4)}"
+                        : phoneNumberFromJson;
 
-                        if (normalizedToNumber == phoneNumber)
-                        {
-                            var errorMessage = record.TryGetProperty("Error Message", out var errElem)
-                                ? errElem.GetString() ?? string.Empty
-                                : string.Empty;
-                            
-                            var scheduledStart = record.TryGetProperty("Scheduled Start Time", out var startElem)
-                                ? startElem.GetString() ?? string.Empty
-                                : string.Empty;
-
-                            System.Diagnostics.Debug.WriteLine($"    MATCH FOUND! Error: {errorMessage}, Start: {scheduledStart}");
-                            results.Add((errorMessage, scheduledStart));
-                        }
-                    }
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("    No 'To ' field found in record");
+                    System.Diagnostics.Debug.WriteLine($"    Adding failure: {errorMessage} at {scheduledStart}");
+                    results.Add((formattedPhone, errorMessage, scheduledStart));
                 }
             }
         }
 
+        System.Diagnostics.Debug.WriteLine($"Total SMS failures found: {results.Count}");
         return results;
     }
 
-    /// <summary>Gets message delivery records for a specific phone number.</summary>
+    /// <summary>Gets message delivery records for a specific phone number by searching all patients.</summary>
     /// <param name="phoneNumber">The normalized 10-digit phone number to search for.</param>
-    /// <returns>A list of message delivery records with Delivery Status, Message Type, Error Message, Date Sent, and Time Sent.</returns>
-    public List<(string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> GetMessageDeliveryStats(string phoneNumber)
+    /// <returns>A list of message delivery records with Phone Number, Delivery Status, Message Type, Error Message, Date Sent, and Time Sent.</returns>
+    public List<(string PhoneNumber, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> GetMessageDeliveryStats(string phoneNumber)
     {
-        var results = new List<(string, string, string, string, string)>();
+        var results = new List<(string, string, string, string, string, string)>();
         
         if (!_hasData || string.IsNullOrWhiteSpace(phoneNumber))
             return results;
 
-        // Navigate to Summary first
-        if (!_jsonRoot.TryGetProperty("Summary", out var summary))
+        // Get the Patients array from the root
+        if (!_jsonRoot.TryGetProperty("Patients", out var patients))
         {
-            System.Diagnostics.Debug.WriteLine("Summary property not found in database root");
+            System.Diagnostics.Debug.WriteLine("Patients property not found in database root");
             return results;
         }
 
-        if (!summary.TryGetProperty("MessageDelivery", out var messageDelivery))
+        if (patients.ValueKind != JsonValueKind.Array)
         {
-            System.Diagnostics.Debug.WriteLine("MessageDelivery property not found in Summary");
-            return results;
-        }
-        
-        // MessageDelivery is directly the MessageDeliveryStats array
-        if (messageDelivery.ValueKind != JsonValueKind.Array)
-        {
-            System.Diagnostics.Debug.WriteLine($"MessageDelivery is not an array, it's a {messageDelivery.ValueKind}");
+            System.Diagnostics.Debug.WriteLine($"Patients is not an array, it's a {patients.ValueKind}");
             return results;
         }
 
-        System.Diagnostics.Debug.WriteLine($"MessageDelivery array has {messageDelivery.GetArrayLength()} records");
+        System.Diagnostics.Debug.WriteLine($"Searching {patients.GetArrayLength()} patients for phone number {phoneNumber}");
 
-        int recordIndex = 0;
-        foreach (var record in messageDelivery.EnumerateArray())
+        // Iterate through all patients
+        foreach (var patient in patients.EnumerateArray())
         {
-            recordIndex++;
-            
-            // Debug: Show all property names in this record (only for first few records)
-            if (recordIndex <= 3)
-            {
-                var propertyNames = new List<string>();
-                foreach (var prop in record.EnumerateObject())
-                {
-                    propertyNames.Add(prop.Name);
-                }
-                System.Diagnostics.Debug.WriteLine($"  Record {recordIndex} properties: {string.Join(", ", propertyNames)}");
-            }
-
-            // Filter for SMS messages only
-            if (record.TryGetProperty("Delivery Type", out var deliveryTypeElement))
-            {
-                var deliveryType = deliveryTypeElement.ValueKind == JsonValueKind.String 
-                    ? deliveryTypeElement.GetString() 
-                    : null;
-                
-                if (recordIndex <= 3)
-                {
-                    System.Diagnostics.Debug.WriteLine($"  Record {recordIndex} Delivery Type: '{deliveryType}'");
-                }
-
-                // Only process SMSMessage records
-                if (deliveryType != "SMSMessage")
-                {
-                    if (recordIndex <= 3)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"  Skipping non-SMS record");
-                    }
-                    continue;
-                }
-            }
-            else
-            {
-                if (recordIndex <= 3)
-                {
-                    System.Diagnostics.Debug.WriteLine($"  Record {recordIndex} has no 'Delivery Type' field, skipping");
-                }
+            // Check if patient has PhoneNumbers array
+            if (!patient.TryGetProperty("PhoneNumbers", out var phoneNumbers))
                 continue;
-            }
 
-            if (record.TryGetProperty("Phone Number", out var phoneNumberElement))
+            if (phoneNumbers.ValueKind != JsonValueKind.Array)
+                continue;
+
+            // Check each phone number
+            foreach (var phoneEntry in phoneNumbers.EnumerateArray())
             {
-                var phoneNumberValue = phoneNumberElement.ValueKind == JsonValueKind.String 
-                    ? phoneNumberElement.GetString() 
-                    : null;
-                
-                if (recordIndex <= 3)
+                // Get the phone number
+                if (!phoneEntry.TryGetProperty("Number", out var numberElement))
+                    continue;
+
+                var phoneNumberFromJson = numberElement.GetString();
+                if (string.IsNullOrWhiteSpace(phoneNumberFromJson))
+                    continue;
+
+                // Normalize the phone number from JSON (remove non-digits and leading 1)
+                var normalizedPhoneFromJson = new string(phoneNumberFromJson.Where(char.IsDigit).ToArray());
+                if (normalizedPhoneFromJson.Length == 11 && normalizedPhoneFromJson[0] == '1')
                 {
-                    System.Diagnostics.Debug.WriteLine($"  Record {recordIndex} Phone Number: '{phoneNumberValue}'");
+                    normalizedPhoneFromJson = normalizedPhoneFromJson.Substring(1);
                 }
-                
-                if (!string.IsNullOrWhiteSpace(phoneNumberValue))
+
+                // Check if this phone number matches
+                if (normalizedPhoneFromJson != phoneNumber)
+                    continue;
+
+                System.Diagnostics.Debug.WriteLine($"Found matching phone number: {phoneNumberFromJson}");
+
+                // Get DeliverySuccess array
+                if (!phoneEntry.TryGetProperty("DeliverySuccess", out var deliverySuccesses))
+                    continue;
+
+                if (deliverySuccesses.ValueKind != JsonValueKind.Array)
+                    continue;
+
+                System.Diagnostics.Debug.WriteLine($"  Found {deliverySuccesses.GetArrayLength()} successful deliveries");
+
+                // Extract each delivery record
+                foreach (var delivery in deliverySuccesses.EnumerateArray())
                 {
-                    // Normalize the phone number from JSON (remove non-digits and leading 1)
-                    var normalizedPhoneNumber = new string(phoneNumberValue.Where(char.IsDigit).ToArray());
-                    if (normalizedPhoneNumber.Length == 11 && normalizedPhoneNumber[0] == '1')
-                    {
-                        normalizedPhoneNumber = normalizedPhoneNumber.Substring(1);
-                    }
+                    var deliveryStatus = delivery.TryGetProperty("DeliveryStatus", out var statusElem)
+                        ? statusElem.GetString() ?? string.Empty
+                        : string.Empty;
+                    
+                    var messageType = delivery.TryGetProperty("MessageType", out var typeElem)
+                        ? typeElem.GetString() ?? string.Empty
+                        : string.Empty;
+                    
+                    var errorMessage = delivery.TryGetProperty("ErrorMessage", out var errElem)
+                        ? errElem.GetString() ?? string.Empty
+                        : string.Empty;
+                    
+                    var dateSent = delivery.TryGetProperty("DateSent", out var dateElem)
+                        ? dateElem.GetString() ?? string.Empty
+                        : string.Empty;
+                    
+                    var timeSent = delivery.TryGetProperty("TimeSent", out var timeElem)
+                        ? timeElem.GetString() ?? string.Empty
+                        : string.Empty;
 
-                    if (recordIndex <= 3)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"  Normalized: '{normalizedPhoneNumber}' vs '{phoneNumber}'");
-                    }
+                    // Format the phone number for display
+                    var formattedPhone = normalizedPhoneFromJson.Length == 10
+                        ? $"{normalizedPhoneFromJson.Substring(0, 3)}-{normalizedPhoneFromJson.Substring(3, 3)}-{normalizedPhoneFromJson.Substring(6, 4)}"
+                        : phoneNumberFromJson;
 
-                    if (normalizedPhoneNumber == phoneNumber)
-                    {
-                        var deliveryStatus = record.TryGetProperty("Delivery Status", out var statusElem) && statusElem.ValueKind == JsonValueKind.String
-                            ? statusElem.GetString() ?? string.Empty
-                            : string.Empty;
-                        
-                        var messageType = record.TryGetProperty("Message Type", out var typeElem) && typeElem.ValueKind == JsonValueKind.String
-                            ? typeElem.GetString() ?? string.Empty
-                            : string.Empty;
-                        
-                        var errorMessage = record.TryGetProperty("Error Message", out var errElem) && errElem.ValueKind == JsonValueKind.String
-                            ? errElem.GetString() ?? string.Empty
-                            : string.Empty;
-                        
-                        var dateSent = record.TryGetProperty("Date Sent", out var dateElem) && dateElem.ValueKind == JsonValueKind.String
-                            ? dateElem.GetString() ?? string.Empty
-                            : string.Empty;
-                        
-                        var timeSent = record.TryGetProperty("Time Sent", out var timeElem) && timeElem.ValueKind == JsonValueKind.String
-                            ? timeElem.GetString() ?? string.Empty
-                            : string.Empty;
-
-                        System.Diagnostics.Debug.WriteLine($"  MATCH FOUND! Status: {deliveryStatus}, Type: {messageType}");
-                        results.Add((deliveryStatus, messageType, errorMessage, dateSent, timeSent));
-                    }
-                }
-            }
-            else
-            {
-                if (recordIndex <= 3)
-                {
-                    System.Diagnostics.Debug.WriteLine($"  Record {recordIndex} has no 'Phone Number' field");
+                    System.Diagnostics.Debug.WriteLine($"    Adding delivery: {messageType} - {deliveryStatus} on {dateSent} at {timeSent}");
+                    results.Add((formattedPhone, deliveryStatus, messageType, errorMessage, dateSent, timeSent));
                 }
             }
         }
 
+
+        System.Diagnostics.Debug.WriteLine($"Total message deliveries found: {results.Count}");
         return results;
     }
 }

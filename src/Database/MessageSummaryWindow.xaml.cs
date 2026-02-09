@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 
 namespace TingenTransmorger.Database;
 
@@ -10,67 +7,145 @@ namespace TingenTransmorger.Database;
 /// </summary>
 public partial class MessageSummaryWindow : Window
 {
-    public MessageSummaryWindow()
+    private List<(string PhoneNumber, string ErrorMessage, string ScheduledStartTime)> _smsFailures;
+    private List<(string PhoneNumber, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> _messageDeliveries;
+
+    public MessageSummaryWindow(
+        List<(string PhoneNumber, string ErrorMessage, string ScheduledStartTime)> smsFailures,
+        List<(string PhoneNumber, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> messageDeliveries)
     {
         InitializeComponent();
+
+        SetMessageData(smsFailures, messageDeliveries);
     }
 
-    /// <summary>Sets the message data to display and populates the grids.</summary>
-    /// <param name="smsFailures">List of SMS failure records.</param>
-    /// <param name="messageDeliveries">List of message delivery records.</param>
     public void SetMessageData(
-        List<(string ErrorMessage, string ScheduledStartTime)> smsFailures,
-        List<(string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> messageDeliveries)
+        List<(string PhoneNumber, string ErrorMessage, string ScheduledStartTime)> smsFailures,
+        List<(string PhoneNumber, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> messageDeliveries)
     {
-        // Convert tuples to display objects for SMS failures
-        var smsFailureItems = smsFailures
-            .Select(f => new SmsFailureItem
+        _smsFailures = smsFailures;
+        _messageDeliveries = messageDeliveries;
+
+        // Combine both lists into a unified message history
+        var combinedMessages = new List<MessageHistoryRow>();
+
+        // Add SMS Failures
+        foreach (var failure in smsFailures)
+        {
+            combinedMessages.Add(new MessageHistoryRow
             {
-                ErrorMessage = f.ErrorMessage,
-                ScheduledStartTime = f.ScheduledStartTime
-            })
-            .OrderByDescending(f => f.ScheduledStartTime)
+                MessageCategory = "Failure",
+                IsFailure = true,
+                PhoneNumber = failure.PhoneNumber ?? string.Empty,
+                Date = ExtractDate(failure.ScheduledStartTime),
+                Time = ExtractTime(failure.ScheduledStartTime),
+                Status = "Failed",
+                MessageType = "SMS",
+                ErrorMessage = failure.ErrorMessage ?? string.Empty,
+                SortTimestamp = ParseTimestamp(failure.ScheduledStartTime)
+            });
+        }
+
+        // Add Message Deliveries
+        foreach (var delivery in messageDeliveries)
+        {
+            combinedMessages.Add(new MessageHistoryRow
+            {
+                MessageCategory = "Delivery",
+                IsFailure = false,
+                PhoneNumber = delivery.PhoneNumber ?? string.Empty,
+                Date = delivery.DateSent ?? string.Empty,
+                Time = delivery.TimeSent ?? string.Empty,
+                Status = delivery.DeliveryStatus ?? string.Empty,
+                MessageType = delivery.MessageType ?? string.Empty,
+                ErrorMessage = delivery.ErrorMessage ?? string.Empty,
+                SortTimestamp = ParseTimestamp($"{delivery.DateSent} {delivery.TimeSent}")
+            });
+        }
+
+        // Sort by most recent first
+        var sortedMessages = combinedMessages
+            .OrderByDescending(m => m.SortTimestamp)
             .ToList();
 
-        dgSmsFailures.ItemsSource = smsFailureItems;
-
-        // Convert tuples to display objects for message deliveries
-        var messageDeliveryItems = messageDeliveries
-            .Select(d => new MessageDeliveryItem
-            {
-                DeliveryStatus = d.DeliveryStatus,
-                MessageType = d.MessageType,
-                ErrorMessage = d.ErrorMessage,
-                DateSent = d.DateSent,
-                TimeSent = d.TimeSent
-            })
-            .OrderByDescending(d => d.DateSent)
-            .ThenByDescending(d => d.TimeSent)
-            .ToList();
-
-        dgMessageDeliveries.ItemsSource = messageDeliveryItems;
+        dgMessages.ItemsSource = sortedMessages;
     }
 
     private void btnClose_Click(object sender, RoutedEventArgs e)
     {
-        this.Close();
+        Close();
     }
 
-    /// <summary>Display class for SMS failure records.</summary>
-    private class SmsFailureItem
+    private void btnDiagnostic_Click(object sender, RoutedEventArgs e)
     {
-        public string ScheduledStartTime { get; set; } = string.Empty;
-        public string ErrorMessage { get; set; } = string.Empty;
+        // Get the parent window's TransMorgDb
+        if (Owner is MainWindow mainWindow && mainWindow.TransMorgDb != null)
+        {
+            var allProperties = mainWindow.TransMorgDb.ListAllRootProperties();
+            var structureInfo = mainWindow.TransMorgDb.GetDatabaseStructureDiagnostic();
+            var smsInfo = mainWindow.TransMorgDb.GetFirstSmsFailureDiagnostic();
+            var searchInfo = mainWindow.TransMorgDb.SearchForSmsFailureRecords();
+            
+            var message = $"{allProperties}\n\n{'='.ToString().PadRight(80, '=')}\n\n{structureInfo}\n\n{'='.ToString().PadRight(80, '=')}\n\n{smsInfo}\n\n{'='.ToString().PadRight(80, '=')}\n\n{searchInfo}";
+            
+            var diagnosticWindow = new DiagnosticWindow();
+            diagnosticWindow.SetDiagnosticText(message);
+            diagnosticWindow.Owner = this;
+            diagnosticWindow.ShowDialog();
+        }
+        else
+        {
+            MessageBox.Show("Database not available", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
-    /// <summary>Display class for message delivery records.</summary>
-    private class MessageDeliveryItem
+    private string ExtractDate(string scheduledStartTime)
     {
-        public string DateSent { get; set; } = string.Empty;
-        public string TimeSent { get; set; } = string.Empty;
-        public string DeliveryStatus { get; set; } = string.Empty;
-        public string MessageType { get; set; } = string.Empty;
-        public string ErrorMessage { get; set; } = string.Empty;
+        if (string.IsNullOrWhiteSpace(scheduledStartTime))
+            return string.Empty;
+
+        // Assuming format like "MM/DD/YYYY HH:MM:SS" or similar
+        var parts = scheduledStartTime.Split(' ');
+        return parts.Length > 0 ? parts[0] : scheduledStartTime;
+    }
+
+    private string ExtractTime(string scheduledStartTime)
+    {
+        if (string.IsNullOrWhiteSpace(scheduledStartTime))
+            return string.Empty;
+
+        // Assuming format like "MM/DD/YYYY HH:MM:SS" or similar
+        var parts = scheduledStartTime.Split(' ');
+        return parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : string.Empty;
+    }
+
+    private DateTime ParseTimestamp(string timestamp)
+    {
+        if (string.IsNullOrWhiteSpace(timestamp))
+            return DateTime.MinValue;
+
+        // Try to parse the timestamp, return MinValue if parsing fails
+        if (DateTime.TryParse(timestamp, out var result))
+            return result;
+
+        return DateTime.MinValue;
     }
 }
+
+/// <summary>
+/// Represents a row in the combined message history grid.
+/// </summary>
+public class MessageHistoryRow
+{
+    public string MessageCategory { get; set; } = string.Empty;
+    public bool IsFailure { get; set; }
+    public string PhoneNumber { get; set; } = string.Empty;
+    public string Date { get; set; } = string.Empty;
+    public string Time { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public string MessageType { get; set; } = string.Empty;
+    public string ErrorMessage { get; set; } = string.Empty;
+    public DateTime SortTimestamp { get; set; }
+}
+
 

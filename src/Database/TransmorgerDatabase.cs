@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 namespace TingenTransmorger.Database;
 
 /// <summary>Builds the Transmorger database from processed report JSON files.</summary>
-public class TransmorgerDatabase
+public partial class TransmorgerDatabase
 {
 
 
@@ -235,11 +235,13 @@ public class TransmorgerDatabase
     {
         var visitStatsSummary = ReadJsonFile(tmpDir, "Visit_Stats-Summary.json");
         var messageFailureSummary = ReadJsonFile(tmpDir, "Message_Failure-Summary.json");
+        var messageDeliveryStats = ReadJsonFile(tmpDir, "Message_Delivery-Message_Delivery_Stats.json");
 
         return new Dictionary<string, object?>
         {
             ["VisitStats"] = visitStatsSummary,
-            ["MessageFailure"] = messageFailureSummary
+            ["MessageFailure"] = messageFailureSummary,
+            ["MessageDelivery"] = messageDeliveryStats
         };
     }
 

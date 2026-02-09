@@ -23,17 +23,6 @@ class Configuration
     public string Mode { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the application should check for
-    /// database updates during startup.
-    /// </summary>
-    public bool CheckForDatabaseUpdateAtStartup { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether null identifiers should be shown in search results.
-    /// </summary>
-    public bool ShowNullIdsInSearchResults { get; set; }
-
-    /// <summary>
     /// Gets or sets a mapping of standard directory keys to their configured paths.
     /// </summary>
     public Dictionary<string, string> StandardDirectories { get; set; }
@@ -100,9 +89,7 @@ class Configuration
     /// </returns>
     private static Configuration CreateDefault(string appDataDirName) => new Configuration
     {
-        Mode                            = "Default",
-        CheckForDatabaseUpdateAtStartup = true,
-        ShowNullIdsInSearchResults      = false,
+        Mode                            = "Standard",
         StandardDirectories             = new Dictionary<string, string>
         {
             { "LocalDb", "" },

@@ -258,7 +258,8 @@
                                         x:Name="btnPhoneDetails"
                                         Width="32"
                                         Height="30"
-                                        Margin="0,0,0,4">
+                                        Margin="0,0,0,4"
+                                        Click="btnPhoneDetails_Click">
                                         <Button.Resources>
                                             <Style TargetType="Border">
                                                 <Setter Property="CornerRadius" Value="0,5,5,0" />

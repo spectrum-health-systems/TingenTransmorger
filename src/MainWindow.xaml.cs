@@ -34,6 +34,16 @@ public partial class MainWindow : Window
     private string _currentPatientId = string.Empty;
 
     /// <summary>
+    /// SMS failure records for the current patient's phone numbers.
+    /// </summary>
+    private List<(string ErrorMessage, string ScheduledStartTime)> _smsFailures = new();
+
+    /// <summary>
+    /// Message delivery records for the current patient's phone numbers.
+    /// </summary>
+    private List<(string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> _messageDeliveries = new();
+
+    /// <summary>
     /// Entry method for Tingen Transmorger.
     /// </summary>
     public MainWindow()
@@ -55,6 +65,8 @@ public partial class MainWindow : Window
 
         if (config.Mode.Trim().ToLower() == "admin")
         {
+            brdrMain.Background = System.Windows.Media.Brushes.IndianRed;
+
             MessageBoxResult result = MessageBox.Show(
                 "Would you like to rebuild the database?",
                 "Admin Mode",
@@ -388,6 +400,40 @@ public partial class MainWindow : Window
         }
 
         lblPatientPhoneValue.Content = string.Join(", ", phoneNumbers);
+
+        // Query SMS failure and delivery stats for all patient phone numbers
+        _smsFailures.Clear();
+        _messageDeliveries.Clear();
+
+        foreach (var phoneNumber in phoneNumbers)
+        {
+            if (phoneNumber != "No phone numbers on file")
+            {
+                // Get normalized phone number (digits only)
+                var normalizedPhone = new string(phoneNumber.Where(char.IsDigit).ToArray());
+
+                if (normalizedPhone.Length == 10)
+                {
+                    // DEBUG: Show what we're searching for
+                    System.Diagnostics.Debug.WriteLine($"Searching for phone: {normalizedPhone}");
+
+                    // Query SMS failures
+                    var failures = TransMorgDb.GetSmsFailureStats(normalizedPhone);
+                    System.Diagnostics.Debug.WriteLine($"Found {failures.Count} SMS failures");
+                    _smsFailures.AddRange(failures);
+
+                    // Query message deliveries
+                    var deliveries = TransMorgDb.GetMessageDeliveryStats(normalizedPhone);
+                    System.Diagnostics.Debug.WriteLine($"Found {deliveries.Count} message deliveries");
+                    _messageDeliveries.AddRange(deliveries);
+                }
+            }
+        }
+
+        System.Diagnostics.Debug.WriteLine($"Total failures: {_smsFailures.Count}, Total deliveries: {_messageDeliveries.Count}");
+
+        // Update btnPhoneDetails button based on SMS records
+        UpdatePhoneDetailsButton();
 
         // Display email addresses
         var emailAddresses = new List<string>();
@@ -788,6 +834,47 @@ public partial class MainWindow : Window
         spnlMeetingDetails.Visibility = Visibility.Visible;
     }
 
+    /// <summary>Updates the btnPhoneDetails button appearance based on SMS failure and delivery records.</summary>
+    private void UpdatePhoneDetailsButton()
+    {
+        bool hasFailures = _smsFailures.Count > 0;
+        bool hasDeliveries = _messageDeliveries.Count > 0;
+
+        if (!hasFailures && !hasDeliveries)
+        {
+            // No records: gray background, disabled
+            btnPhoneDetails.Background = System.Windows.Media.Brushes.Gray;
+            btnPhoneDetails.IsEnabled = false;
+        }
+        else if (hasFailures && hasDeliveries)
+        {
+            // Both: yellow background, enabled
+            btnPhoneDetails.Background = System.Windows.Media.Brushes.Yellow;
+            btnPhoneDetails.IsEnabled = true;
+        }
+        else if (hasFailures)
+        {
+            // Only failures: red background, enabled
+            btnPhoneDetails.Background = System.Windows.Media.Brushes.Red;
+            btnPhoneDetails.IsEnabled = true;
+        }
+        else
+        {
+            // Only deliveries: green background, enabled
+            btnPhoneDetails.Background = System.Windows.Media.Brushes.Green;
+            btnPhoneDetails.IsEnabled = true;
+        }
+    }
+
+    /// <summary>Handles the phone details button click event.</summary>
+    private void PhoneDetailsClicked()
+    {
+        var messageSummaryWindow = new Database.MessageSummaryWindow();
+        messageSummaryWindow.SetMessageData(_smsFailures, _messageDeliveries);
+        messageSummaryWindow.Owner = this;
+        messageSummaryWindow.ShowDialog();
+    }
+
     /*
      * EVENT HANDLERS
      */
@@ -800,4 +887,6 @@ public partial class MainWindow : Window
     private void lstbxSearchResults_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => SearchResultSelected();
 
     private void dgPatientMeetings_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => MeetingSelected();
+
+    private void btnPhoneDetails_Click(object sender, RoutedEventArgs e) => PhoneDetailsClicked();
 }

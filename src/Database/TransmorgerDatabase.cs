@@ -417,11 +417,17 @@ public partial class TransmorgerDatabase
         var result = new List<Dictionary<string, object?>>(providersByName.Count);
         foreach (var provider in providersByName.Values)
         {
-            result.Add(new Dictionary<string, object?>(3)
+            // Convert email addresses HashSet to List
+            var emailAddresses = provider.TryGetValue("EmailAddresses", out var emails)
+                ? ((HashSet<string>)emails!).Select(e => new Dictionary<string, object?> { ["Address"] = e }).ToList()
+                : new List<Dictionary<string, object?>>();
+
+            result.Add(new Dictionary<string, object?>(4)
             {
                 ["ProviderName"] = provider["ProviderName"],
                 ["ProviderId"] = provider["ProviderId"],
-                ["Meetings"] = (List<string>)provider["Meetings"]!
+                ["Meetings"] = (List<string>)provider["Meetings"]!,
+                ["EmailAddresses"] = emailAddresses
             });
         }
         return result;
@@ -728,8 +734,17 @@ public partial class TransmorgerDatabase
                 {
                     ["ProviderName"] = providerName,
                     ["ProviderId"] = null,  // Will be filled in from meeting details
-                    ["Meetings"] = new List<string>()  // Will be filled in from meeting details
+                    ["Meetings"] = new List<string>(),  // Will be filled in from meeting details
+                    ["EmailAddresses"] = new HashSet<string>(StringComparer.OrdinalIgnoreCase)  // Collect email addresses
                 };
+            }
+
+            // Extract email address if present
+            var emailAddress = GetStringValue(participant, "Email Address");
+            if (!string.IsNullOrWhiteSpace(emailAddress) && IsValidEmail(emailAddress))
+            {
+                var emailAddresses = (HashSet<string>)providersByName[providerName]["EmailAddresses"]!;
+                emailAddresses.Add(emailAddress);
             }
         }
     }

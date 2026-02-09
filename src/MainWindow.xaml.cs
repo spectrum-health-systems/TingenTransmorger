@@ -749,6 +749,52 @@ public partial class MainWindow : Window
         spnlPatientPhone.Visibility = Visibility.Collapsed;
         spnlPatientEmail.Visibility = Visibility.Collapsed;
 
+        // Still collect email data in the background (hidden from UI)
+        // Display email addresses (hidden from user but still processed)
+        var emailAddresses = new List<string>();
+        if (providerDetails.Value.TryGetProperty("EmailAddresses", out var emailAddressesArray))
+        {
+            if (emailAddressesArray.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var emailEntry in emailAddressesArray.EnumerateArray())
+                {
+                    if (emailEntry.TryGetProperty("Address", out var addressElem))
+                    {
+                        var address = addressElem.GetString();
+                        if (!string.IsNullOrWhiteSpace(address))
+                        {
+                            emailAddresses.Add(address);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Query email failure and delivery stats for all provider email addresses (background processing)
+        _emailFailures.Clear();
+        _emailDeliveries.Clear();
+
+        foreach (var emailAddress in emailAddresses)
+        {
+            if (emailAddress != "No email addresses on file")
+            {
+                // DEBUG: Show what we're searching for
+                System.Diagnostics.Debug.WriteLine($"Searching for provider email: {emailAddress}");
+
+                // Query email failures
+                var failures = TransMorgDb.GetEmailFailureStats(emailAddress);
+                System.Diagnostics.Debug.WriteLine($"Found {failures.Count} email failures");
+                _emailFailures.AddRange(failures);
+
+                // Query email deliveries
+                var deliveries = TransMorgDb.GetEmailDeliveryStats(emailAddress);
+                System.Diagnostics.Debug.WriteLine($"Found {deliveries.Count} email deliveries");
+                _emailDeliveries.AddRange(deliveries);
+            }
+        }
+
+        System.Diagnostics.Debug.WriteLine($"Total provider email failures: {_emailFailures.Count}, Total provider email deliveries: {_emailDeliveries.Count}");
+
         // Display meetings for this provider
         var meetingRows = new List<PatientMeetingRow>();
         if (providerDetails.Value.TryGetProperty("Meetings", out var meetingsElement))

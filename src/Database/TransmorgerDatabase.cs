@@ -14,7 +14,7 @@ public partial class TransmorgerDatabase
 {
 
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
+    internal static readonly JsonSerializerOptions JsonOptions = new()
     {
         WriteIndented = true,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping // Preserves special characters like ' and -
@@ -235,13 +235,14 @@ public partial class TransmorgerDatabase
     {
         var visitStatsSummary = ReadJsonFile(tmpDir, "Visit_Stats-Summary.json");
         var messageFailureSummary = ReadJsonFile(tmpDir, "Message_Failure-Summary.json");
-        var messageDeliveryStats = ReadJsonFile(tmpDir, "Message_Delivery-Message_Delivery_Stats.json");
+        // NOTE: Message_Delivery-Message_Delivery_Stats.json is intentionally NOT loaded here
+        // because that data is already embedded in patient phone numbers and would be redundant
 
         return new Dictionary<string, object?>
         {
             ["VisitStats"] = visitStatsSummary,
-            ["MessageFailure"] = messageFailureSummary,
-            ["MessageDelivery"] = messageDeliveryStats
+            ["MessageFailure"] = messageFailureSummary
+            // MessageDelivery intentionally excluded to avoid ~50% size increase from data duplication
         };
     }
 

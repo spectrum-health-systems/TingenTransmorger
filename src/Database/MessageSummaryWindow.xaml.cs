@@ -81,12 +81,13 @@ public partial class MessageSummaryWindow : Window
         // Get the parent window's TransMorgDb
         if (Owner is MainWindow mainWindow && mainWindow.TransMorgDb != null)
         {
+            var sizeAnalysis = mainWindow.TransMorgDb.AnalyzeDatabaseSizeIssues();
             var allProperties = mainWindow.TransMorgDb.ListAllRootProperties();
             var structureInfo = mainWindow.TransMorgDb.GetDatabaseStructureDiagnostic();
             var smsInfo = mainWindow.TransMorgDb.GetFirstSmsFailureDiagnostic();
             var searchInfo = mainWindow.TransMorgDb.SearchForSmsFailureRecords();
             
-            var message = $"{allProperties}\n\n{'='.ToString().PadRight(80, '=')}\n\n{structureInfo}\n\n{'='.ToString().PadRight(80, '=')}\n\n{smsInfo}\n\n{'='.ToString().PadRight(80, '=')}\n\n{searchInfo}";
+            var message = $"{sizeAnalysis}\n\n{'='.ToString().PadRight(80, '=')}\n\n{allProperties}\n\n{'='.ToString().PadRight(80, '=')}\n\n{structureInfo}\n\n{'='.ToString().PadRight(80, '=')}\n\n{smsInfo}\n\n{'='.ToString().PadRight(80, '=')}\n\n{searchInfo}";
             
             var diagnosticWindow = new DiagnosticWindow();
             diagnosticWindow.SetDiagnosticText(message);

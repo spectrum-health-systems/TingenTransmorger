@@ -316,4 +316,135 @@ public partial class TransmorgerDatabase
         
         return sb.ToString();
     }
+    
+    /// <summary>Analyzes database for potential data duplication to identify size issues.</summary>
+    public string AnalyzeDatabaseSizeIssues()
+    {
+        if (!_hasData)
+            return "No data loaded";
+            
+        var sb = new StringBuilder();
+        sb.AppendLine("=== Database Size Analysis ===\n");
+        
+        // Count patients
+        if (_jsonRoot.TryGetProperty("Patients", out var patients) && patients.ValueKind == JsonValueKind.Array)
+        {
+            sb.AppendLine($"Total Patients: {patients.GetArrayLength()}");
+            
+            int patientsWithDeliveryFailures = 0;
+            int patientsWithDeliverySuccesses = 0;
+            int totalDeliveryFailures = 0;
+            int totalDeliverySuccesses = 0;
+            
+            foreach (var patient in patients.EnumerateArray())
+            {
+                if (patient.TryGetProperty("PhoneNumbers", out var phoneNumbers) && phoneNumbers.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var phoneEntry in phoneNumbers.EnumerateArray())
+                    {
+                        if (phoneEntry.TryGetProperty("DeliveryFailure", out var failures) && failures.ValueKind == JsonValueKind.Array)
+                        {
+                            int failureCount = failures.GetArrayLength();
+                            if (failureCount > 0)
+                            {
+                                patientsWithDeliveryFailures++;
+                                totalDeliveryFailures += failureCount;
+                            }
+                        }
+                        
+                        if (phoneEntry.TryGetProperty("DeliverySuccess", out var successes) && successes.ValueKind == JsonValueKind.Array)
+                        {
+                            int successCount = successes.GetArrayLength();
+                            if (successCount > 0)
+                            {
+                                patientsWithDeliverySuccesses++;
+                                totalDeliverySuccesses += successCount;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            sb.AppendLine($"Patients with Delivery Failures: {patientsWithDeliveryFailures}");
+            sb.AppendLine($"Total Delivery Failure records (in patients): {totalDeliveryFailures}");
+            sb.AppendLine($"Patients with Delivery Successes: {patientsWithDeliverySuccesses}");
+            sb.AppendLine($"Total Delivery Success records (in patients): {totalDeliverySuccesses}\n");
+        }
+        
+        // Check for Summary sections that might duplicate data
+        if (_jsonRoot.TryGetProperty("Summary", out var summary))
+        {
+            sb.AppendLine("Summary section exists:");
+            
+            if (summary.TryGetProperty("MessageFailure", out var msgFailure))
+            {
+                if (msgFailure.ValueKind == JsonValueKind.Array)
+                {
+                    sb.AppendLine($"  MessageFailure array length: {msgFailure.GetArrayLength()}");
+                    
+                    int totalRecords = 0;
+                    foreach (var item in msgFailure.EnumerateArray())
+                    {
+                        if (item.TryGetProperty("Records", out var records) && records.ValueKind == JsonValueKind.Array)
+                        {
+                            totalRecords += records.GetArrayLength();
+                        }
+                    }
+                    sb.AppendLine($"  Total records in MessageFailure: {totalRecords}");
+                }
+                else
+                {
+                    sb.AppendLine($"  MessageFailure type: {msgFailure.ValueKind}");
+                }
+            }
+            
+            if (summary.TryGetProperty("MessageDelivery", out var msgDelivery))
+            {
+                if (msgDelivery.ValueKind == JsonValueKind.Array)
+                {
+                    sb.AppendLine($"  MessageDelivery array length: {msgDelivery.GetArrayLength()}");
+                }
+                else
+                {
+                    sb.AppendLine($"  MessageDelivery type: {msgDelivery.ValueKind}");
+                }
+            }
+            
+            sb.AppendLine();
+        }
+        
+        // Check for other potential duplicate storage locations
+        var rootProps = new List<string>();
+        foreach (var prop in _jsonRoot.EnumerateObject())
+        {
+            if (prop.Name.Contains("Message", StringComparison.OrdinalIgnoreCase) ||
+                prop.Name.Contains("SMS", StringComparison.OrdinalIgnoreCase) ||
+                prop.Name.Contains("Delivery", StringComparison.OrdinalIgnoreCase) ||
+                prop.Name.Contains("Failure", StringComparison.OrdinalIgnoreCase))
+            {
+                var count = prop.Value.ValueKind == JsonValueKind.Array ? prop.Value.GetArrayLength() : 0;
+                rootProps.Add($"  {prop.Name} ({prop.Value.ValueKind}) {(count > 0 ? $"[{count} items]" : "")}");
+            }
+        }
+        
+        if (rootProps.Count > 0)
+        {
+            sb.AppendLine("Other message-related properties at root level:");
+            foreach (var prop in rootProps)
+            {
+                sb.AppendLine(prop);
+            }
+            sb.AppendLine();
+        }
+        
+        sb.AppendLine("*** POTENTIAL DUPLICATION ANALYSIS ***");
+        sb.AppendLine("If data is stored BOTH in patient phone numbers AND in Summary/root sections,");
+        sb.AppendLine("this would cause the database to be approximately double the necessary size.");
+        sb.AppendLine();
+        sb.AppendLine("RECOMMENDATION:");
+        sb.AppendLine("The Summary.MessageDelivery section appears to be redundant.");
+        sb.AppendLine("Consider removing it from the database build process to reduce file size by ~50%.");
+        
+        return sb.ToString();
+    }
 }

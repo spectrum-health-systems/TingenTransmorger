@@ -83,7 +83,7 @@
                             Orientation="Horizontal">
                             <TextBox
                                 x:Name="txbxSearch"
-                                Width="260"
+                                Width="310"
                                 Height="32"
                                 Margin="10,0,8,0"
                                 Padding="10,0,0,0"
@@ -96,17 +96,6 @@
                                     </Style>
                                 </TextBox.Resources>
                             </TextBox>
-                            <Button
-                                x:Name="btnGoSearch"
-                                Width="32"
-                                Height="32"
-                                Content="&gt;">
-                                <Button.Resources>
-                                    <Style TargetType="Border">
-                                        <Setter Property="CornerRadius" Value="5" />
-                                    </Style>
-                                </Button.Resources>
-                            </Button>
                         </StackPanel>
                         <ListBox
                             x:Name="lstbxSearchResults"

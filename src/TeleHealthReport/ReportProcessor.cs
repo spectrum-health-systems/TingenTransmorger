@@ -41,4 +41,56 @@ static class ReportProcessor
         ProcessWorkbook.MessageFailure(importDir, tmpDir);
         ProcessWorkbook.MessageDelivery(importDir, tmpDir);
     }
+
+    /// <summary>
+    /// Processes Visit Stats reports with progress callback support.
+    /// </summary>
+    /// <param name="importDir">Directory containing source Excel files.</param>
+    /// <param name="tmpDir">Temporary data directory.</param>
+    /// <param name="statusCallback">Optional callback to report status messages.</param>
+    internal static void ProcessVisitStats(string importDir, string tmpDir, Action<string>? statusCallback = null)
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        Directory.CreateDirectory(tmpDir);
+        ProcessWorkbook.VisitStats(importDir, tmpDir, statusCallback);
+    }
+
+    /// <summary>
+    /// Processes Visit Details reports with progress callback support.
+    /// </summary>
+    /// <param name="importDir">Directory containing source Excel files.</param>
+    /// <param name="tmpDir">Temporary data directory.</param>
+    /// <param name="statusCallback">Optional callback to report status messages.</param>
+    internal static void ProcessVisitDetails(string importDir, string tmpDir, Action<string>? statusCallback = null)
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        Directory.CreateDirectory(tmpDir);
+        ProcessWorkbook.VisitDetails(importDir, tmpDir, statusCallback);
+    }
+
+    /// <summary>
+    /// Processes Message Failure reports with progress callback support.
+    /// </summary>
+    /// <param name="importDir">Directory containing source Excel files.</param>
+    /// <param name="tmpDir">Temporary data directory.</param>
+    /// <param name="statusCallback">Optional callback to report status messages.</param>
+    internal static void ProcessMessageFailure(string importDir, string tmpDir, Action<string>? statusCallback = null)
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        Directory.CreateDirectory(tmpDir);
+        ProcessWorkbook.MessageFailure(importDir, tmpDir, statusCallback);
+    }
+
+    /// <summary>
+    /// Processes Message Delivery reports with progress callback support.
+    /// </summary>
+    /// <param name="importDir">Directory containing source Excel files.</param>
+    /// <param name="tmpDir">Temporary data directory.</param>
+    /// <param name="statusCallback">Optional callback to report status messages.</param>
+    internal static void ProcessMessageDelivery(string importDir, string tmpDir, Action<string>? statusCallback = null)
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        Directory.CreateDirectory(tmpDir);
+        ProcessWorkbook.MessageDelivery(importDir, tmpDir, statusCallback);
+    }
 }

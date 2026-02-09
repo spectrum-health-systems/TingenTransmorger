@@ -287,6 +287,8 @@ public class TransmorgerDatabase
             }
         }
 
+        AddPhoneNumbersFromParticipantDetails(tmpDir, patientsByName, participantDetails);
+
         AddPhoneNumbersFromSmsStats(tmpDir, patientsByName);
 
         AddEmailAddressesFromEmailStats(tmpDir, patientsByName);
@@ -895,6 +897,71 @@ public class TransmorgerDatabase
         }
 
         return false;
+    }
+
+    /// <summary>Adds phone numbers from participant details to patient records.</summary>
+    /// <param name="tmpDir">Directory containing JSON files.</param>
+    /// <param name="patientsByName">Dictionary of patients keyed by name.</param>
+    /// <param name="participantDetails">Cached participant details data.</param>
+    private static void AddPhoneNumbersFromParticipantDetails(string tmpDir, Dictionary<string, Dictionary<string, object?>> patientsByName, List<Dictionary<string, object?>>? participantDetails)
+    {
+        if (participantDetails == null)
+        {
+            return;
+        }
+
+        var missingPatients = new HashSet<string>();
+
+        foreach (var participant in participantDetails)
+        {
+            // Only process client (patient) records
+            if (!IsClient(participant))
+            {
+                continue;
+            }
+
+            var patientName = GetStringValue(participant, "Participant Name");
+            var phoneNumber = GetStringValue(participant, "Phone Number");
+
+            if (string.IsNullOrWhiteSpace(patientName))
+            {
+                continue;
+            }
+
+            // Skip if no phone number
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                continue;
+            }
+
+            // Check if patient exists
+            if (patientsByName.TryGetValue(patientName, out var patient))
+            {
+                var sanitizedPhone = SanitizePhoneNumber(phoneNumber);
+                if (!string.IsNullOrEmpty(sanitizedPhone))
+                {
+                    var phoneNumbersDict = (Dictionary<string, List<Dictionary<string, object?>>>)patient["PhoneNumbers"]!;
+
+                    // Add the phone number if it doesn't already exist
+                    if (!phoneNumbersDict.ContainsKey(sanitizedPhone))
+                    {
+                        phoneNumbersDict[sanitizedPhone] = new List<Dictionary<string, object?>>();
+                    }
+                }
+            }
+            else
+            {
+                if (!missingPatients.Contains(patientName))
+                {
+                    missingPatients.Add(patientName);
+                }
+            }
+        }
+
+        if (missingPatients.Count > 0)
+        {
+            WriteErrorFile(tmpDir, "participant-phone-missing-patient.error", missingPatients.ToList());
+        }
     }
 
     /// <summary>Adds phone numbers with failed meeting details to patient records from SMS stats.</summary>

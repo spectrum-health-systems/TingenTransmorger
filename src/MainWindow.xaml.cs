@@ -40,13 +40,14 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        StartApp();
+        // Call StartApp asynchronously
+        _ = StartApp();
     }
 
     /// <summary>
     /// Starts the application.
     /// </summary>
-    private void StartApp()
+    private async Task StartApp()
     {
         var config = Configuration.Load();
 
@@ -54,16 +55,77 @@ public partial class MainWindow : Window
 
         if (config.Mode.Trim().ToLower() == "admin")
         {
-            TeleHealthReport.ReportProcessor.Process(config.AdminDirectories["Import"], config.AdminDirectories["Tmp"]);
-            TransmorgerDatabase.Build(config.AdminDirectories["Tmp"], config.StandardDirectories["MasterDb"]);
+            // Hide the main window during database rebuild
+            this.Hide();
+
+            // Show the rebuild window
+            var rebuildWindow = new Database.DatabaseRebuildWindow();
+            rebuildWindow.SetParentWindow(this);
+            rebuildWindow.Show();
+
+            // Run rebuild on background thread
+            await Task.Run(() =>
+            {
+                // Process reports with progress updates
+                rebuildWindow.UpdateTask("Processing Visit Stats...");
+                rebuildWindow.UpdateProgress(10);
+                TeleHealthReport.ReportProcessor.ProcessVisitStats(
+                    config.AdminDirectories["Import"],
+                    config.AdminDirectories["Tmp"],
+                    (status) => rebuildWindow.UpdateStatus(status));
+
+                rebuildWindow.UpdateTask("Processing Visit Details...");
+                rebuildWindow.UpdateProgress(30);
+                TeleHealthReport.ReportProcessor.ProcessVisitDetails(
+                    config.AdminDirectories["Import"],
+                    config.AdminDirectories["Tmp"],
+                    (status) => rebuildWindow.UpdateStatus(status));
+
+                rebuildWindow.UpdateTask("Processing Message Failure...");
+                rebuildWindow.UpdateProgress(50);
+                TeleHealthReport.ReportProcessor.ProcessMessageFailure(
+                    config.AdminDirectories["Import"],
+                    config.AdminDirectories["Tmp"],
+                    (status) => rebuildWindow.UpdateStatus(status));
+
+                rebuildWindow.UpdateTask("Processing Message Delivery...");
+                rebuildWindow.UpdateProgress(70);
+                TeleHealthReport.ReportProcessor.ProcessMessageDelivery(
+                    config.AdminDirectories["Import"],
+                    config.AdminDirectories["Tmp"],
+                    (status) => rebuildWindow.UpdateStatus(status));
+
+                rebuildWindow.UpdateTask("Building Database...");
+                rebuildWindow.UpdateProgress(90);
+                TransmorgerDatabase.Build(config.AdminDirectories["Tmp"], config.StandardDirectories["MasterDb"]);
+
+                rebuildWindow.Complete();
+            });
         }
 
         var localDbPath = Path.Combine(config.StandardDirectories["LocalDb"], "transmorger.db");
 
-        TransMorgDb = TransmorgerDatabase.Load(localDbPath);
+        try
+        {
+            TransMorgDb = TransmorgerDatabase.Load(localDbPath);
+        }
+        catch (FileNotFoundException)
+        {
+            var errorMessage = $"Database file not found at:\n{localDbPath}\n\nPlease ensure the database file exists or run the application in admin mode to rebuild it.";
+            StopApp(errorMessage);
+            return;
+        }
+        catch (Exception ex)
+        {
+            var errorMessage = $"Failed to load database:\n{ex.Message}";
+            StopApp(errorMessage);
+            return;
+        }
 
         rbtnByName.IsChecked = true;
         spnlPatientDetails.Visibility = Visibility.Collapsed;
+        spnlPatientMeetings.Visibility = Visibility.Collapsed;
+        spnlMeetingDetails.Visibility = Visibility.Collapsed;
     }
 
     /// <summary>
@@ -157,6 +219,12 @@ public partial class MainWindow : Window
             return;
         }
 
+        // Don't search if database is not yet initialized
+        if (TransMorgDb == null)
+        {
+            return;
+        }
+
         // Get all patients from the database
         var allPatients = TransMorgDb.GetPatients();
 
@@ -196,6 +264,12 @@ public partial class MainWindow : Window
     /// </remarks>
     private void SearchResultSelected()
     {
+        // Don't process selection if database is not yet initialized
+        if (TransMorgDb == null)
+        {
+            return;
+        }
+
         // Hide placeholder and show patient details section
         //txtDetailsPlaceholder.Visibility = Visibility.Collapsed;
         spnlPatientDetails.Visibility = Visibility.Visible;
@@ -444,6 +518,13 @@ public partial class MainWindow : Window
     /// </remarks>
     private void MeetingSelected()
     {
+        // Don't process selection if database is not yet initialized
+        if (TransMorgDb == null)
+        {
+            spnlMeetingDetails.Visibility = Visibility.Collapsed;
+            return;
+        }
+
         // Get the selected meeting
         var selectedMeeting = dgPatientMeetings.SelectedItem as PatientMeetingRow;
         if (selectedMeeting == null || string.IsNullOrWhiteSpace(selectedMeeting.MeetingId))
@@ -585,7 +666,7 @@ public partial class MainWindow : Window
         var device = string.Empty;
         var os = string.Empty;
         var browser = string.Empty;
-        
+
         // Retrieve the patient details to access the meetings array
         var patientDetailsForQuality = TransMorgDb.GetPatientDetails(_currentPatientName, _currentPatientId);
 

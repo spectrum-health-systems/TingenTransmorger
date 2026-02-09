@@ -30,7 +30,10 @@ internal class ProcessWorkbook
     /// <param name="tmpDir">
     /// Temporary data directory.
     /// </param>
-    internal static void MessageDelivery(string importDir, string tmpDir)
+    /// <param name="statusCallback">
+    /// Optional callback to report status messages.
+    /// </param>
+    internal static void MessageDelivery(string importDir, string tmpDir, Action<string>? statusCallback = null)
     {
         var allRecords = new List<Dictionary<string, object?>>();
         var headers    = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -41,7 +44,7 @@ internal class ProcessWorkbook
             {
                 ProcessWorksheet.Flat(worksheet, allRecords, headers);
             }
-        });
+        }, statusCallback);
 
         ReportUtility.WriteFlatJson(tmpDir, "Message_Delivery-Message_Delivery_Stats.json", allRecords);
     }
@@ -55,7 +58,10 @@ internal class ProcessWorkbook
     /// <param name="tmpDir">
     /// Temporary data directory.
     /// </param>
-    internal static void MessageFailure(string importDir, string tmpDir)
+    /// <param name="statusCallback">
+    /// Optional callback to report status messages.
+    /// </param>
+    internal static void MessageFailure(string importDir, string tmpDir, Action<string>? statusCallback = null)
     {
         var summaryMetrics = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
         (string, string)? summaryHeaders = null;
@@ -80,7 +86,7 @@ internal class ProcessWorkbook
             {
                 ProcessWorksheet.ClientStats(worksheet, emailStatsByClient, emailStatsHeaders);
             }
-        });
+        }, statusCallback);
 
         ReportUtility.WriteSummaryJson(tmpDir, "Message_Failure-Summary.json", summaryMetrics, summaryHeaders);
         ReportUtility.WriteClientStatsJson(tmpDir, "Message_Failure-Sms_Stats.json", smsStatsByClient);
@@ -96,7 +102,10 @@ internal class ProcessWorkbook
     /// <param name="tmpDir">
     /// Temporary data directory.
     /// </param>
-    internal static void VisitDetails(string importDir, string tmpDir)
+    /// <param name="statusCallback">
+    /// Optional callback to report status messages.
+    /// </param>
+    internal static void VisitDetails(string importDir, string tmpDir, Action<string>? statusCallback = null)
     {
         var meetingDetailsById    = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
         var meetingDetailsHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -114,7 +123,7 @@ internal class ProcessWorkbook
             {
                 ProcessWorksheet.Flat(worksheet, participantDetails, participantDetailsHeaders);
             }
-        });
+        }, statusCallback);
 
         ReportUtility.WriteKeyedJson(tmpDir, "Visit_Details-Meeting_Details.json", meetingDetailsById);
         ReportUtility.WriteFlatJson(tmpDir, "Visit_Details-Participant_Details.json", participantDetails);
@@ -129,7 +138,10 @@ internal class ProcessWorkbook
     /// <param name="tmpDir">
     /// Temporary data directory.
     /// </param>
-    internal static void VisitStats(string importDir, string tmpDir)
+    /// <param name="statusCallback">
+    /// Optional callback to report status messages.
+    /// </param>
+    internal static void VisitStats(string importDir, string tmpDir, Action<string>? statusCallback = null)
     {
         var summaryMetrics = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
 
@@ -148,7 +160,7 @@ internal class ProcessWorkbook
             {
                 ProcessWorksheet.Keyed(worksheet, meetingErrorsById, meetingErrorHeaders, "Meeting ID", aggregateNumeric: true);
             }
-        });
+        }, statusCallback);
 
         ReportUtility.WriteSummaryJson(tmpDir, "Visit_Stats-Summary.json", summaryMetrics, summaryHeaders);
         ReportUtility.WriteKeyedJson(tmpDir, "Visit_Stats-Meeting_Errors.json", meetingErrorsById);
@@ -158,16 +170,28 @@ internal class ProcessWorkbook
     /// <param name="importDir">Directory to search for Excel files.</param>
     /// <param name="pattern">File search pattern (e.g., "*Visit_Stats*.xlsx").</param>
     /// <param name="processSheet">Callback action that receives each DataTable and sheet name.</param>
-    private static void Process(string importDir, string pattern, Action<DataTable, string> processSheet)
+    /// <param name="statusCallback">Optional callback to report status messages.</param>
+    private static void Process(string importDir, string pattern, Action<DataTable, string> processSheet, Action<string>? statusCallback = null)
     {
         string[] matchingFiles = Directory.GetFiles(importDir, pattern, SearchOption.TopDirectoryOnly);
+        int processedCount = 0;
+        int totalFiles = matchingFiles.Length;
 
         foreach (string filePath in matchingFiles)
         {
+            // Skip Excel temporary files (lock files that start with ~$)
+            string fileName = Path.GetFileName(filePath);
+            if (fileName.StartsWith("~$"))
+            {
+                continue;
+            }
+
+            statusCallback?.Invoke($"Processing file {processedCount + 1}/{totalFiles}: {fileName}");
+
             using FileStream fileStream        = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             using IExcelDataReader excelReader = ExcelReaderFactory.CreateReader(fileStream);
 
-            DataSet dataSet = excelReader.AsDataSet(ExcelConfig); //
+            DataSet dataSet = excelReader.AsDataSet(ExcelConfig);
 
             foreach (DataTable worksheet in dataSet.Tables)
             {
@@ -176,6 +200,8 @@ internal class ProcessWorkbook
                     processSheet(worksheet, worksheet.TableName);
                 }
             }
+
+            processedCount++;
         }
     }
 }

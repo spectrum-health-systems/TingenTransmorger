@@ -10,9 +10,12 @@
 - [ ] Details for all messages
 - [ ] Make sure controls clear when they are supposed to
 - [ ] Collapse window components correctly
-- [ ] Smaller final datbase
+- [ ] Smaller final database
 - [ ] Show building process
 - [ ] SHFB
+- [X] Remove leading "+1" on phone numbers
+- [ ] Add "-" to phone numbers
+
 
 
 ## Settings
@@ -37,7 +40,7 @@ The ConvertMessageDeliveryStatsWorksheet() method is different than the others
 move translation stuff (e.g., maps_, first/last reverses) to excel conversion
 Do something to shrink database size
 MunoDatabase ok global?
-Remove leading "1" on phone numbers
+
 Database contains a list of files used to build that version
 Public/internal/private, static
 Admin loads database

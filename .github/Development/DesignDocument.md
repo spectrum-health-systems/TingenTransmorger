@@ -1,1 +1,0 @@
-# Tingen Muno: Design Document

@@ -151,10 +151,21 @@ public partial class MainWindow : Window
         var localDbPath = Path.Combine(config.StandardDirectories["LocalDb"], "transmorger.db");
         var masterDbPath = Path.Combine(config.StandardDirectories["MasterDb"], "transmorger.db");
 
-        if (File.Exists(masterDbPath) && File.Exists(localDbPath))
+        ////if (File.Exists(masterDbPath) && File.Exists(localDbPath))
+        if (File.Exists(masterDbPath))
         {
-            var masterDbDate = File.GetLastWriteTime(masterDbPath);
-            var localDbDate = File.GetLastWriteTime(localDbPath);
+            DateTime masterDbDate = File.GetLastWriteTime(masterDbPath);
+            DateTime localDbDate = File.GetLastWriteTime(localDbPath);
+
+            if (File.Exists(localDbPath))
+            {
+                localDbDate = File.GetLastWriteTime(localDbPath);
+            }
+            else
+            {
+                localDbDate = default;
+            }
+
 
             if (masterDbDate > localDbDate)
             {
@@ -393,7 +404,7 @@ public partial class MainWindow : Window
         }
 
         var searchMode = btnSearchToggle.Content.ToString();
-        
+
         // Get the selected item
         var selectedItem = lstbxSearchResults.SelectedItem as string;
         if (string.IsNullOrWhiteSpace(selectedItem))

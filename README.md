@@ -2,14 +2,18 @@
 
 Tingen Transmorger is a utility for Netsmart's Avatar TeleHealth platform.
 
+Transmorger is currently beta software.
+
+This documentation is not final, is missing a bunch of things, and basically goes over installing Tingen Transmorger.
+
 ## Downloading Tingen Transmorger
 
 1. Download the latest [release]()
 2. Extract the `TingenTransmorger.exe` file to a location of your choice.
 
 > [!IMPORTANT]
-> Verify the SHA256 hash!
-> `9e0c6522f3e87c1c361207ee9dd828b65c8ef9d8803b3a5b6863aef645142b54`
+> Verify the SHA256 hash (v0.9.20.0)
+> `82d08e5237b5f5816da05c9d9b6424db8262c31c1e58424401ba3d07bf2efd57`
 
 ## Initial launch of Tingen Transmorger
 

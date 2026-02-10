@@ -1,0 +1,60 @@
+﻿<Window
+    x:Class="TingenTransmorger.Database.DatabaseRebuildWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Database Rebuild"
+    Width="500"
+    Height="300"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Grid.Row="0"
+            Margin="0,0,0,20"
+            FontSize="18"
+            FontWeight="Bold"
+            Text="Rebuilding Database" />
+
+        <TextBlock
+            x:Name="txtCurrentTask"
+            Grid.Row="1"
+            Margin="0,0,0,10"
+            FontSize="14"
+            Text="Initializing..." />
+
+        <ProgressBar
+            x:Name="progressBar"
+            Grid.Row="2"
+            Height="30"
+            Maximum="100"
+            Minimum="0"
+            Value="0" />
+
+        <TextBlock
+            x:Name="txtStatus"
+            Grid.Row="3"
+            Margin="0,10,0,0"
+            FontSize="12"
+            Foreground="Gray"
+            Text="Starting..." />
+
+        <Button
+            x:Name="btnClose"
+            Grid.Row="4"
+            Width="100"
+            Height="30"
+            Margin="0,20,0,0"
+            HorizontalAlignment="Center"
+            Click="btnClose_Click"
+            Content="Close"
+            Visibility="Collapsed" />
+    </Grid>
+</Window>

@@ -126,6 +126,11 @@ internal static class ReportUtility
             {
                 normalized[key] = nestedList.Select(d => NormalizePhoneNumbersInDictionary(d)).ToList();
             }
+            // Skip "Error Message" field - preserve full error text including opt-out messages
+            else if (key.Equals("Error Message", StringComparison.OrdinalIgnoreCase))
+            {
+                normalized[key] = value;
+            }
             // Check if this field is likely a phone number field
             else if (IsPhoneNumberField(key) && value != null)
             {

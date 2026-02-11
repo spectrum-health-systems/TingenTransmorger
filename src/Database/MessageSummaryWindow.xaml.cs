@@ -33,7 +33,13 @@ public partial class MessageSummaryWindow : Window
         foreach (var failure in smsFailures)
         {
             var formattedStartTime = FormatStartTime(failure.ScheduledStartTime);
-            
+
+            // Detect opt-out error - check for "is opted out" or general "opt out" phrases
+            var isOptedOut = !string.IsNullOrWhiteSpace(failure.ErrorMessage)
+                && (failure.ErrorMessage.Contains("is opted out", StringComparison.OrdinalIgnoreCase)
+                    || failure.ErrorMessage.Contains("opted out", StringComparison.OrdinalIgnoreCase)
+                    || failure.ErrorMessage.Contains("opt-out", StringComparison.OrdinalIgnoreCase));
+
             combinedMessages.Add(new MessageHistoryRow
             {
                 IsFailure = true,
@@ -41,7 +47,7 @@ public partial class MessageSummaryWindow : Window
                 ScheduleStartTime = formattedStartTime,
                 Status = "Failed",
                 MessageType = "SMS",
-                ErrorDetails = FormatErrorDetails(failure.ErrorMessage),
+                ErrorDetails = isOptedOut ? "Opted out" : FormatErrorDetails(failure.ErrorMessage),
                 PhoneNumber = failure.PhoneNumber ?? string.Empty,
                 Type = "Failure",
                 SortTimestamp = ParseTimestamp(failure.ScheduledStartTime)

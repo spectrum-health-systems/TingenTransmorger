@@ -6,21 +6,42 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <Version>0.9.20.0</Version>
-    <AssemblyVersion>0.9.20.0</AssemblyVersion>
-    <FileVersion>0.9.20.0</FileVersion>
-    <InformationalVersion>0.9.20.0</InformationalVersion>
+    <Version>0.9.22.0</Version>
+    <AssemblyVersion>0.9.22.0</AssemblyVersion>
+    <FileVersion>0.9.22.0</FileVersion>
+    <InformationalVersion>0.9.22.0</InformationalVersion>
     <DebugType>embedded</DebugType>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <RuntimeFrameworkVersion>10.0.2</RuntimeFrameworkVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="AppData\" />
+    <None Remove="AppData\Image\Control\Button\CopyAll-40x40.png" />
+    <None Remove="AppData\Image\Control\Button\CopyError-40x40.png" />
+    <None Remove="AppData\Image\Control\Button\CopySuccess-40x40.png" />
+    <None Remove="AppData\Image\Control\Button\CopyTen-40x40.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="src\Database\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="AppData\Image\Control\Button\CopyAll-40x40.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="AppData\Image\Control\Button\CopyError-40x40.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="AppData\Image\Control\Button\CopySuccess-40x40.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="AppData\Image\Control\Button\CopyTen-40x40.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

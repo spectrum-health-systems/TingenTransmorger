@@ -1204,9 +1204,9 @@ public partial class MainWindow : Window
     /// <summary>Handles the phone details button click event.</summary>
     private void PhoneDetailsClicked()
     {
-        var messageSummaryWindow = new Database.MessageSummaryWindow(_smsFailures, _messageDeliveries);
-        messageSummaryWindow.Owner = this;
-        messageSummaryWindow.ShowDialog();
+        var messageHistoryWindow = new Database.MessageHistoryWindow(_smsFailures, _messageDeliveries);
+        messageHistoryWindow.Owner = this;
+        messageHistoryWindow.ShowDialog();
     }
 
     /// <summary>Updates the btnEmailDetails button appearance based on email failure and delivery records.</summary>

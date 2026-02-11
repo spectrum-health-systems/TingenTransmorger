@@ -35,3 +35,7 @@ Database contains a list of files used to build that version
 Public/internal/private, static
 Verify files are ONE_TWO-THREE_FOUR
 Open excel files for detailed research
+
+
+
+<a target="_blank" href="https://icons8.com/icon/43011/copy">Copy</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>

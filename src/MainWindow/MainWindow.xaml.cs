@@ -117,78 +117,106 @@ public partial class MainWindow : Window
         Environment.Exit(0);
     }
 
-
-
-
-
-
-
-    /// <summary>Searches for patients based on the search text.</summary>
-    private void SearchPatients(string searchText)
+    /// <summary>Patient search.</summary>
+    /// <param name="searchText">Contents of the search box.</param>
+    private void PatientSearch(string searchText)
     {
-        // Get all patients from the database
-        var allPatients = tmDb.GetPatients();
+        bool searchByName = rbtnByName.IsChecked == true;
 
-        // Filter patients based on search type
-        var filteredPatients = new List<(string PatientName, string PatientId)>();
+        var patientList = SearchFor.Patients(searchText, tmDb, searchByName);
 
-        if (rbtnByName.IsChecked == true)
+        foreach (var patient in patientList)
         {
-            // Search by name - case insensitive
-            filteredPatients = allPatients
-                .Where(p => p.PatientName.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(p => p.PatientName)
-                .ToList();
-        }
-        else if (rbtnById.IsChecked == true)
-        {
-            // Search by ID
-            filteredPatients = allPatients
-                .Where(p => p.PatientId.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(p => p.PatientName)
-                .ToList();
-        }
-
-        // Display results in the format "PatientName (PatientId)"
-        foreach (var patient in filteredPatients)
-        {
-            lstbxSearchResults.Items.Add($"{patient.PatientName} ({patient.PatientId})");
+            lstbxSearchResults.Items.Add(patient);
         }
     }
 
     /// <summary>Searches for providers based on the search text.</summary>
+    /// <param name="searchText">Contents of the search box.</param>
     private void SearchProviders(string searchText)
     {
-        // Get all providers from the database
-        var allProviders = tmDb.GetProviders();
+        bool searchByName = rbtnByName.IsChecked == true;
 
-        // Filter providers based on search type
-        var filteredProviders = new List<(string ProviderName, string ProviderId)>();
+        var providerList = SearchFor.Providers(searchText, tmDb, searchByName);
 
-        if (rbtnByName.IsChecked == true)
+        foreach (var provider in providerList)
         {
-            // Search by name - case insensitive
-            filteredProviders = allProviders
-                .Where(p => p.ProviderName.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(p => p.ProviderName)
-                .ToList();
-        }
-        else if (rbtnById.IsChecked == true)
-        {
-            // Search by ID
-            filteredProviders = allProviders
-                .Where(p => p.ProviderId.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(p => p.ProviderName)
-                .ToList();
-        }
-
-        // Display results in the format "ProviderName (ProviderId)"
-        foreach (var provider in filteredProviders)
-        {
-            var displayId = provider.ProviderId == "N/A" ? "No ID" : provider.ProviderId;
-            lstbxSearchResults.Items.Add($"{provider.ProviderName} ({displayId})");
+            lstbxSearchResults.Items.Add(provider);
         }
     }
+
+
+
+
+
+
+
+    /////// <summary>Searches for patients based on the search text.</summary>
+    ////private void SearchPatients(string searchText)
+    ////{
+    ////    // Get all patients from the database
+    ////    var allPatients = tmDb.GetPatients();
+
+    ////    // Filter patients based on search type
+    ////    var filteredPatients = new List<(string PatientName, string PatientId)>();
+
+    ////    if (rbtnByName.IsChecked == true)
+    ////    {
+    ////        // Search by name - case insensitive
+    ////        filteredPatients = allPatients
+    ////            .Where(p => p.PatientName.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+    ////            .OrderBy(p => p.PatientName)
+    ////            .ToList();
+    ////    }
+    ////    else if (rbtnById.IsChecked == true)
+    ////    {
+    ////        // Search by ID
+    ////        filteredPatients = allPatients
+    ////            .Where(p => p.PatientId.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+    ////            .OrderBy(p => p.PatientName)
+    ////            .ToList();
+    ////    }
+
+    ////    // Display results in the format "PatientName (PatientId)"
+    ////    foreach (var patient in filteredPatients)
+    ////    {
+    ////        lstbxSearchResults.Items.Add($"{patient.PatientName} ({patient.PatientId})");
+    ////    }
+    ////}
+
+    ///////// <summary>Searches for providers based on the search text.</summary>
+    //////private void SearchProviders(string searchText)
+    //////{
+    //////    // Get all providers from the database
+    //////    var allProviders = tmDb.GetProviders();
+
+    //////    // Filter providers based on search type
+    //////    var filteredProviders = new List<(string ProviderName, string ProviderId)>();
+
+    //////    if (rbtnByName.IsChecked == true)
+    //////    {
+    //////        // Search by name - case insensitive
+    //////        filteredProviders = allProviders
+    //////            .Where(p => p.ProviderName.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+    //////            .OrderBy(p => p.ProviderName)
+    //////            .ToList();
+    //////    }
+    //////    else if (rbtnById.IsChecked == true)
+    //////    {
+    //////        // Search by ID
+    //////        filteredProviders = allProviders
+    //////            .Where(p => p.ProviderId.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+    //////            .OrderBy(p => p.ProviderName)
+    //////            .ToList();
+    //////    }
+
+    //////    // Display results in the format "ProviderName (ProviderId)"
+    //////    foreach (var provider in filteredProviders)
+    //////    {
+    //////        var displayId = provider.ProviderId == "N/A" ? "No ID" : provider.ProviderId;
+    //////        lstbxSearchResults.Items.Add($"{provider.ProviderName} ({displayId})");
+    //////    }
+    //////}
 
     /// <summary>Handles the selection changed event for the search results list.</summary>
     /// <remarks>

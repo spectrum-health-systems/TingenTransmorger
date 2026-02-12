@@ -60,7 +60,7 @@ public partial class MainWindow : Window
         switch (btnSearchToggle.Content.ToString())
         {
             case "Patient Search":
-                SearchPatients(searchText);
+                PatientSearch(searchText);
                 break;
 
             case "Provider Search":

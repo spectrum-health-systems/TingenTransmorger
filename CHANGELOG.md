@@ -1,8 +1,16 @@
 # Tingen Transmorger: Changelog
 
+### 0.9.25.5
+
+- 'REFACTOR` Made significant changes to the following classes:
+  - MainWindow.asmx.cs
+  - MainWindow.AdminMode.cs
+  - TransmorgerDatabase.cs
+
 ### 0.9.25.4
 
 - `ADDED` MainWindow/
+  - Moved MainWindow classes to MainWindow/
 - `ADDED` MainWindow.UserInterface.cs
 - 'REFACTOR` Made significant changes to the following classes:
   - MainWindow.asmx.cs

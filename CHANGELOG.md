@@ -1,5 +1,9 @@
 # Tingen Transmorger: Changelog
 
+### 0.9.25.8
+
+- `REFACTOR` Working on breaking the patient display logic up into more manageable pieces.
+
 ### 0.9.25.7
 
 - 'REFACTOR` Combined the patient and provider search methods into a single method

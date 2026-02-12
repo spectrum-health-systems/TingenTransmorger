@@ -18,10 +18,6 @@ This documentation is not final, is missing a bunch of things, and basically goe
 1. Download the latest [release](https://github.com/spectrum-health-systems/TingenTransmorger/releases)
 2. Extract the `TingenTransmorger.exe` file to a location of your choice.
 
-> [!IMPORTANT]
-> Verify the SHA256 hash (v0.9.20.0)
-> `82d08e5237b5f5816da05c9d9b6424db8262c31c1e58424401ba3d07bf2efd57`
-
 ## Initial launch of Tingen Transmorger
 
 The first time you run `TingenTransmorger.exe`, you'll get this message:

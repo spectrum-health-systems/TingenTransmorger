@@ -92,12 +92,12 @@ class Configuration
         Mode                            = "Standard",
         StandardDirectories             = new Dictionary<string, string>
         {
-            { "LocalDb", "" },
+            { "LocalDb", "AppData/Database" },
             { "MasterDb", "" }
         },
         AdminDirectories                = new Dictionary<string, string>
         {
-            { "Tmp", "" },
+            { "Tmp", "AppData/Tmp" },
             { "Import", "" },
         }
     };

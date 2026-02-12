@@ -1,6 +1,16 @@
 # Tingen Transmorger: Changelog
 
-## 0.9.25.1
+### 0.9.25.2
+
+`MODIFIED` The default configuration file now defines both the LocalDb and Tmp directories under /AppData
+`MODIFIED` MainWindow
+  - Commented out some code that may not be needed
+  - Created MainWindow.AdminMode.cs partial class for admin mode stuff
+  - Minor refactoring/code/comment cleanup
+`MODIFIED` DatabaseRebuildWindow
+  - Minor UI tweaks
+
+### 0.9.25.1
 
 `REMOVED` Unused/abandoned code  
 

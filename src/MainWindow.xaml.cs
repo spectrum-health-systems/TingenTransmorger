@@ -1,5 +1,13 @@
-﻿// 260206_code
-// 260206_documentation
+﻿// 260212_code
+// 260212_documentation
+
+/* The MainWindow class contains the following partial classes:
+ *
+ *   - MainWindow.asmx
+ *   - MainWindow.asmx.cs
+ * TingenTransmorger
+ * A tool for Netsmart's Avatar TeleHealth platform.
+ */
 
 using System.IO;
 using System.Text.Json;
@@ -33,15 +41,17 @@ public partial class MainWindow : Window
     /// </summary>
     private string _currentPatientId = string.Empty;
 
-    /// <summary>
-    /// Currently selected provider name.
-    /// </summary>
-    private string _currentProviderName = string.Empty;
+    /* TODO: The provider details section is currently not implemented in the UI, so we may not either of these.
+     */
+    /////// <summary>
+    /////// Currently selected provider name.
+    /////// </summary>
+    ////private string _currentProviderName = string.Empty;
 
-    /// <summary>
-    /// Currently selected provider ID.
-    /// </summary>
-    private string _currentProviderId = string.Empty;
+    /////// <summary>
+    /////// Currently selected provider ID.
+    /////// </summary>
+    ////private string _currentProviderId = string.Empty;
 
     /// <summary>
     /// SMS failure records for the current patient's phone numbers.
@@ -51,7 +61,7 @@ public partial class MainWindow : Window
     /// <summary>
     /// Message delivery records for the current patient's phone numbers.
     /// </summary>
-    private List<(string PhoneNumber, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> _messageDeliveries = new();
+    private List<(string PhoneNumber, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> _smsDeliveries = new();
 
     /// <summary>
     /// Email failure records for the current patient's email addresses.
@@ -70,6 +80,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        /* TODO Does this need to be async?
+         */
         // Call StartApp asynchronously
         _ = StartApp();
     }
@@ -81,70 +93,21 @@ public partial class MainWindow : Window
     {
         var config = Configuration.Load();
 
+        /* TODO: Verify this is working. If the config file doesn't have an Import path, the app crashes.
+         */
         Framework.Verify(config);
 
+        /* TODO: Do we need flow control here?
+         */
         if (config.Mode.Trim().ToLower() == "admin")
         {
-            brdrMain.Background = System.Windows.Media.Brushes.IndianRed;
-
-            MessageBoxResult result = MessageBox.Show(
-                "Would you like to rebuild the database?",
-                "Admin Mode",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-
-            if (result == MessageBoxResult.No)
+            //EnterAdminMode(config.AdminDirectories["Import"], config.AdminDirectories["Tmp"], config.StandardDirectories["MasterDb"]);
+            //var flowControl = await AdminMode(config.AdminDirectories["Import"], config.StandardDirectories["MasterDb"], config.AdminDirectories["Tmp"]);
+            var flowControl = await EnterAdminMode(config.AdminDirectories["Import"], config.AdminDirectories["Tmp"], config.StandardDirectories["MasterDb"]);
+            if (!flowControl)
             {
-                // If user chooses not to rebuild, just return
                 return;
             }
-
-            // Hide the main window during database rebuild
-            this.Hide();
-
-            // Show the rebuild window
-            var rebuildWindow = new Database.DatabaseRebuildWindow();
-            rebuildWindow.SetParentWindow(this);
-            rebuildWindow.Show();
-
-            // Run rebuild on background thread
-            await Task.Run(() =>
-            {
-                // Process reports with progress updates
-                rebuildWindow.UpdateTask("Processing Visit Stats...");
-                rebuildWindow.UpdateProgress(10);
-                TeleHealthReport.ReportProcessor.ProcessVisitStats(
-                    config.AdminDirectories["Import"],
-                    config.AdminDirectories["Tmp"],
-                    (status) => rebuildWindow.UpdateStatus(status));
-
-                rebuildWindow.UpdateTask("Processing Visit Details...");
-                rebuildWindow.UpdateProgress(30);
-                TeleHealthReport.ReportProcessor.ProcessVisitDetails(
-                    config.AdminDirectories["Import"],
-                    config.AdminDirectories["Tmp"],
-                    (status) => rebuildWindow.UpdateStatus(status));
-
-                rebuildWindow.UpdateTask("Processing Message Failure...");
-                rebuildWindow.UpdateProgress(50);
-                TeleHealthReport.ReportProcessor.ProcessMessageFailure(
-                    config.AdminDirectories["Import"],
-                    config.AdminDirectories["Tmp"],
-                    (status) => rebuildWindow.UpdateStatus(status));
-
-                rebuildWindow.UpdateTask("Processing Message Delivery...");
-                rebuildWindow.UpdateProgress(70);
-                TeleHealthReport.ReportProcessor.ProcessMessageDelivery(
-                    config.AdminDirectories["Import"],
-                    config.AdminDirectories["Tmp"],
-                    (status) => rebuildWindow.UpdateStatus(status));
-
-                rebuildWindow.UpdateTask("Building Database...");
-                rebuildWindow.UpdateProgress(90);
-                TransmorgerDatabase.Build(config.AdminDirectories["Tmp"], config.StandardDirectories["MasterDb"]);
-
-                rebuildWindow.Complete();
-            });
         }
 
         // Check if MasterDb is newer than LocalDb and offer to upgrade
@@ -218,6 +181,8 @@ public partial class MainWindow : Window
         spnlPatientMeetings.Visibility = Visibility.Collapsed;
         spnlMeetingDetails.Visibility = Visibility.Collapsed;
     }
+
+
 
     /// <summary>
     /// Stops the application.
@@ -507,7 +472,7 @@ public partial class MainWindow : Window
 
         // Query SMS failure and delivery stats for all patient phone numbers
         _smsFailures.Clear();
-        _messageDeliveries.Clear();
+        _smsDeliveries.Clear();
 
         foreach (var phoneNumber in phoneNumbers)
         {
@@ -529,12 +494,12 @@ public partial class MainWindow : Window
                     // Query message deliveries
                     var deliveries = TransMorgDb.GetMessageDeliveryStats(normalizedPhone);
                     System.Diagnostics.Debug.WriteLine($"Found {deliveries.Count} message deliveries");
-                    _messageDeliveries.AddRange(deliveries);
+                    _smsDeliveries.AddRange(deliveries);
                 }
             }
         }
 
-        System.Diagnostics.Debug.WriteLine($"Total failures: {_smsFailures.Count}, Total deliveries: {_messageDeliveries.Count}");
+        System.Diagnostics.Debug.WriteLine($"Total failures: {_smsFailures.Count}, Total deliveries: {_smsDeliveries.Count}");
 
         // Update btnPhoneDetails button based on SMS records
         UpdatePhoneDetailsButton();
@@ -751,9 +716,11 @@ public partial class MainWindow : Window
         // Set header to PROVIDER
         lblPatientHeader.Content = "PROVIDER";
 
-        // Store current provider info
-        _currentProviderName = providerName;
-        _currentProviderId = providerId;
+        /* TODO: These are related to the potentially unused fields at the top of this class.
+         */
+        //////// Store current provider info
+        //////_currentProviderName = providerName;
+        //////_currentProviderId = providerId;
 
         // Get provider details from database
         var providerDetails = TransMorgDb.GetProviderDetails(providerName);
@@ -1187,7 +1154,7 @@ public partial class MainWindow : Window
     private void UpdatePhoneDetailsButton()
     {
         bool hasFailures = _smsFailures.Count > 0;
-        bool hasDeliveries = _messageDeliveries.Count > 0;
+        bool hasDeliveries = _smsDeliveries.Count > 0;
 
         if (!hasFailures && !hasDeliveries)
         {
@@ -1218,7 +1185,7 @@ public partial class MainWindow : Window
     /// <summary>Handles the phone details button click event.</summary>
     private void PhoneDetailsClicked()
     {
-        var messageHistoryWindow = new Database.MessageHistoryWindow(_smsFailures, _messageDeliveries);
+        var messageHistoryWindow = new Database.MessageHistoryWindow(_smsFailures, _smsDeliveries);
         messageHistoryWindow.Owner = this;
         messageHistoryWindow.ShowDialog();
     }

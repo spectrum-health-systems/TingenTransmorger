@@ -12,6 +12,8 @@
 - [ ] After rebuild, non-existant database causes error
 
 
+
+
 - [X] Details for phone messages
 - [X] Add "-" to phone numbers
 - [X] Remove leading "+1" on phone numbers
@@ -25,7 +27,7 @@
 
 
 
-
+- Is verification working? if no import in config, crash
 
 Method signatures
 Make sure all paths use Path.Combine

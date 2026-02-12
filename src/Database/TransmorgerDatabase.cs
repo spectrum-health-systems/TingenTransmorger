@@ -25,15 +25,31 @@ public partial class TransmorgerDatabase
 
     private static readonly Regex EmailRegex = new(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
 
-    // Holds the parsed database JSON when loaded via Load()
-    private JsonElement _jsonRoot;
-    private bool _hasData;
+
 
     /* OLD STRUCTURE - END  ========================================================================================= */
 
     /*
      * NEW STRUCTURE - START ===========================================================================================
      */
+
+    /* Not quite sure how these two private fields work, but it's integral to the way that Claude Sonnet 4.5 parses the
+     * database.
+     */
+    /// <summary>Represents the root JSON element of the parsed database structure.</summary>
+    /// <remarks>
+    ///     This field provides access to the main JSON object from which all database data can be traversed. It is
+    ///     essential for operations that require reading or navigating the database contents.
+    /// </remarks>
+    private JsonElement _jsonRoot;
+
+    /// <summary>Represents whether the database has been successfully loaded with data.</summary>
+    /// <remarks>
+    ///     This flag is used to indicate if the _jsonRoot contains valid data that can be accessed. If false, it
+    ///     suggests that the database is either not loaded or contains no data, and attempts to access _jsonRoot should
+    ///     be handled accordingly to avoid errors.
+    /// </remarks>
+    private bool _hasData;
 
     /// <summary>Check to see if the master database is newer than the local database and offer to upgrade.</summary>
     /// <param name="localDbPath">The local database path.</param>
@@ -86,58 +102,33 @@ public partial class TransmorgerDatabase
         }
     }
 
+    /// <summary> Loads a TransmorgerDatabase instance from the specified local database file path. </summary>
+    /// <remarks>
+    ///     If the specified file does not exist, the application will stop and notify the user. Ensure that the file
+    ///     path is correct and accessible.
+    /// </remarks>
+    /// <param name="localDbPath">The path to the local database file.</param>
+    /// <returns>A TransmorgerDatabase instance populated with data from the specified file.</returns>
     internal static TransmorgerDatabase Load(string localDbPath)
     {
         if (File.Exists(localDbPath))
         {
             var tmDbJson = File.ReadAllText(localDbPath, Encoding.UTF8);
 
-
             using var doc = JsonDocument.Parse(tmDbJson);
-            var instance = new TransmorgerDatabase();
-            // Clone the root element so it lives beyond the JsonDocument scope
-            instance._jsonRoot = doc.RootElement.Clone();
-            instance._hasData = true;
-            return instance;
+
+            return new TransmorgerDatabase
+            {
+                _jsonRoot = doc.RootElement.Clone(),
+                _hasData = true
+            };
         }
         else
         {
             MainWindow.StopApp("Local database file not found.");
         }
 
-        return new TransmorgerDatabase();
-
-        //try
-        //{
-
-
-
-        ////// Resolve path: try as provided, then relative to application base directory
-        ////var path = localDbDir;
-
-        ////if (!File.Exists(path))
-        ////{
-        ////    var alt = Path.Combine(AppContext.BaseDirectory ?? Directory.GetCurrentDirectory(), localDbDir);
-
-        ////    if (File.Exists(alt))
-        ////    {
-        ////        path = alt;
-        ////    }
-        ////    else
-        ////    {
-        ////        throw new FileNotFoundException($"Database file not found: {localDbDir}", localDbDir);
-        ////    }
-        ////}
-
-        ////var json = File.ReadAllText(path, Encoding.UTF8);
-
-        ////using var doc = JsonDocument.Parse(json);
-        ////var instance = new TransmorgerDatabase();
-        ////// Clone the root element so it lives beyond the JsonDocument scope
-        ////instance._jsonRoot = doc.RootElement.Clone();
-        ////instance._hasData = true;
-
-        ////return instance;
+        return new TransmorgerDatabase(); // Required to satisfy the compiler's requirement for a return statement.
     }
 
 

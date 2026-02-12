@@ -53,6 +53,12 @@ class Catalog
         $"Please note: If you select 'No', the application will close."
     ];
 
+    internal static string[] msgbox_DatabaseRebuildCheck() =>
+    [
+        $"Tingen Transmorger - Database rebuild",
+        $"Would you like to rebuild the database?"
+    ];
+
     internal static string[] msgbox_DatabaseUpdateAvailable() =>
     [
         $"Tingen Transmorger - Database update",

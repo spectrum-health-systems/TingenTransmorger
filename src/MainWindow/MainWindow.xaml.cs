@@ -2,11 +2,9 @@
 // 260212_documentation
 
 /* The MainWindow class contains the following partial classes:
- *
- *   - MainWindow.asmx
- *   - MainWindow.asmx.cs
- * TingenTransmorger
- * A tool for Netsmart's Avatar TeleHealth platform.
+ *   - MainWindow.asmx         - MainWindow XAML markup
+ *   - MainWindow.asmx.cs      - MainWindow general logic
+ *   - MainWindow.AdminMode.cs - Logic related to admin mode functionality
  */
 
 using System.IO;
@@ -16,6 +14,9 @@ using TingenTransmorger.Core;
 using TingenTransmorger.Database;
 using TingenTransmorger.Models;
 
+/* I've moved the MainWindow partial classes to MainWindow/ to keep the code organized, but I'm leaving the namespace as
+ * TingenTransmorger instead of TingenTransmorger.MainWindow to avoid confusion with the MainWindow class.
+ */
 namespace TingenTransmorger;
 
 /// <summary>Entry class for Tingen Transmorger.</summary>
@@ -89,28 +90,23 @@ public partial class MainWindow : Window
         string masterDbPath = Path.Combine(config.StandardDirectories["MasterDb"], "transmorger.db");
 
         TransmorgerDatabase.Update(localDbPath, masterDbPath);
+
         tmDb = TransmorgerDatabase.Load(localDbPath);
 
-
-        rbtnByName.IsChecked = true;
-        spnlPatientDetails.Visibility = Visibility.Collapsed;
-        spnlPatientMeetings.Visibility = Visibility.Collapsed;
-        spnlMeetingDetails.Visibility = Visibility.Collapsed;
+        SetupInitialUI();
     }
 
-    /// <summary>
-    /// Stops the application.
-    /// </summary>
-    /// <param name="msgExit">
-    /// An optional exit message to display to the user.
-    /// </param>
+    /// <summary> Stops the application. </summary>
     /// <remarks>
-    /// <para>
-    /// If you pass a message to <paramref name="msgExit"/>, it will be displayed to the user in a MessageBox before the
-    /// application exits.
-    /// </para>
-    /// <para>This method is public because it is called from other methods outside the <see cref="MainWindow"/> class.</para>
+    ///     <para>
+    ///         If you pass a message to <paramref name="msgExit"/>, it will be displayed to the user in a MessageBox
+    ///         before the application exits.
+    ///     </para>
+    ///     <para>
+    ///         This method is public because it is called from other methods outside the <see cref="MainWindow"/> class.
+    ///     </para>
     /// </remarks>
+    /// <param name="msgExit">  An optional exit message to display to the user. </param>
     public static void StopApp(string msgExit = "")
     {
         if (!string.IsNullOrEmpty(msgExit))
@@ -121,94 +117,11 @@ public partial class MainWindow : Window
         Environment.Exit(0);
     }
 
-    /*
-     * EVENTS
-     */
 
-    /// <summary>The search toggle button was clicked.</summary>
-    /// <remarks>
-    /// <para>
-    /// The search toggle button cycles through the three search modes:
-    /// - Patient Search
-    /// - Provider Search
-    /// - Meeting Search.
-    /// </para>
-    /// <para>This method handles the click event for the search toggle button and updates the button's content accordingly.</para>
-    /// </remarks>
-    private void SearchToggleClicked()
-    {
-        switch (btnSearchToggle.Content)
-        {
-            case "Patient Search":
-                btnSearchToggle.Content = "Provider Search";
-                break;
 
-            case "Provider Search":
-                btnSearchToggle.Content = "Patient Search";
-                break;
 
-                /* Eventually we might bring meeting search back.
-                 */
-                //case "Patient Search":
-                //    btnSearchToggle.Content = "Provider Search";
-                //    break;
 
-                //case "Provider Search":
-                //    btnSearchToggle.Content = "Meeting Search";
-                //    break;
 
-                //case "Meeting Search":
-                //    btnSearchToggle.Content = "Patient Search";
-                //    break;
-        }
-
-        // Clear search box and results when toggling
-        txbxSearch.Text = string.Empty;
-        lstbxSearchResults.Items.Clear();
-
-        // Clear and hide details panel
-        //txtDetailsPlaceholder.Visibility = Visibility.Visible;
-        spnlPatientDetails.Visibility = Visibility.Collapsed;
-        spnlPatientMeetings.Visibility = Visibility.Collapsed;
-        spnlMeetingDetails.Visibility = Visibility.Collapsed;
-    }
-
-    /// <summary>Handles the search text changed event.</summary>
-    /// <remarks>
-    /// <para>
-    /// This method is called when the user types in the search text box.
-    /// It filters and displays results based on the current search mode and search type (by name or ID).
-    /// </para>
-    /// </remarks>
-    private void SearchTextChanged()
-    {
-        // Clear previous results
-        lstbxSearchResults.Items.Clear();
-
-        var searchMode = btnSearchToggle.Content.ToString();
-        var searchText = txbxSearch.Text?.Trim();
-
-        // Don't search if text is empty or too short
-        if (string.IsNullOrWhiteSpace(searchText))
-        {
-            return;
-        }
-
-        // Don't search if database is not yet initialized
-        if (tmDb == null)
-        {
-            return;
-        }
-
-        if (searchMode == "Patient Search")
-        {
-            SearchPatients(searchText);
-        }
-        else if (searchMode == "Provider Search")
-        {
-            SearchProviders(searchText);
-        }
-    }
 
     /// <summary>Searches for patients based on the search text.</summary>
     private void SearchPatients(string searchText)
@@ -1258,27 +1171,4 @@ public partial class MainWindow : Window
             MessageBox.Show(this, $"Failed to copy meeting details: {ex.Message}", "Copy Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
-
-    /*
-     * EVENT HANDLERS
-     */
-    private void btnSearchToggle_Click(object? sender, RoutedEventArgs e) => SearchToggleClicked();
-
-    private void txbxSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) => SearchTextChanged();
-
-    private void rbtnSearch_Checked(object sender, RoutedEventArgs e) => SearchTextChanged();
-
-    private void lstbxSearchResults_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => SearchResultSelected();
-
-    private void dgPatientMeetings_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => MeetingSelected();
-
-    private void btnPhoneDetails_Click(object sender, RoutedEventArgs e) => PhoneDetailsClicked();
-
-    private void btnEmailDetails_Click(object sender, RoutedEventArgs e) => EmailDetailsClicked();
-
-    private void btnCopyMeetingDetailsGeneral_Click(object sender, RoutedEventArgs e) => CopyMeetingDetailsGeneralClicked();
-
-    private void btnCopyMeetingDetailsPatient_Click(object sender, RoutedEventArgs e) => CopyMeetingDetailsPatientClicked();
-
-    private void btnCopyMeetingDetailsProvider_Click(object sender, RoutedEventArgs e) => CopyMeetingDetailsProviderClicked();
 }

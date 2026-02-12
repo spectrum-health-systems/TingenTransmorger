@@ -7,7 +7,7 @@
 - [ ] Make sure controls clear when they are supposed to
 - [ ] Smaller final database
 - [ ] SHFB
-- [ ] Ignore null ids
+- [ ] Ignore null ids (provider "no id", e.g., Lori D.)
 - [ ] Show data base statistics/summaries
 - [ ] After rebuild, non-existant database causes error
 

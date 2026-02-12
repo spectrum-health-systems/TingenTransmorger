@@ -4,6 +4,9 @@
 using System.Windows;
 using TingenTransmorger.Database;
 
+/* I've moved the MainWindow partial classes to MainWindow/ to keep the code organized, but I'm leaving the namespace as
+ * TingenTransmorger instead of TingenTransmorger.MainWindow to avoid confusion with the MainWindow class.
+ */
 namespace TingenTransmorger;
 
 /// <summary>Admin mode logic.</summary>
@@ -31,8 +34,6 @@ public partial class MainWindow : Window
     /// rebuild was initiated; otherwise, <see langword="false"/> if the user declined to proceed.</returns>
     private async Task<bool> AdminMode(string importDir, string tmpDir, string masterDbDir)
     {
-
-
         MessageBoxResult result = MessageBox.Show(
                "Would you like to rebuild the database?",
                "Admin Mode",

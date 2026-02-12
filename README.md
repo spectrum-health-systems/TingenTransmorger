@@ -1,10 +1,6 @@
 <div align="center">
 
-<<<<<<< Updated upstream
-  ![Release](https://img.shields.io/badge/version-0.9.25.0-teal)&nbsp;&nbsp;
-=======
-  ![Release](https://img.shields.io/badge/version-0.9.26.0-teal)&nbsp;&nbsp;
->>>>>>> Stashed changes
+  ![Release](https://img.shields.io/badge/version-0.9.26.x-teal)&nbsp;&nbsp;
   ![License](https://img.shields.io/badge/license-apache-blue)
 
 </div>

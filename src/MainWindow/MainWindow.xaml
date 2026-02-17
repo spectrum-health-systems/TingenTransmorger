@@ -114,7 +114,7 @@
                                 Orientation="Vertical">
 
                                 <!-- Search by name -->
-                                <RadioButton x:Name="rbtnByName"
+                                <RadioButton x:Name="rbtnSearchByName"
                                     Width="116"
                                     Margin="5,12,0,0"
                                     VerticalContentAlignment="Center"
@@ -123,7 +123,7 @@
                                     FontSize="14" />
 
                                 <!-- Search by ID -->
-                                <RadioButton x:Name="rbtnById"
+                                <RadioButton x:Name="rbtnSearchById"
                                     Width="116"
                                     Margin="5,5,0,0"
                                     VerticalContentAlignment="Center"
@@ -139,7 +139,7 @@
                             Orientation="Horizontal">
 
                             <!-- Search bar -->
-                            <TextBox x:Name="txbxSearch"
+                            <TextBox x:Name="txbxSearchBox"
                                 Width="310"
                                 Height="32"
                                 Margin="10,0,8,0"
@@ -394,14 +394,14 @@
                                 Orientation="Horizontal">
 
                                 <!-- Total meetings -->
-                                <TextBlock x:Name="txbkTotalMeetings"
+                                <TextBlock x:Name="txbkTotalMeetingsValue"
                                     Margin="0,0,5,0"
                                     FontSize="16"
                                     FontWeight="Bold"
                                     Text="Meetings" />
 
                                 <!-- Completed meetings -->
-                                <TextBlock x:Name="txbkCompletedMeetings"
+                                <TextBlock x:Name="txbkCompletedMeetingsValue"
                                     FontSize="16"
                                     Foreground="Green"
                                     Text="0 Completed" />
@@ -412,7 +412,7 @@
                                     Text=" / " />
 
                                 <!-- In-progress meetings -->
-                                <TextBlock x:Name="txbkMeetingsInProgress"
+                                <TextBlock x:Name="txbkMeetingsInProgressValue"
                                     FontSize="16"
                                     Foreground="Orange"
                                     Text="0 In-Progress" />
@@ -423,18 +423,18 @@
                                     Text=" / " />
 
                                 <!-- Expired meetings -->
-                                <TextBlock x:Name="txbkMeetingsExpired"
+                                <TextBlock x:Name="txbkMeetingsExpiredValue"
                                     FontSize="16"
                                     Foreground="Red"
                                     Text="0 Expired" />
 
                                 <!-- Separator -->
-                                <TextBlock x:Name="txbkMeetingsSeparator3       "
+                                <TextBlock x:Name="txbkMeetingsSeparator3"
                                     FontSize="16"
                                     Text=" / " />
 
                                 <!-- Cancelled meetings -->
-                                <TextBlock x:Name="txbkMeetingsCancelled"
+                                <TextBlock x:Name="txbkMeetingsCancelledValue"
                                     FontSize="16"
                                     Foreground="Black"
                                     Text="0 Cancelled" />
@@ -445,14 +445,14 @@
                                     Text=" / " />
 
                                 <!-- Scheduled meetings -->
-                                <TextBlock x:Name="txbkMeetingsScheduled"
+                                <TextBlock x:Name="txbkMeetingsScheduledValue"
                                     FontSize="16"
                                     Foreground="Gray"
                                     Text="0 Scheduled" />
                             </StackPanel>
 
                             <!-- Meeting list -->
-                            <DataGrid x:Name="dgrdMeetingList"
+                            <DataGrid x:Name="dgrdMeetingResults"
                                 Height="120"
                                 MaxHeight="120"
                                 AutoGenerateColumns="False"
@@ -695,7 +695,7 @@
                                                     Text="Duration:" />
 
                                                 <!-- Meeting duration value -->
-                                                <TextBlock x:Name="txbkMeetingDuration"
+                                                <TextBlock x:Name="txbkMeetingDurationValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
@@ -713,7 +713,7 @@
                                                     Text="Service code:" />
 
                                                 <!-- Service code value -->
-                                                <TextBlock x:Name="txbkMeetingServiceCode"
+                                                <TextBlock x:Name="txbkMeetingServiceCodeValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
@@ -730,14 +730,14 @@
                                                 Orientation="Horizontal">
 
                                                 <!-- Started by label -->
-                                                <TextBlock x:Name="txbkMeetingStartedBy"
+                                                <TextBlock x:Name="txbkMeetingStartedByKey"
                                                     Width="90"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Started by:" />
 
                                                 <!-- Started by value -->
-                                                <TextBlock x:Name="txbkMeetingInitiatedBy"
+                                                <TextBlock x:Name="txbkMeetingStartedByValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
@@ -748,14 +748,14 @@
                                                 Orientation="Horizontal">
 
                                                 <!-- Scheduled start label -->
-                                                <TextBlock x:Name=""
+                                                <TextBlock x:Name="txbkMeetingScheduledStartKey"
                                                     Width="90"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Scheduled start:" />
 
                                                 <!-- Scheduled start value -->
-                                                <TextBlock x:Name="txbkMeetingScheduledStart"
+                                                <TextBlock x:Name="txbkMeetingScheduledStartValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
@@ -766,14 +766,14 @@
                                                 Orientation="Horizontal">
 
                                                 <!-- Actual start label -->
-                                                <TextBlock x:Name="lblMeetingActualStartLabel"
+                                                <TextBlock x:Name="txbkMeetingActualStartKey"
                                                     Width="90"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Actual start:" />
 
                                                 <!-- Actual start value -->
-                                                <TextBlock x:Name="txbkMeetingActualStart"
+                                                <TextBlock x:Name="txbkMeetingActualStartValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
@@ -784,14 +784,14 @@
                                                 Orientation="Horizontal">
 
                                                 <!-- Ended by label -->
-                                                <TextBlock x:Name="lblMeetingEndedByLabel"
+                                                <TextBlock x:Name="txbkMeetingEndedByKey"
                                                     Width="90"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Ended by:" />
 
                                                 <!--  -->
-                                                <TextBlock x:Name="txbkMeetingEndedBy"
+                                                <TextBlock x:Name="txbkMeetingEndedByValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
@@ -809,7 +809,7 @@
                                                     Text="Scheduled end:" />
 
                                                 <!-- Scheduled end value -->
-                                                <TextBlock x:Name="txbkMeetingScheduledEnd"
+                                                <TextBlock x:Name="txbkMeetingScheduledEndValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
@@ -820,14 +820,14 @@
                                                 Orientation="Horizontal">
 
                                                 <!-- Actual end label -->
-                                                <TextBlock x:Name="txbkMeetingActualEndLabel"
+                                                <TextBlock x:Name="txbkMeetingActualEndKey"
                                                     Width="90"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Actual end:" />
 
                                                 <!-- Actual end value -->
-                                                <TextBlock x:Name="txbkMeetingActualEnd"
+                                                <TextBlock x:Name="txbkMeetingActualEndValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
@@ -849,46 +849,58 @@
                                                     Text="Workflow:" />
 
                                                 <!-- Workflow value -->
-                                                <TextBlock x:Name="txbkMeetingWorkflow"
+                                                <TextBlock x:Name="txbkMeetingWorkflowValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
 
                                             <!-- Program -->
-                                            <StackPanel
+                                            <StackPanel x:Name="spnlMeetingProgram"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
-                                                <TextBlock
+
+                                                <!-- Program label -->
+                                                <TextBlock x:Name="txbkMeetingProgramKey"
                                                     Width="90"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Program:" />
-                                                <TextBlock x:Name="txtMeetingProgram"
+
+                                                <!-- Program value -->
+                                                <TextBlock x:Name="txbkMeetingProgram"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
+
                                             <!-- Front Desk Check-in -->
-                                            <StackPanel
+                                            <StackPanel x:Name="spnlMeetingFrontDeskCheckIn"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
-                                                <TextBlock
+                                                <!-- Front Desk Check-In label -->
+                                                <TextBlock x:Name="txbkMeetingFrontDeskCheckInKey"
                                                     Width="116"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Front Desk Check-In:" />
-                                                <TextBlock x:Name="txtMeetingCheckedInByFrontDesk"
+                                                <!-- Front Desk Check-In value -->
+                                                <TextBlock x:Name="txbkMeetingCheckedInByFrontDeskValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
+
                                             <!-- Meeting Error -->
-                                            <StackPanel
+                                            <StackPanel x:Name=""
                                                 Margin="0,2"
                                                 Orientation="Vertical">
-                                                <TextBlock
+
+                                                <!-- Meeting Error label -->
+                                                <TextBlock x:Name="txbkMeetingErrorKey"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Meeting error:" />
-                                                <TextBlock x:Name="txtMeetingError"
+
+                                                <!-- Meeting Error value -->
+                                                <TextBlock x:Name="txbkMeetingErrorValue"
                                                     Margin="0,2,0,0"
                                                     FontSize="11"
                                                     Text="---"

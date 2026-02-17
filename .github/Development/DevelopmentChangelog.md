@@ -1,18 +1,6 @@
 # Tingen Transmorger: Changelog
 
-## 0.9.26.4
-
-- Continued to clean up MainWindow.axml
-
-## 0.9.26.3
-
-- Continued to clean up MainWindow.axml
-
-## 0.9.26.2
-
-- Continued to clean up MainWindow.axml
-
-## 0.9.26.1
+## 0.9.26.1 - 0.9.26.5
 
 - Continued to clean up MainWindow.axml
 
@@ -29,21 +17,14 @@
 
 - Combined the patient and provider search methods into a single method
 
-## 0.9.25.6
+## 0.9.25.5 - 0.9.25.6
 
 - Made significant changes to the following classes:
   - MainWindow.asmx.cs
   - MainWindow.AdminMode.cs
   - TransmorgerDatabase.cs
 
-## 0.9.25.5
-
-- Made significant changes to the following classes:
-  - MainWindow.asmx.cs
-  - MainWindow.AdminMode.cs
-  - TransmorgerDatabase.cs
-
-## 0.9.25.4
+## 0.9.25.3 - 0.9.25.4
 
 - MainWindow/
   - Moved MainWindow classes to MainWindow/
@@ -52,14 +33,6 @@
   - MainWindow.asmx.cs
   - MainWindow.AdminMode.cs
   - TransmorgerDatabase.cs
-
-## 0.9.25.3
-
-- Made significant changes to the following classes:
-  - MainWindow.asmx.cs
-  - MainWindow.AdminMode.cs
-  - TransmorgerDatabase.cs
-- Additional MsgBox components to Core.Catalog.cs
 
 ## 0.9.25.2
 

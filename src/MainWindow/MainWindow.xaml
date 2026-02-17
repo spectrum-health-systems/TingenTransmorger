@@ -1,4 +1,35 @@
-﻿<Window
+﻿<!--
+    260217_code
+    260217_documentation
+-->
+
+<!--
+    This is the main window of the Tingen Transmorger application. I am not a UI designer, so it probably breaks a
+    number of UI best practices, but I did my best! To that point, this window has a resolution of 1200x700, and is not
+    designed to be resized.
+    
+    I've provided detailed comments throughout the XAML to explain the structure and purpose of each element in the UI,
+    and the code-behind contains is written to be as clear as possible.
+    
+    A few things of note:
+    
+    The brdrMainContainer control will be different colors, depending on what type of user is running the application;
+    standard users will see a SteelBlue background, admin users will see a DarkRed background
+    
+    The btnSearchToggle control toggles between patient and provider search modes.
+    
+    When in patient search mode:
+    - The brdrMeetingDetailsPatient control is visible
+    - The spnlPatientPhoneAndEmail control is visible
+    - The brdrMeetingDetailsProvider control is hidden
+    
+    When in provider search mode:
+    - The spnlPatientPhoneAndEmail control is hidden
+    - The brdrMeetingDetailsProvider control is visible
+    - The brdrMeetingDetailsPatient control is hidden
+-->
+
+<Window
     x:Class="TingenTransmorger.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -11,10 +42,11 @@
     ResizeMode="NoResize"
     mc:Ignorable="d">
 
-    <!-- MAIN GRID -->
-    <Grid x:Name="gridMainGrid">
-        <!-- MAIN BORDER -->
-        <Border x:Name="brdrMainBorder"
+    <!-- The main grid. -->
+    <Grid x:Name="gridMainContainer">
+
+        <!-- The main border that holds all of the UI -->
+        <Border x:Name="brdrMainContainer"
             Margin="10"
             Background="SteelBlue">
             <Border.Resources>
@@ -22,15 +54,19 @@
                     <Setter Property="CornerRadius" Value="10" />
                 </Style>
             </Border.Resources>
+
             <!--
-                The MainWindow will be have two components:
+                The grid that contains the two main columns of the UI.
+                A :
                 - The left column will be for searching patients/providers
                 - The right column will be for displaying details about the selected patient/provider and their meetings.
             -->
-            <Grid>
+            <Grid x:Name="gridMainColumnsContainer">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="360" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition x:Name="colLeftColumn"
+                        Width="360" />
+                    <ColumnDefinition x:Name="colRightColumn"
+                        Width="*" />
                 </Grid.ColumnDefinitions>
                 <!-- LEFT COLUMN BORDER -->
                 <Border x:Name="brdrLeftColumn"
@@ -472,8 +508,7 @@
                                         Margin="0,0,0,4"
                                         Orientation="Horizontal">
                                         <!-- Meeting Details (General) header -->
-                                        <TextBlock
-                                            x:Name="txtMeetingDetailsHeader"
+                                        <TextBlock x:Name="txtMeetingDetailsHeader"
                                             Margin="0,5,0,0"
                                             FontSize="12"
                                             FontWeight="SemiBold"

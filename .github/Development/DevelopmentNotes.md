@@ -10,6 +10,8 @@
 - [ ] Ignore null ids (provider "no id", e.g., Lori D.)
 - [ ] Show data base statistics/summaries
 - [ ] After rebuild, non-existant database causes error
+- [ ] Version on title bar
+
 
 - [ ] Review dgPatientProviderMeetings to make sure the comments work for both patients and providers
 
@@ -47,3 +49,10 @@ Open excel files for detailed research
 - Left column: Meeting ID, Title, Status, Joins, Duration, Service code
 - Center column: Started by, Scheduled start, Actual start, Ended by, Scheduled end, Actual end
 - Right column: Workflow, Program, Front Desk Check-in, Meeting error
+
+
+
+        - A left column for searching
+        - A right column for details
+        - Buttons to view additional details
+        - Buttons to copy information to the clipboard

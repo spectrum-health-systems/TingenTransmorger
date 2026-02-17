@@ -961,19 +961,20 @@
                                         <Grid.ColumnDefinitions>
                                             <!-- Left column -->
                                             <ColumnDefinition x:Name="colMeetingDetailsPatientLeft"
-                                                Width="*" />
+                                                Width="201*" />
+                                            <ColumnDefinition Width="49*"/>
                                             <!-- Center column -->
                                             <ColumnDefinition x:Name="colMeetingDetailsPatientCenter"
-                                                Width="*" />
+                                                Width="250*" />
                                             <!-- Right column -->
                                             <ColumnDefinition x:Name="colMeetingDetailsPatientRight"
-                                                Width="*" />
+                                                Width="250*" />
                                         </Grid.ColumnDefinitions>
 
                                         <!-- Left column: Patient arrived, Patient dropped, Duration, Rating -->
                                         <StackPanel x:Name="spnlMeetingDetailsPatientLeftComponents"
                                             Grid.Column="0"
-                                            Margin="0,0,10,0">
+                                            Margin="0,0,10,0" Grid.ColumnSpan="2">
 
                                             <!-- Patient Arrived -->
                                             <StackPanel x:Name="spnlPatientArrived"
@@ -1005,7 +1006,7 @@
                                                     FontWeight="SemiBold"
                                                     Text="Patient dropped:" />
 
-                                                <!--  -->
+                                                <!-- Patient Dropped value -->
                                                 <TextBlock x:Name="txbkPatientDroppedValue"
                                                     FontSize="11"
                                                     Text="---" />
@@ -1030,14 +1031,12 @@
                                             </StackPanel>
 
                                             <!-- Rating -->
-                                            <StackPanel
-                                                x:Name="spnlPatientRating"
+                                            <StackPanel x:Name="spnlPatientRating"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
 
                                                 <!-- Rating key -->
-                                                <TextBlock
-                                                    x:Name="txbkPatientRatingKey"
+                                                <TextBlock x:Name="txbkPatientRatingKey"
                                                     Width="90"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
@@ -1050,79 +1049,104 @@
                                             </StackPanel>
                                         </StackPanel>
 
-                                        <!-- CENTER COLUMN -->
-                                        <StackPanel
-                                            Grid.Column="1"
+                                        <!-- Center column: Checked-In via chat, Check-In wait, Wait for Care Team member, Wait for provider, Check out wait -->
+                                        <StackPanel x:Name="spnlMeetingDetailsPatientCenterComponents"
+                                            Grid.Column="2"
                                             Margin="0,0,10,0">
+
                                             <!-- Checked-In via chat -->
-                                            <StackPanel
+                                            <StackPanel x:Name="spnlCheckedInViaChat"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
-                                                <TextBlock
+
+                                                <!-- Checked-In via chat key -->
+                                                <TextBlock x:Name="txbkCheckedInViaChatKey"
                                                     Width="130"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Checked-In via chat:" />
-                                                <TextBlock x:Name="txtCheckInViaChat"
+
+                                                <!-- Checked-In via chat value -->
+                                                <TextBlock x:Name="txbkCheckedInViaChatValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
+
                                             <!-- Check-In wait -->
-                                            <StackPanel
+                                            <StackPanel x:Name="spnlCheckInWait"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
-                                                <TextBlock
+
+                                                <!-- Check-In wait key -->
+                                                <TextBlock x:Name="txbkCheckInWaitKey"
                                                     Width="130"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Check-In wait:" />
-                                                <TextBlock x:Name="txtCheckInWait"
+
+                                                <!-- Check-In wait value -->
+                                                <TextBlock x:Name="txbkCheckInWaitValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
+
                                             <!-- Wait for Care Team member -->
-                                            <StackPanel
+                                            <StackPanel x:Name="spnlWaitForCareTeam"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
-                                                <TextBlock
+
+                                                <!-- Wait for Care Team key -->
+                                                <TextBlock x:Name="txbkWaitForCareTeamKey"
                                                     Width="130"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Wait for Care Team:" />
-                                                <TextBlock x:Name="txtWaitForCareTeam"
+
+                                                <!-- Wait for Care Team value -->
+                                                <TextBlock x:Name="txbkWaitForCareTeamValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
+
                                             <!-- Wait for provider -->
-                                            <StackPanel
+                                            <StackPanel x:Name="spnlWaitForProvider"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
-                                                <TextBlock
+
+                                                <!-- Wait for provider key -->
+                                                <TextBlock x:Name="txbkWaitForProviderKey"
                                                     Width="130"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Wait for provider:" />
-                                                <TextBlock x:Name="txtWaitForProvider"
+
+                                                <!-- Wait for provider value -->
+                                                <TextBlock x:Name="txbkWaitForProviderValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
+
                                             <!-- Check out wait -->
-                                            <StackPanel
+                                            <StackPanel x:Name="spnlCheckOutWait"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
-                                                <TextBlock
+
+                                                <!-- Check out wait key -->
+                                                <TextBlock x:Name="txbkCheckOutWaitKey"
                                                     Width="130"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Check-out wait:" />
-                                                <TextBlock x:Name="txtCheckOutWait"
+
+                                                <!-- Check out wait value -->
+                                                <TextBlock x:Name="txbkCheckOutWaitValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
                                         </StackPanel>
 
-                                        <!-- RIGHT COLUMN -->
-                                        <StackPanel Grid.Column="2">
+                                        <!-- Right column: Device, Operating System, Browser -->
+                                        <StackPanel x:Name="spnlRightColumn" Grid.Column="3">
                                             <!-- Device -->
                                             <StackPanel
                                                 Margin="0,2"

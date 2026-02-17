@@ -1,98 +1,101 @@
 # Tingen Transmorger: Changelog
 
+## 0.9.26.1
 
-### 0.9.26.0
+- Continued to clean up MainWindow.axml
+
+## 0.9.26.0
 
 - Removed Settings button
 - Started to cleanup MainWindow.axml
 
-### 0.9.25.8
+## 0.9.25.8
 
-- `REFACTOR` Working on breaking the patient display logic up into more manageable pieces.
+- Working on breaking the patient display logic up into more manageable pieces.
 
-### 0.9.25.7
+## 0.9.25.7
 
-- 'REFACTOR` Combined the patient and provider search methods into a single method
+- Combined the patient and provider search methods into a single method
 
-### 0.9.25.6
+## 0.9.25.6
 
-- 'REFACTOR` Made significant changes to the following classes:
+- Made significant changes to the following classes:
   - MainWindow.asmx.cs
   - MainWindow.AdminMode.cs
   - TransmorgerDatabase.cs
 
-### 0.9.25.5
+## 0.9.25.5
 
-- 'REFACTOR` Made significant changes to the following classes:
+- Made significant changes to the following classes:
   - MainWindow.asmx.cs
   - MainWindow.AdminMode.cs
   - TransmorgerDatabase.cs
 
-### 0.9.25.4
+## 0.9.25.4
 
-- `ADDED` MainWindow/
+- MainWindow/
   - Moved MainWindow classes to MainWindow/
-- `ADDED` MainWindow.UserInterface.cs
-- 'REFACTOR` Made significant changes to the following classes:
+- MainWindow.UserInterface.cs
+- Made significant changes to the following classes:
   - MainWindow.asmx.cs
   - MainWindow.AdminMode.cs
   - TransmorgerDatabase.cs
 
-### 0.9.25.3
+## 0.9.25.3
 
-- 'REFACTOR` Made significant changes to the following classes:
+- Made significant changes to the following classes:
   - MainWindow.asmx.cs
   - MainWindow.AdminMode.cs
   - TransmorgerDatabase.cs
-- `ADDED` Additional MsgBox components to Core.Catalog.cs
+- Additional MsgBox components to Core.Catalog.cs
 
-### 0.9.25.2
+## 0.9.25.2
 
-- `MODIFIED` The default configuration file now defines both the LocalDb and Tmp directories under /AppData
-- `MODIFIED` MainWindow
+- The default configuration file now defines both the LocalDb and Tmp directories under /AppData
+- MainWindow
   - Commented out some code that may not be needed
   - Created MainWindow.AdminMode.cs partial class for admin mode stuff
   - Minor refactoring/code/comment cleanup
-- `MODIFIED` DatabaseRebuildWindow
+- DatabaseRebuildWindow
   - Minor UI tweaks
 
-### 0.9.25.1
+## 0.9.25.1
 
-- `REMOVED` Unused/abandoned code
+- Unused/abandoned code
 
 ## 0.9.25.0 - 2/11/2026
 
-- `ADDED` Meeting Details (Provider) component
-- `MODIFIED` Disabled the meeting search functionality for now
+- Meeting Details (Provider) component
+- Disabled the meeting search functionality for now
 
-### 0.9.24.0
+## 0.9.24.0
 
-- `ADDED` Functionality to copy Meeting Details (General)
-- `ADDED` Functionality to copy Meeting Details (Patient)
-- `REMOVED` DiagnosticWindow
-- `REMOVED` EmailSummaryWindow
+- Functionality to copy Meeting Details (General)
+- Functionality to copy Meeting Details (Patient)
+- DiagnosticWindow
+- EmailSummaryWindow
 
-### 0.9.23.0
+## 0.9.23.0
 
-- `MODIFIED` Migrated the EmailSummaryWindow functionality into MessageHistoryWindow
+- Migrated the EmailSummaryWindow functionality into MessageHistoryWindow
 
-### 0.9.22.0
+## 0.9.22.0
 
-- `ADDED` Functionality to copy the following message histories to the clipboard:
+- Functionality to copy the following message histories to the clipboard:
   - All message history
   - The top 10 rows of message history
   - All successes
   - All errors
-- `ADDED` TingenTransmorger.Help.HelpWindow
-- `MODIFIED` TingenTransmorger.Database.MessageHistoryWindow
+- TingenTransmorger.Help.HelpWindow
+- TingenTransmorger.Database.MessageHistoryWindow
   - Renamed TingenTransmorger.Database.MessageSummaryWindow -> TingenTransmorger.Database.MessageHistoryWindow
   - Minor changes to user interface
 
-### 0.9.21.0
+## 0.9.21.0
 
-- `ADDED` ProjectInfo.cs
-- `FIXED` The "opted-out" message properly displays
+- ProjectInfo.cs
+- The "opted-out" message properly displays
 
 ## 0.9.20.0 - 2/10/2026
 
-- `FIXED` Fixed an issue where a clean install without a local database would not download the master database.
+- Fixed an issue where a clean install without a local database would not download the master database.

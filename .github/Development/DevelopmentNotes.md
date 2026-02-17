@@ -11,7 +11,7 @@
 - [ ] Show data base statistics/summaries
 - [ ] After rebuild, non-existant database causes error
 
-
+- [ ] Review dgPatientProviderMeetings to make sure the comments work for both patients and providers
 
 
 - [X] Details for phone messages
@@ -41,3 +41,9 @@ Open excel files for detailed research
 
 
 <a target="_blank" href="https://icons8.com/icon/43011/copy">Copy</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+
+
+
+- Left column: Meeting ID, Title, Status, Joins, Duration, Service code
+- Center column: Started by, Scheduled start, Actual start, Ended by, Scheduled end, Actual end
+- Right column: Workflow, Program, Front Desk Check-in, Meeting error

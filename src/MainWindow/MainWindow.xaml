@@ -10,11 +10,10 @@
     Height="700"
     ResizeMode="NoResize"
     mc:Ignorable="d">
+
+    <!-- MAIN GRID -->
     <Grid x:Name="gridMainGrid">
-        <!--
-            Main area
-            This will be blue for standard users, and red for admins.
-        -->
+        <!-- MAIN BORDER -->
         <Border x:Name="brdrMainBorder"
             Margin="10"
             Background="SteelBlue">
@@ -24,18 +23,16 @@
                 </Style>
             </Border.Resources>
             <!--
-                Two-column layout:
-                Left  - Search
-                Right - Details
+                The MainWindow will be have two components:
+                - The left column will be for searching patients/providers
+                - The right column will be for displaying details about the selected patient/provider and their meetings.
             -->
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="360" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <!--
-                    Left column
-                -->
+                <!-- LEFT COLUMN BORDER -->
                 <Border x:Name="brdrLeftColumn"
                     Grid.Column="0"
                     Margin="12,12,4,12"
@@ -118,57 +115,47 @@
                             </ListBox.Resources>
                         </ListBox>
                     </StackPanel>
-                    <!-- spnlSearchContainer -->
                 </Border>
-                <!-- brdrLeftColumnContainer -->
-                <!-- Right: Details panel -->
+                <!-- RIGHT COLUMN BORDER -->
                 <Border x:Name="brdrRightPanel"
                     Grid.Column="1"
                     Margin="4,12,12,12"
                     Padding="8"
                     Background="White"
                     CornerRadius="0,6,6,0">
+                    <!-- StackPanel for both patient/provider details -->
                     <StackPanel x:Name="spnlDetailsMain">
-                        <!--
-                            Patient Details Section
-                            This is what should be visible/collapsed when showing/hiding patient details.
-                        -->
-                        <StackPanel x:Name="spnlPatientDetails"
+                        <!-- StackPanel for patient/provider name, and patient phone/email. -->
+                        <StackPanel x:Name="spnlNamePhoneEmail"
                             Height="65"
                             Margin="0"
                             Background="White"
                             Orientation="Horizontal">
-                            <StackPanel x:Name="spnlPatientNameAndId"
-                                Orientation="Vertical">
-                                <Label x:Name="lblPatientHeader"
-                                    Width="100"
-                                    Height="64"
-                                    Margin="0,0,0,0"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    Background="Black"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    Content="PATIENT"
-                                    FontSize="18"
-                                    FontWeight="SemiBold"
-                                    Foreground="White">
-                                    <Label.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="5,0,0,5" />
-                                        </Style>
-                                    </Label.Resources>
-                                </Label>
-
-                            </StackPanel>
-                            <StackPanel x:Name="spnlPatientHeaderAndIdKey"
+                            <!-- Patient/provider label -->
+                            <Label x:Name="lblPatientProviderKey"
+                                Width="100"
+                                Height="64"
+                                Margin="0,-1,0,0"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Background="Black"
+                                BorderBrush="Black"
+                                BorderThickness="1"
+                                Content="PATIENT"
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Foreground="White">
+                                <Label.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="5,0,0,5" />
+                                    </Style>
+                                </Label.Resources>
+                            </Label>
+                            <!-- Patient/provider name and ID -->
+                            <StackPanel x:Name="spnlPatientProviderNameAndId"
                                 Orientation="vertical">
-
-
-                                <!-- Patient Name -->
-
-
-                                <Label x:Name="lblPatientNameValue"
+                                <!-- Patient/provider Name -->
+                                <Label x:Name="lblPatientProviderNameValue"
                                     Width="250"
                                     Height="32"
                                     Margin="0,0,0,0"
@@ -185,7 +172,8 @@
                                         </Style>
                                     </Label.Resources>
                                 </Label>
-                                <Label x:Name="lblPatientIdValue"
+                                <!-- Patient/provider ID -->
+                                <Label x:Name="lblPatientProviderIdValue"
                                     Width="250"
                                     Height="32"
                                     Margin="0,0,0,0"
@@ -205,9 +193,13 @@
                                     </Label.Resources>
                                 </Label>
                             </StackPanel>
-                            <StackPanel Orientation="Vertical">
+                            <!-- Patient phone and email -->
+                            <StackPanel x:Name="spnlPatientPhoneAndEmail"
+                                Orientation="Vertical">
+                                <!-- Patient phone -->
                                 <StackPanel x:Name="spnlPatientPhone"
                                     Orientation="Horizontal">
+                                    <!-- Patient phone label -->
                                     <Label x:Name="lblPatientPhoneKey"
                                         Width="60"
                                         Height="30"
@@ -227,6 +219,7 @@
                                             </Style>
                                         </Label.Resources>
                                     </Label>
+                                    <!-- Patient phone number -->
                                     <Label x:Name="lblPatientPhoneValue"
                                         Width="325"
                                         Height="30"
@@ -245,6 +238,7 @@
                                             </Style>
                                         </Label.Resources>
                                     </Label>
+                                    <!-- Button to view patient phone details -->
                                     <Button x:Name="btnPhoneDetails"
                                         Width="32"
                                         Height="30"
@@ -257,8 +251,10 @@
                                         </Button.Resources>
                                     </Button>
                                 </StackPanel>
+                                <!-- Patient email -->
                                 <StackPanel x:Name="spnlPatientEmail"
                                     Orientation="Horizontal">
+                                    <!--  -->
                                     <Label x:Name="lblPatientEmailKey"
                                         Width="60"
                                         Height="30"
@@ -278,6 +274,7 @@
                                             </Style>
                                         </Label.Resources>
                                     </Label>
+                                    <!--  -->
                                     <Label x:Name="lblPatientEmailValue"
                                         Width="325"
                                         Height="30"
@@ -295,6 +292,7 @@
                                             </Style>
                                         </Label.Resources>
                                     </Label>
+                                    <!--  -->
                                     <Button x:Name="btnEmailDetails"
                                         Width="32"
                                         Height="30"
@@ -309,52 +307,63 @@
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
-
-                        <!-- Patient Meetings Section -->
-                        <StackPanel x:Name="spnlPatientMeetings"
+                        <!-- Patient/provider meeting information -->
+                        <StackPanel x:Name="spnlPatientProviderMeetings"
                             Margin="0,10,0,0">
+                            <!-- Meeting details -->
                             <StackPanel x:Name="spnlMeetingsHeader"
                                 Margin="0,0,0,8"
                                 Orientation="Horizontal">
+                                <!-- Total meetings -->
                                 <TextBlock x:Name="txtMeetingsTotal"
                                     Margin="0,0,5,0"
                                     FontSize="16"
                                     FontWeight="Bold"
                                     Text="Meetings" />
+                                <!-- Completed meetings -->
                                 <TextBlock x:Name="txtMeetingsCompleted"
                                     FontSize="16"
                                     Foreground="Green"
                                     Text="0 Completed" />
-                                <TextBlock
+                                <!-- Separator -->
+                                <TextBlock x:Name="txtMeetingsSeparator1"
                                     FontSize="16"
                                     Text=" / " />
+                                <!-- In-progress meetings -->
                                 <TextBlock x:Name="txtMeetingsInProgress"
                                     FontSize="16"
                                     Foreground="Orange"
                                     Text="0 In-Progress" />
-                                <TextBlock
+                                <!-- Separator -->
+                                <TextBlock x:Name="txtMeetingsSeparator2"
                                     FontSize="16"
                                     Text=" / " />
+                                <!-- Expired meetings -->
                                 <TextBlock x:Name="txtMeetingsExpired"
                                     FontSize="16"
                                     Foreground="Red"
                                     Text="0 Expired" />
-                                <TextBlock
+                                <!-- Separator -->
+                                <TextBlock x:Name="txtMeetingsSeparator3"
                                     FontSize="16"
                                     Text=" / " />
+                                <!-- Cancelled meetings -->
                                 <TextBlock x:Name="txtMeetingsCancelled"
                                     FontSize="16"
                                     Foreground="Black"
                                     Text="0 Cancelled" />
-                                <TextBlock
+                                <!-- Separator -->
+                                <TextBlock x:Name="txtMeetingsSeparator4"
                                     FontSize="16"
                                     Text=" / " />
+                                <!-- Scheduled meetings -->
                                 <TextBlock x:Name="txtMeetingsScheduled"
                                     FontSize="16"
                                     Foreground="Gray"
                                     Text="0 Scheduled" />
                             </StackPanel>
-                            <DataGrid x:Name="dgPatientMeetings"
+                            <!-- DataGrid to display patient/provider meetings -->
+                            <DataGrid x:Name="dgPatientProviderMeetings"
                                 Height="120"
                                 MaxHeight="120"
                                 AutoGenerateColumns="False"
@@ -401,27 +410,33 @@
                                     </Style>
                                 </DataGrid.Resources>
                                 <DataGrid.Columns>
+                                    <!-- Meeting ID -->
                                     <DataGridTextColumn
                                         Width="100"
                                         Binding="{Binding MeetingId}"
                                         CellStyle="{StaticResource MeetingIdCellStyle}"
                                         Header="ID" />
+                                    <!-- Meeting scheduled start date/time -->
                                     <DataGridTextColumn
                                         Width="150"
                                         Binding="{Binding Start}"
                                         Header="Scheduled Start" />
+                                    <!-- Patient arrived date/time -->
                                     <DataGridTextColumn
                                         Width="150"
                                         Binding="{Binding Arrived}"
                                         Header="Patient Arrived" />
+                                    <!-- Patient dropped date/time -->
                                     <DataGridTextColumn
                                         Width="150"
                                         Binding="{Binding Dropped}"
                                         Header="Patient Dropped" />
+                                    <!-- Patient duration -->
                                     <DataGridTextColumn
                                         Width="110"
                                         Binding="{Binding Duration}"
                                         Header="Patient Duration" />
+                                    <!-- Meeting status -->
                                     <DataGridTextColumn
                                         Width="*"
                                         Binding="{Binding Status}"
@@ -429,559 +444,586 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <StackPanel x:Name="spnlMeetingDetails"
-                                Width="788"
-                                Margin="0,10,20,0"
-                                Orientation="Vertical">
-                                <!-- Meeting Details - Three Column Layout -->
-                                <Border
-                                    Margin="0,0,20,0"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-                                    <StackPanel x:Name="spnlMeetingDetailsGeneral"
-                                        Margin="5,5,0,0">
+                        <!--
+                            StackPanel that contains the following:
+                            - Meeting Details (General)
+                            - Meeting Details (Patient)
+                            - Meeting Details (Provider)
+                        -->
+                        <StackPanel x:Name="spnlMeetingDetails"
+                            Width="788"
+                            Margin="0,10,20,0"
+                            Orientation="Vertical">
+                            <!-- Meeting Details (General) -->
+                            <Border x:Name="brdrMeetingDetailsGeneral"
+                                Margin="0,0,20,0"
+                                BorderBrush="Black"
+                                BorderThickness="1"
+                                CornerRadius="5">
+                                <!--
+                                    StackPanel to hold Meeting Details (General) information, which consists of:
+                                    - The top row, containing the title and the copy button.
+                                    - The bottom row, containing a 3-column grid meeting information.
+                                -->
+                                <StackPanel x:Name="spnlMeetingDetailsGeneral"
+                                    Margin="5,5,0,0">
+                                    <!-- Stackpanel containing the Meeting Details (General) information -->
+                                    <StackPanel x:Name="spnlMeetingDetailsGeneralContainer"
+                                        Margin="0,0,0,4"
+                                        Orientation="Horizontal">
+                                        <!-- Meeting Details (General) header -->
+                                        <TextBlock
+                                            x:Name="txtMeetingDetailsHeader"
+                                            Margin="0,5,0,0"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Text="Meeting Details (General)" />
+                                        <!-- Button to copy Meeting Details (General) information to clipboard -->
+                                        <Button x:Name="btnCopyMeetingDetailsGeneral"
+                                            Width="24"
+                                            Height="24"
+                                            Margin="10,0,0,0"
+                                            BorderThickness="0"
+                                            Click="btnCopyMeetingDetailsGeneral_Click">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="3" />
+                                                </Style>
+                                            </Button.Resources>
+                                            <Button.Background>
+                                                <ImageBrush ImageSource="/AppData/Image/Control/Button/Copy-40x40.png" />
+                                            </Button.Background>
+                                        </Button>
+                                    </StackPanel>
+                                    <!--
+                                        Bottom row with 3-column grid:
+                                        - Left column: Meeting ID, Title, Status, Joins, Duration, Service code
+                                        - Center column: Started by, Scheduled start, Actual start, Ended by, Scheduled end, Actual end
+                                        - Right column: Workflow, Program, Front Desk Check-in, Meeting error
+                                    -->
+                                    <Grid Margin="0,4,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <!-- Left column -->
                                         <StackPanel
-                                            Margin="0,0,0,4"
-                                            Orientation="Horizontal">
-                                            <TextBlock
-                                                Margin="0,5,0,0"
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Text="Meeting Details (General)" />
-                                            <Button x:Name="btnCopyMeetingDetailsGeneral"
-                                                Width="24"
-                                                Height="24"
-                                                Margin="10,0,0,0"
-                                                BorderThickness="0"
-                                                Click="btnCopyMeetingDetailsGeneral_Click">
-                                                <Button.Resources>
-                                                    <Style TargetType="Border">
-                                                        <Setter Property="CornerRadius" Value="3" />
-                                                    </Style>
-                                                </Button.Resources>
-                                                <Button.Background>
-                                                    <ImageBrush ImageSource="/AppData/Image/Control/Button/Copy-40x40.png" />
-                                                </Button.Background>
-                                            </Button>
-                                        </StackPanel>
-                                        <Grid Margin="0,4,0,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- LEFT COLUMN -->
+                                            Grid.Column="0"
+                                            Margin="0,0,10,0">
+                                            <!-- Meeting ID -->
                                             <StackPanel
-                                                Grid.Column="0"
-                                                Margin="0,0,10,0">
-                                                <!-- Meeting ID -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="80"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Meeting ID:" />
-                                                    <TextBlock x:Name="lblMeetingIdValue"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <!--  -->
+                                                <TextBlock
+                                                    Width="80"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Meeting ID:" />
+                                                <!-- Meeting ID value -->
+                                                <TextBlock x:Name="lblMeetingIdValue"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Meeting Title -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
                                                 <!-- Meeting Title -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="80"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Title:" />
-                                                    <TextBlock x:Name="lblMeetingTitleValue"
-                                                        FontSize="11"
-                                                        Text="---"
-                                                        TextWrapping="Wrap" />
-                                                </StackPanel>
+                                                <TextBlock
+                                                    Width="80"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Title:" />
+                                                <!-- Meeting Title value -->
+                                                <TextBlock x:Name="lblMeetingTitleValue"
+                                                    FontSize="11"
+                                                    Text="---"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                            <!-- Meeting Status -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
                                                 <!-- Meeting Status -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="80"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Status:" />
-                                                    <TextBlock x:Name="lblMeetingStatusValue"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Joins -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="80"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Joins:" />
-                                                    <TextBlock x:Name="lblMeetingJoins"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Duration -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="80"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Duration:" />
-                                                    <TextBlock x:Name="lblMeetingDuration"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Service Code -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="80"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Service code:" />
-                                                    <TextBlock x:Name="lblMeetingServiceCode"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
+                                                <TextBlock
+                                                    Width="80"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Status:" />
+                                                <!-- Meeting Status value -->
+                                                <TextBlock x:Name="lblMeetingStatusValue"
+                                                    FontSize="11"
+                                                    Text="---" />
                                             </StackPanel>
-
-                                            <!-- CENTER COLUMN -->
+                                            <!-- Meeting joins -->
                                             <StackPanel
-                                                Grid.Column="1"
-                                                Margin="0,0,10,0">
-                                                <!-- Started by -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Started by:" />
-                                                    <TextBlock x:Name="lblMeetingInitiatedBy"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Scheduled start -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Scheduled start:" />
-                                                    <TextBlock x:Name="lblMeetingScheduledStart"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Actual start -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Actual start:" />
-                                                    <TextBlock x:Name="lblMeetingActualStart"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Ended by -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Ended by:" />
-                                                    <TextBlock x:Name="lblMeetingEndedBy"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Scheduled end -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Scheduled end:" />
-                                                    <TextBlock x:Name="lblMeetingScheduledEnd"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Actual end -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Actual end:" />
-                                                    <TextBlock x:Name="lblMeetingActualEnd"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <!-- Meeting joins label -->
+                                                <TextBlock
+                                                    Width="80"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Joins:" />
+                                                <!-- Meeting joins value -->
+                                                <TextBlock x:Name="lblMeetingJoins"
+                                                    FontSize="11"
+                                                    Text="---" />
                                             </StackPanel>
-
-                                            <!-- RIGHT COLUMN -->
-                                            <StackPanel Grid.Column="2">
-                                                <!-- Workflow -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Workflow:" />
-                                                    <TextBlock x:Name="txtMeetingWorkflow"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Program -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Program:" />
-                                                    <TextBlock x:Name="txtMeetingProgram"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Front Desk Check-in -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="116"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Front Desk Check-In:" />
-                                                    <TextBlock x:Name="txtMeetingCheckedInByFrontDesk"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Meeting Error -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Vertical">
-                                                    <TextBlock
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Meeting error:" />
-                                                    <TextBlock x:Name="txtMeetingError"
-                                                        Margin="0,2,0,0"
-                                                        FontSize="11"
-                                                        Text="---"
-                                                        TextWrapping="Wrap" />
-                                                </StackPanel>
+                                            <!-- Meeting duration -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <!-- Meeting duration label -->
+                                                <TextBlock
+                                                    Width="80"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Duration:" />
+                                                <!-- Meeting duration value -->
+                                                <TextBlock x:Name="lblMeetingDuration"
+                                                    FontSize="11"
+                                                    Text="---" />
                                             </StackPanel>
-                                        </Grid>
-                                    </StackPanel>
-                                </Border>
+                                            <!-- Service Code -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="80"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Service code:" />
+                                                <TextBlock x:Name="lblMeetingServiceCode"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                        </StackPanel>
 
-
-                                <!-- Meeting Details (Patient) Section -->
-                                <Border x:Name="brdrMeetingDetailsPatient"
-                                    Margin="0,10,20,0"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-                                    <StackPanel x:Name="spnlMeetingDetailsPatient"
-                                        Margin="8">
+                                        <!-- CENTER COLUMN -->
                                         <StackPanel
-                                            Margin="0,0,0,4"
-                                            Orientation="Horizontal">
-                                            <TextBlock
-                                                Margin="0,5,0,0"
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Text="Meeting Details (Patient)" />
-                                            <Button x:Name="btnCopyMeetingDetailsPatient"
-                                                Width="24"
-                                                Height="24"
-                                                Margin="10,0,0,0"
-                                                BorderThickness="0"
-                                                Click="btnCopyMeetingDetailsPatient_Click">
-                                                <Button.Resources>
-                                                    <Style TargetType="Border">
-                                                        <Setter Property="CornerRadius" Value="3" />
-                                                    </Style>
-                                                </Button.Resources>
-                                                <Button.Background>
-                                                    <ImageBrush ImageSource="/AppData/Image/Control/Button/Copy-40x40.png" />
-                                                </Button.Background>
-                                            </Button>
-                                        </StackPanel>
-                                        <Grid Margin="0,4,0,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- LEFT COLUMN -->
+                                            Grid.Column="1"
+                                            Margin="0,0,10,0">
+                                            <!-- Started by -->
                                             <StackPanel
-                                                Grid.Column="0"
-                                                Margin="0,0,10,0">
-                                                <!-- Patient Arrived -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Patient arrived:" />
-                                                    <TextBlock x:Name="txtPatientArrived"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Patient Dropped -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Patient dropped:" />
-                                                    <TextBlock x:Name="txtPatientDropped"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Duration -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Duration:" />
-                                                    <TextBlock x:Name="txtPatientDuration"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Rating -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Rating:" />
-                                                    <TextBlock x:Name="txtPatientRating"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Started by:" />
+                                                <TextBlock x:Name="lblMeetingInitiatedBy"
+                                                    FontSize="11"
+                                                    Text="---" />
                                             </StackPanel>
-
-                                            <!-- CENTER COLUMN -->
+                                            <!-- Scheduled start -->
                                             <StackPanel
-                                                Grid.Column="1"
-                                                Margin="0,0,10,0">
-                                                <!-- Checked-In via chat -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="130"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Checked-In via chat:" />
-                                                    <TextBlock x:Name="txtCheckInViaChat"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Check-In wait -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="130"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Check-In wait:" />
-                                                    <TextBlock x:Name="txtCheckInWait"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Wait for Care Team member -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="130"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Wait for Care Team:" />
-                                                    <TextBlock x:Name="txtWaitForCareTeam"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Wait for provider -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="130"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Wait for provider:" />
-                                                    <TextBlock x:Name="txtWaitForProvider"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Check out wait -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="130"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Check-out wait:" />
-                                                    <TextBlock x:Name="txtCheckOutWait"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Scheduled start:" />
+                                                <TextBlock x:Name="lblMeetingScheduledStart"
+                                                    FontSize="11"
+                                                    Text="---" />
                                             </StackPanel>
-
-                                            <!-- RIGHT COLUMN -->
-                                            <StackPanel Grid.Column="2">
-                                                <!-- Device -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Device:" />
-                                                    <TextBlock x:Name="txtPatientDevice"
-                                                        FontSize="11"
-                                                        Text="---" />
-                                                </StackPanel>
-                                                <!-- Operating System -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="OS:" />
-                                                    <TextBlock x:Name="txtPatientOs"
-                                                        FontSize="11"
-                                                        Text="---"
-                                                        TextWrapping="Wrap" />
-                                                </StackPanel>
-                                                <!-- Browser -->
-                                                <StackPanel
-                                                    Margin="0,2"
-                                                    Orientation="Horizontal">
-                                                    <TextBlock
-                                                        Width="90"
-                                                        FontSize="11"
-                                                        FontWeight="SemiBold"
-                                                        Text="Browser:" />
-                                                    <TextBlock x:Name="txtPatientBrowser"
-                                                        FontSize="11"
-                                                        Text="---"
-                                                        TextWrapping="Wrap" />
-                                                </StackPanel>
+                                            <!-- Actual start -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Actual start:" />
+                                                <TextBlock x:Name="lblMeetingActualStart"
+                                                    FontSize="11"
+                                                    Text="---" />
                                             </StackPanel>
-                                        </Grid>
-
-                                        <!-- Participant Meeting Quality Data - Spanning all columns -->
-                                        <StackPanel Margin="0,8,0,0">
-                                            <TextBlock
-                                                FontSize="11"
-                                                FontWeight="SemiBold"
-                                                Text="Participant Meeting Quality Data:" />
-                                            <TextBlock x:Name="txtMeetingQualityData"
-                                                Margin="0,2,0,0"
-                                                FontSize="11"
-                                                Text="---"
-                                                TextWrapping="Wrap" />
+                                            <!-- Ended by -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Ended by:" />
+                                                <TextBlock x:Name="lblMeetingEndedBy"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Scheduled end -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Scheduled end:" />
+                                                <TextBlock x:Name="lblMeetingScheduledEnd"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Actual end -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Actual end:" />
+                                                <TextBlock x:Name="lblMeetingActualEnd"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
                                         </StackPanel>
+
+                                        <!-- RIGHT COLUMN -->
+                                        <StackPanel Grid.Column="2">
+                                            <!-- Workflow -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Workflow:" />
+                                                <TextBlock x:Name="txtMeetingWorkflow"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Program -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Program:" />
+                                                <TextBlock x:Name="txtMeetingProgram"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Front Desk Check-in -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="116"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Front Desk Check-In:" />
+                                                <TextBlock x:Name="txtMeetingCheckedInByFrontDesk"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Meeting Error -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Vertical">
+                                                <TextBlock
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Meeting error:" />
+                                                <TextBlock x:Name="txtMeetingError"
+                                                    Margin="0,2,0,0"
+                                                    FontSize="11"
+                                                    Text="---"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+
+                            <!-- Meeting Details (Patient) Section -->
+                            <Border x:Name="brdrMeetingDetailsPatient"
+                                Margin="0,10,20,0"
+                                BorderBrush="Black"
+                                BorderThickness="1"
+                                CornerRadius="5">
+                                <StackPanel x:Name="spnlMeetingDetailsPatient"
+                                    Margin="8">
+                                    <StackPanel
+                                        Margin="0,0,0,4"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            Margin="0,5,0,0"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Text="Meeting Details (Patient)" />
+                                        <Button x:Name="btnCopyMeetingDetailsPatient"
+                                            Width="24"
+                                            Height="24"
+                                            Margin="10,0,0,0"
+                                            BorderThickness="0"
+                                            Click="btnCopyMeetingDetailsPatient_Click">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="3" />
+                                                </Style>
+                                            </Button.Resources>
+                                            <Button.Background>
+                                                <ImageBrush ImageSource="/AppData/Image/Control/Button/Copy-40x40.png" />
+                                            </Button.Background>
+                                        </Button>
                                     </StackPanel>
-                                </Border>
+                                    <Grid Margin="0,4,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
 
-                                <!-- Meeting Details (Provider) Section -->
-                                <Border x:Name="brdrMeetingDetailsProvider"
-                                    Margin="0,10,20,0"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-                                    <StackPanel x:Name="spnlMeetingDetailsProvider"
-                                        Margin="8">
+                                        <!-- LEFT COLUMN -->
                                         <StackPanel
-                                            Margin="0,0,0,4"
-                                            Orientation="Horizontal">
-                                            <TextBlock
-                                                Margin="0,5,0,0"
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Text="Meeting Details (Provider)" />
-                                            <Button x:Name="btnCopyMeetingDetailsProvider"
-                                                Width="24"
-                                                Height="24"
-                                                Margin="10,0,0,0"
-                                                BorderThickness="0"
-                                                Click="btnCopyMeetingDetailsProvider_Click">
-                                                <Button.Resources>
-                                                    <Style TargetType="Border">
-                                                        <Setter Property="CornerRadius" Value="3" />
-                                                    </Style>
-                                                </Button.Resources>
-                                                <Button.Background>
-                                                    <ImageBrush ImageSource="/AppData/Image/Control/Button/Copy-40x40.png" />
-                                                </Button.Background>
-                                            </Button>
+                                            Grid.Column="0"
+                                            Margin="0,0,10,0">
+                                            <!-- Patient Arrived -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Patient arrived:" />
+                                                <TextBlock x:Name="txtPatientArrived"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Patient Dropped -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Patient dropped:" />
+                                                <TextBlock x:Name="txtPatientDropped"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Duration -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Duration:" />
+                                                <TextBlock x:Name="txtPatientDuration"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Rating -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Rating:" />
+                                                <TextBlock x:Name="txtPatientRating"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
                                         </StackPanel>
 
-                                        <!-- Participant Names - Spanning full width -->
-                                        <StackPanel Margin="0,8,0,0">
-                                            <TextBlock
-                                                FontSize="11"
-                                                FontWeight="SemiBold"
-                                                Text="Participant Names:" />
-                                            <TextBlock x:Name="txtProviderParticipantNames"
-                                                Margin="0,2,0,0"
-                                                FontSize="11"
-                                                Text="---"
-                                                TextWrapping="Wrap" />
+                                        <!-- CENTER COLUMN -->
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            Margin="0,0,10,0">
+                                            <!-- Checked-In via chat -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="130"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Checked-In via chat:" />
+                                                <TextBlock x:Name="txtCheckInViaChat"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Check-In wait -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="130"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Check-In wait:" />
+                                                <TextBlock x:Name="txtCheckInWait"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Wait for Care Team member -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="130"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Wait for Care Team:" />
+                                                <TextBlock x:Name="txtWaitForCareTeam"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Wait for provider -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="130"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Wait for provider:" />
+                                                <TextBlock x:Name="txtWaitForProvider"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Check out wait -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="130"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Check-out wait:" />
+                                                <TextBlock x:Name="txtCheckOutWait"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
                                         </StackPanel>
+
+                                        <!-- RIGHT COLUMN -->
+                                        <StackPanel Grid.Column="2">
+                                            <!-- Device -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Device:" />
+                                                <TextBlock x:Name="txtPatientDevice"
+                                                    FontSize="11"
+                                                    Text="---" />
+                                            </StackPanel>
+                                            <!-- Operating System -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="OS:" />
+                                                <TextBlock x:Name="txtPatientOs"
+                                                    FontSize="11"
+                                                    Text="---"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                            <!-- Browser -->
+                                            <StackPanel
+                                                Margin="0,2"
+                                                Orientation="Horizontal">
+                                                <TextBlock
+                                                    Width="90"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    Text="Browser:" />
+                                                <TextBlock x:Name="txtPatientBrowser"
+                                                    FontSize="11"
+                                                    Text="---"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Participant Meeting Quality Data - Spanning all columns -->
+                                    <StackPanel Margin="0,8,0,0">
+                                        <TextBlock
+                                            FontSize="11"
+                                            FontWeight="SemiBold"
+                                            Text="Participant Meeting Quality Data:" />
+                                        <TextBlock x:Name="txtMeetingQualityData"
+                                            Margin="0,2,0,0"
+                                            FontSize="11"
+                                            Text="---"
+                                            TextWrapping="Wrap" />
                                     </StackPanel>
-                                </Border>
-                            </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Meeting Details (Provider) Section -->
+                            <Border x:Name="brdrMeetingDetailsProvider"
+                                Margin="0,10,20,0"
+                                BorderBrush="Black"
+                                BorderThickness="1"
+                                CornerRadius="5">
+                                <StackPanel x:Name="spnlMeetingDetailsProvider"
+                                    Margin="8">
+                                    <StackPanel
+                                        Margin="0,0,0,4"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            Margin="0,5,0,0"
+                                            FontSize="12"
+                                            FontWeight="SemiBold"
+                                            Text="Meeting Details (Provider)" />
+                                        <Button x:Name="btnCopyMeetingDetailsProvider"
+                                            Width="24"
+                                            Height="24"
+                                            Margin="10,0,0,0"
+                                            BorderThickness="0"
+                                            Click="btnCopyMeetingDetailsProvider_Click">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="3" />
+                                                </Style>
+                                            </Button.Resources>
+                                            <Button.Background>
+                                                <ImageBrush ImageSource="/AppData/Image/Control/Button/Copy-40x40.png" />
+                                            </Button.Background>
+                                        </Button>
+                                    </StackPanel>
+
+                                    <!-- Participant Names - Spanning full width -->
+                                    <StackPanel Margin="0,8,0,0">
+                                        <TextBlock
+                                            FontSize="11"
+                                            FontWeight="SemiBold"
+                                            Text="Participant Names:" />
+                                        <TextBlock x:Name="txtProviderParticipantNames"
+                                            Margin="0,2,0,0"
+                                            FontSize="11"
+                                            Text="---"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
-
                     </StackPanel>
                 </Border>
             </Grid>

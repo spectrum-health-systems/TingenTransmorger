@@ -1,11 +1,53 @@
 # Tingen Transmorger: Changelog
 
-## 0.9.26.0
+
+### 0.9.26.0
+
+- Removed Settings button
+- Started to cleanup MainWindow.axml
+
+### 0.9.25.8
+
+- `REFACTOR` Working on breaking the patient display logic up into more manageable pieces.
+
+### 0.9.25.7
+
+- 'REFACTOR` Combined the patient and provider search methods into a single method
+
+### 0.9.25.6
+
+- 'REFACTOR` Made significant changes to the following classes:
+  - MainWindow.asmx.cs
+  - MainWindow.AdminMode.cs
+  - TransmorgerDatabase.cs
+
+### 0.9.25.5
+
+- 'REFACTOR` Made significant changes to the following classes:
+  - MainWindow.asmx.cs
+  - MainWindow.AdminMode.cs
+  - TransmorgerDatabase.cs
+
+### 0.9.25.4
 
 - `ADDED` MainWindow/
   - Moved MainWindow classes to MainWindow/
 - `ADDED` MainWindow.UserInterface.cs
+- 'REFACTOR` Made significant changes to the following classes:
+  - MainWindow.asmx.cs
+  - MainWindow.AdminMode.cs
+  - TransmorgerDatabase.cs
+
+### 0.9.25.3
+
+- 'REFACTOR` Made significant changes to the following classes:
+  - MainWindow.asmx.cs
+  - MainWindow.AdminMode.cs
+  - TransmorgerDatabase.cs
 - `ADDED` Additional MsgBox components to Core.Catalog.cs
+
+### 0.9.25.2
+
 - `MODIFIED` The default configuration file now defines both the LocalDb and Tmp directories under /AppData
 - `MODIFIED` MainWindow
   - Commented out some code that may not be needed
@@ -13,12 +55,9 @@
   - Minor refactoring/code/comment cleanup
 - `MODIFIED` DatabaseRebuildWindow
   - Minor UI tweaks
-- 'REFACTOR` Combined the patient and provider search methods into a single method
-- 'REFACTOR` Made significant changes to the following classes:
-  - MainWindow.asmx.cs
-  - MainWindow.AdminMode.cs
-  - TransmorgerDatabase.cs
-- `REMOVED` Settings button
+
+### 0.9.25.1
+
 - `REMOVED` Unused/abandoned code
 
 ## 0.9.25.0 - 2/11/2026
@@ -26,18 +65,18 @@
 - `ADDED` Meeting Details (Provider) component
 - `MODIFIED` Disabled the meeting search functionality for now
 
-## 0.9.24.0
+### 0.9.24.0
 
 - `ADDED` Functionality to copy Meeting Details (General)
 - `ADDED` Functionality to copy Meeting Details (Patient)
 - `REMOVED` DiagnosticWindow
 - `REMOVED` EmailSummaryWindow
 
-## 0.9.23.0
+### 0.9.23.0
 
 - `MODIFIED` Migrated the EmailSummaryWindow functionality into MessageHistoryWindow
 
-## 0.9.22.0
+### 0.9.22.0
 
 - `ADDED` Functionality to copy the following message histories to the clipboard:
   - All message history
@@ -49,7 +88,7 @@
   - Renamed TingenTransmorger.Database.MessageSummaryWindow -> TingenTransmorger.Database.MessageHistoryWindow
   - Minor changes to user interface
 
-## 0.9.21.0
+### 0.9.21.0
 
 - `ADDED` ProjectInfo.cs
 - `FIXED` The "opted-out" message properly displays

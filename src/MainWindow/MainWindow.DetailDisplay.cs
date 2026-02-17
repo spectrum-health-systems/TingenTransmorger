@@ -217,28 +217,28 @@ public partial class MainWindow : Window
         }
 
         // Update the header with the detailed count using individual TextBlocks
-        txtMeetingsTotal.Text = $"{totalCount} MEETINGS";
-        txtMeetingsCompleted.Text = $"{completedCount} Completed";
-        txtMeetingsInProgress.Text = $"{inProgressCount} In-Progress";
-        txtMeetingsExpired.Text = $"{expiredCount} Expired";
-        txtMeetingsCancelled.Text = $"{cancelledCount} Cancelled";
-        txtMeetingsScheduled.Text = $"{scheduledCount} Scheduled";
+        txbkTotalMeetingsValue.Text = $"{totalCount} MEETINGS";
+        txbkCompletedMeetingsValue.Text = $"{completedCount} Completed";
+        txbkMeetingsInProgressValue.Text = $"{inProgressCount} In-Progress";
+        txbkMeetingsExpiredValue.Text = $"{expiredCount} Expired";
+        txbkMeetingsCancelledValue.Text = $"{cancelledCount} Cancelled";
+        txbkMeetingsScheduledValue.Text = $"{scheduledCount} Scheduled";
 
         // Bind to DataGrid
-        dgPatientMeetings.ItemsSource = meetingRows;
+        dgrdMeetingResults.ItemsSource = meetingRows;
 
         // Show meetings section if there are meetings
         if (meetingRows.Count > 0)
         {
-            spnlPatientMeetings.Visibility = Visibility.Visible;
+            spnlMeetingComponents.Visibility = Visibility.Visible;
         }
         else
         {
-            spnlPatientMeetings.Visibility = Visibility.Collapsed;
+            spnlMeetingComponents.Visibility = Visibility.Collapsed;
         }
 
         // Hide meeting details until a meeting is selected
-        spnlMeetingDetails.Visibility = Visibility.Collapsed;
+        spnlMeetingDetailsComponents.Visibility = Visibility.Collapsed;
     }
 
     /// <summary>

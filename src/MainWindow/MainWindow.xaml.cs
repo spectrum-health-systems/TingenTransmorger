@@ -108,7 +108,7 @@ public partial class MainWindow : Window
     /// <param name="searchText">Contents of the search box.</param>
     private void DisplaySearchResults(string searchType, string searchText)
     {
-        bool searchByName = rbtnByName.IsChecked == true;
+        bool searchByName = rbtnSearchByName.IsChecked == true;
 
         List<string> resultList = SearchFor.PatientOrProvider(searchType, searchText, TmDb, searchByName);
 
@@ -447,10 +447,10 @@ public partial class MainWindow : Window
     private void DisplayProviderDetails(string providerName, string providerId)
     {
         // Show provider details section
-        spnlPatientDetails.Visibility = Visibility.Visible;
+        spnlPatientProviderDetailsComponents.Visibility = Visibility.Visible;
 
         // Set header to PROVIDER
-        lblPatientHeader.Content = "PROVIDER";
+        lblPatientProviderKey.Content = "PROVIDER";
 
         /* TODO: These are related to the potentially unused fields at the top of this class.
          */
@@ -466,12 +466,12 @@ public partial class MainWindow : Window
         }
 
         // Display provider name and ID
-        lblPatientNameValue.Content = providerName;
-        lblPatientIdValue.Content = providerId;
+        lblPatientProviderNameValue.Content = providerName;
+        lblPatientProviderIdValue.Content = providerId;
 
         // Hide phone and email sections for providers
-        spnlPatientPhone.Visibility = Visibility.Collapsed;
-        spnlPatientEmail.Visibility = Visibility.Collapsed;
+        spnlPatientPhoneComponents.Visibility = Visibility.Collapsed;
+        spnlPatientEmailComponents.Visibility = Visibility.Collapsed;
 
         // Still collect email data in the background (hidden from UI)
         // Display email addresses (hidden from user but still processed)
@@ -623,28 +623,28 @@ public partial class MainWindow : Window
         }
 
         // Update the header with the detailed count
-        txtMeetingsTotal.Text = $"{totalCount} MEETINGS";
-        txtMeetingsCompleted.Text = $"{completedCount} Completed";
-        txtMeetingsInProgress.Text = $"{inProgressCount} In-Progress";
-        txtMeetingsExpired.Text = $"{expiredCount} Expired";
-        txtMeetingsCancelled.Text = $"{cancelledCount} Cancelled";
-        txtMeetingsScheduled.Text = $"{scheduledCount} Scheduled";
+        txbkTotalMeetingsValue.Text = $"{totalCount} MEETINGS";
+        txbkCompletedMeetingsValue.Text = $"{completedCount} Completed";
+        txbkMeetingsInProgressValue.Text = $"{inProgressCount} In-Progress";
+        txbkMeetingsExpiredValue.Text = $"{expiredCount} Expired";
+        txbkMeetingsCancelledValue.Text = $"{cancelledCount} Cancelled";
+        txbkMeetingsScheduledValue.Text = $"{scheduledCount} Scheduled";
 
         // Bind to DataGrid
-        dgPatientMeetings.ItemsSource = meetingRows;
+        dgrdMeetingResults.ItemsSource = meetingRows;
 
         // Show meetings section if there are meetings
         if (meetingRows.Count > 0)
         {
-            spnlPatientMeetings.Visibility = Visibility.Visible;
+            spnlMeetingComponents.Visibility = Visibility.Visible;
         }
         else
         {
-            spnlPatientMeetings.Visibility = Visibility.Collapsed;
+            spnlMeetingComponents.Visibility = Visibility.Collapsed;
         }
 
         // Hide meeting details until a meeting is selected
-        spnlMeetingDetails.Visibility = Visibility.Collapsed;
+        spnlMeetingDetailsComponents.Visibility = Visibility.Collapsed;
     }
 
     /// <summary>Handles the selection changed event for the meetings DataGrid.</summary>
@@ -659,15 +659,15 @@ public partial class MainWindow : Window
         // Don't process selection if database is not yet initialized
         if (TmDb == null)
         {
-            spnlMeetingDetails.Visibility = Visibility.Collapsed;
+            spnlMeetingDetailsComponents.Visibility = Visibility.Collapsed;
             return;
         }
 
         // Get the selected meeting
-        var selectedMeeting = dgPatientMeetings.SelectedItem as PatientMeetingRow;
+        var selectedMeeting = dgrdMeetingResults.SelectedItem as PatientMeetingRow;
         if (selectedMeeting == null || string.IsNullOrWhiteSpace(selectedMeeting.MeetingId))
         {
-            spnlMeetingDetails.Visibility = Visibility.Collapsed;
+            spnlMeetingDetailsComponents.Visibility = Visibility.Collapsed;
             return;
         }
 
@@ -675,7 +675,7 @@ public partial class MainWindow : Window
         var meetingDetail = TmDb.GetMeetingDetail(selectedMeeting.MeetingId);
         if (meetingDetail == null)
         {
-            spnlMeetingDetails.Visibility = Visibility.Collapsed;
+            spnlMeetingDetailsComponents.Visibility = Visibility.Collapsed;
             return;
         }
 
@@ -741,25 +741,25 @@ public partial class MainWindow : Window
             ? (checkedInElem.GetString() ?? string.Empty) : string.Empty;
 
         // Populate labels with null-safe values
-        lblMeetingIdValue.Text = ReplaceNull(meetingId ?? string.Empty);
-        lblMeetingStatusValue.Text = ReplaceNull(status ?? string.Empty);
-        lblMeetingTitleValue.Text = ReplaceNull(meetingTitle ?? string.Empty);
+        txbkMeetingIdValue.Text = ReplaceNull(meetingId ?? string.Empty);
+        txbkMeetingStatusValue.Text = ReplaceNull(status ?? string.Empty);
+        txbkMeetingTitleValue.Text = ReplaceNull(meetingTitle ?? string.Empty);
 
         // Populate meeting detail TextBlocks
-        lblMeetingInitiatedBy.Text = ReplaceNull(initiatedBy ?? string.Empty);
-        lblMeetingScheduledStart.Text = ReplaceNull(scheduledStart ?? string.Empty);
-        lblMeetingActualStart.Text = ReplaceNull(actualStart ?? string.Empty);
-        lblMeetingScheduledEnd.Text = ReplaceNull(scheduledEnd ?? string.Empty);
-        lblMeetingActualEnd.Text = ReplaceNull(actualEnd ?? string.Empty);
-        lblMeetingEndedBy.Text = ReplaceNull(endedBy ?? string.Empty);
-        lblMeetingJoins.Text = ReplaceNull(joins ?? string.Empty);
-        lblMeetingDuration.Text = ReplaceNull(duration ?? string.Empty);
-        lblMeetingServiceCode.Text = ReplaceNull(serviceCode ?? string.Empty);
+        txbkMeetingStartedByValue.Text = ReplaceNull(initiatedBy ?? string.Empty);
+        txbkMeetingScheduledStartValue.Text = ReplaceNull(scheduledStart ?? string.Empty);
+        txbkMeetingActualStartValue.Text = ReplaceNull(actualStart ?? string.Empty);
+        txbkMeetingScheduledEndValue.Text = ReplaceNull(scheduledEnd ?? string.Empty);
+        txbkMeetingActualEndValue.Text = ReplaceNull(actualEnd ?? string.Empty);
+        txbkMeetingEndedByValue.Text = ReplaceNull(endedBy ?? string.Empty);
+        txbkMeetingJoins.Text = ReplaceNull(joins ?? string.Empty);
+        txbkMeetingDurationValue.Text = ReplaceNull(duration ?? string.Empty);
+        txbkMeetingServiceCodeValue.Text = ReplaceNull(serviceCode ?? string.Empty);
 
         // Populate additional information TextBlocks
-        txtMeetingWorkflow.Text = ReplaceNull(workflow ?? string.Empty);
-        txtMeetingProgram.Text = ReplaceNull(program ?? string.Empty);
-        txtMeetingCheckedInByFrontDesk.Text = ReplaceNull(checkedInByFrontDesk ?? string.Empty);
+        txbkMeetingWorkflowValue.Text = ReplaceNull(workflow ?? string.Empty);
+        txbkMeetingProgram.Text = ReplaceNull(program ?? string.Empty);
+        txbkMeetingCheckedInByFrontDeskValue.Text = ReplaceNull(checkedInByFrontDesk ?? string.Empty);
 
         // Get and display meeting error if it exists
         var meetingError = TmDb.GetMeetingError(selectedMeeting.MeetingId);
@@ -772,16 +772,16 @@ public partial class MainWindow : Window
 
             if (!string.IsNullOrWhiteSpace(kind) || !string.IsNullOrWhiteSpace(reason))
             {
-                txtMeetingError.Text = $"{kind}\n{reason}";
+                txbkMeetingErrorValue.Text = $"{kind}\n{reason}";
             }
             else
             {
-                txtMeetingError.Text = "---";
+                txbkMeetingErrorValue.Text = "---";
             }
         }
         else
         {
-            txtMeetingError.Text = "---";
+            txbkMeetingErrorValue.Text = "---";
         }
 
         // Get and display participant meeting quality data from Patients.Meetings
@@ -847,26 +847,26 @@ public partial class MainWindow : Window
         }
 
         // Populate patient meeting detail fields
-        txtPatientArrived.Text = ReplaceNull(arrived);
-        txtPatientDropped.Text = ReplaceNull(dropped);
-        txtPatientDuration.Text = ReplaceNull(patientDuration);
-        txtPatientRating.Text = ReplaceNull(rating);
-        txtCheckInViaChat.Text = ReplaceNull(checkInViaChat);
-        txtCheckInWait.Text = ReplaceNull(checkInWait);
-        txtWaitForCareTeam.Text = ReplaceNull(waitForCareTeam);
-        txtWaitForProvider.Text = ReplaceNull(waitForProvider);
-        txtCheckOutWait.Text = ReplaceNull(checkOutWait);
-        txtPatientDevice.Text = ReplaceNull(device);
-        txtPatientOs.Text = ReplaceNull(os);
-        txtPatientBrowser.Text = ReplaceNull(browser);
-        txtMeetingQualityData.Text = ReplaceNull(qualityData);
+        txbkPatientArrivedValue.Text = ReplaceNull(arrived);
+        txbkPatientDroppedValue.Text = ReplaceNull(dropped);
+        txbkPatientDurationValue.Text = ReplaceNull(patientDuration);
+        txbkPatientRatingValue.Text = ReplaceNull(rating);
+        txbkCheckedInViaChatValue.Text = ReplaceNull(checkInViaChat);
+        txbkCheckInWaitValue.Text = ReplaceNull(checkInWait);
+        txbkWaitForCareTeamValue.Text = ReplaceNull(waitForCareTeam);
+        txbkWaitForProviderValue.Text = ReplaceNull(waitForProvider);
+        txbkCheckOutWaitValue.Text = ReplaceNull(checkOutWait);
+        txbkPatientDeviceValue.Text = ReplaceNull(device);
+        txbkPatientOsValue.Text = ReplaceNull(os);
+        txbkPatientBrowserValue.Text = ReplaceNull(browser);
+        txbkMeetingQualityDataValue.Text = ReplaceNull(qualityData);
 
         // Show/hide patient-specific and provider-specific meeting details based on current view mode
         // If we're viewing a provider, hide the patient-specific section and show provider section
-        if (lblPatientHeader.Content?.ToString() == "PROVIDER")
+        if (lblPatientProviderKey.Content?.ToString() == "PROVIDER")
         {
-            brdrMeetingDetailsPatient.Visibility = Visibility.Collapsed;
-            brdrMeetingDetailsProvider.Visibility = Visibility.Visible;
+            brdrMeetingDetailsPatientContainer.Visibility = Visibility.Collapsed;
+            brdrMeetingDetailsProviderContainer.Visibility = Visibility.Visible;
 
             // Get and display participant names from MeetingDetail
             var participantNames = string.Empty;
@@ -878,12 +878,12 @@ public partial class MainWindow : Window
         }
         else
         {
-            brdrMeetingDetailsPatient.Visibility = Visibility.Visible;
-            brdrMeetingDetailsProvider.Visibility = Visibility.Collapsed;
+            brdrMeetingDetailsPatientContainer.Visibility = Visibility.Visible;
+            brdrMeetingDetailsProviderContainer.Visibility = Visibility.Collapsed;
         }
 
         // Show the meeting details section
-        spnlMeetingDetails.Visibility = Visibility.Visible;
+        spnlMeetingDetailsComponents.Visibility = Visibility.Visible;
     }
 
     /// <summary>Updates the btnPhoneDetails button appearance based on SMS failure and delivery records.</summary>
@@ -978,30 +978,30 @@ public partial class MainWindow : Window
             sb.AppendLine();
 
             // Left column
-            sb.AppendLine("Meeting ID:       " + lblMeetingIdValue.Text);
-            sb.AppendLine("Title:            " + lblMeetingTitleValue.Text);
-            sb.AppendLine("Status:           " + lblMeetingStatusValue.Text);
-            sb.AppendLine("Joins:            " + lblMeetingJoins.Text);
-            sb.AppendLine("Duration:         " + lblMeetingDuration.Text);
-            sb.AppendLine("Service code:     " + lblMeetingServiceCode.Text);
+            sb.AppendLine("Meeting ID:       " + txbkMeetingIdValue.Text);
+            sb.AppendLine("Title:            " + txbkMeetingTitleValue.Text);
+            sb.AppendLine("Status:           " + txbkMeetingStatusValue.Text);
+            sb.AppendLine("Joins:            " + txbkMeetingJoins.Text);
+            sb.AppendLine("Duration:         " + txbkMeetingDurationValue.Text);
+            sb.AppendLine("Service code:     " + txbkMeetingServiceCodeValue.Text);
             sb.AppendLine();
 
             // Center column
-            sb.AppendLine("Started by:       " + lblMeetingInitiatedBy.Text);
-            sb.AppendLine("Scheduled start:  " + lblMeetingScheduledStart.Text);
-            sb.AppendLine("Actual start:     " + lblMeetingActualStart.Text);
-            sb.AppendLine("Ended by:         " + lblMeetingEndedBy.Text);
-            sb.AppendLine("Scheduled end:    " + lblMeetingScheduledEnd.Text);
-            sb.AppendLine("Actual end:       " + lblMeetingActualEnd.Text);
+            sb.AppendLine("Started by:       " + txbkMeetingStartedByValue.Text);
+            sb.AppendLine("Scheduled start:  " + txbkMeetingScheduledStartValue.Text);
+            sb.AppendLine("Actual start:     " + txbkMeetingActualStartValue.Text);
+            sb.AppendLine("Ended by:         " + txbkMeetingEndedByValue.Text);
+            sb.AppendLine("Scheduled end:    " + txbkMeetingScheduledEndValue.Text);
+            sb.AppendLine("Actual end:       " + txbkMeetingActualEndValue.Text);
             sb.AppendLine();
 
             // Right column
-            sb.AppendLine("Workflow:         " + txtMeetingWorkflow.Text);
-            sb.AppendLine("Program:          " + txtMeetingProgram.Text);
-            sb.AppendLine("Front Desk Check-In: " + txtMeetingCheckedInByFrontDesk.Text);
+            sb.AppendLine("Workflow:         " + txbkMeetingWorkflowValue.Text);
+            sb.AppendLine("Program:          " + txbkMeetingProgram.Text);
+            sb.AppendLine("Front Desk Check-In: " + txbkMeetingCheckedInByFrontDeskValue.Text);
             sb.AppendLine();
             sb.AppendLine("Meeting error:");
-            sb.AppendLine(txtMeetingError.Text);
+            sb.AppendLine(txbkMeetingErrorValue.Text);
 
             Clipboard.SetText(sb.ToString());
             MessageBox.Show(this, "Meeting details (General) copied to clipboard.", "Copied", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -1024,29 +1024,29 @@ public partial class MainWindow : Window
             sb.AppendLine();
 
             // Left column
-            sb.AppendLine("Patient arrived:  " + txtPatientArrived.Text);
-            sb.AppendLine("Patient dropped:  " + txtPatientDropped.Text);
-            sb.AppendLine("Duration:         " + txtPatientDuration.Text);
-            sb.AppendLine("Rating:           " + txtPatientRating.Text);
+            sb.AppendLine("Patient arrived:  " + txbkPatientArrivedValue.Text);
+            sb.AppendLine("Patient dropped:  " + txbkPatientDroppedValue.Text);
+            sb.AppendLine("Duration:         " + txbkPatientDurationValue.Text);
+            sb.AppendLine("Rating:           " + txbkPatientRatingValue.Text);
             sb.AppendLine();
 
             // Center column
-            sb.AppendLine("Checked-In via chat: " + txtCheckInViaChat.Text);
-            sb.AppendLine("Check-In wait:    " + txtCheckInWait.Text);
-            sb.AppendLine("Wait for Care Team: " + txtWaitForCareTeam.Text);
-            sb.AppendLine("Wait for provider: " + txtWaitForProvider.Text);
-            sb.AppendLine("Check-out wait:   " + txtCheckOutWait.Text);
+            sb.AppendLine("Checked-In via chat: " + txbkCheckedInViaChatValue.Text);
+            sb.AppendLine("Check-In wait:    " + txbkCheckInWaitValue.Text);
+            sb.AppendLine("Wait for Care Team: " + txbkWaitForCareTeamValue.Text);
+            sb.AppendLine("Wait for provider: " + txbkWaitForProviderValue.Text);
+            sb.AppendLine("Check-out wait:   " + txbkCheckOutWaitValue.Text);
             sb.AppendLine();
 
             // Right column
-            sb.AppendLine("Device:           " + txtPatientDevice.Text);
-            sb.AppendLine("OS:               " + txtPatientOs.Text);
-            sb.AppendLine("Browser:          " + txtPatientBrowser.Text);
+            sb.AppendLine("Device:           " + txbkPatientDeviceValue.Text);
+            sb.AppendLine("OS:               " + txbkPatientOsValue.Text);
+            sb.AppendLine("Browser:          " + txbkPatientBrowserValue.Text);
             sb.AppendLine();
 
             // Quality data (spanning section)
             sb.AppendLine("Participant Meeting Quality Data:");
-            sb.AppendLine(txtMeetingQualityData.Text);
+            sb.AppendLine(txbkMeetingQualityDataValue.Text);
 
             Clipboard.SetText(sb.ToString());
             MessageBox.Show(this, "Meeting details (Patient) copied to clipboard.", "Copied", MessageBoxButton.OK, MessageBoxImage.Information);

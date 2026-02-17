@@ -17,32 +17,32 @@ public partial class MainWindow : Window
     /// <summary>Setup the initial user interface so the right panel is blank.</summary>
     private void SetupInitialUi()
     {
-        rbtnByName.IsChecked           = true;
-        spnlPatientDetails.Visibility  = Visibility.Collapsed;
-        spnlPatientMeetings.Visibility = Visibility.Collapsed;
-        spnlMeetingDetails.Visibility  = Visibility.Collapsed;
+        rbtnSearchByName.IsChecked           = true;
+        spnlPatientProviderDetailsComponents.Visibility  = Visibility.Collapsed;
+        spnlMeetingComponents.Visibility = Visibility.Collapsed;
+        spnlMeetingDetailsComponents.Visibility  = Visibility.Collapsed;
     }
 
     /// <summary>Clears user interface components.</summary>
     private void ClearUi()
     {
-        txbxSearch.Text = string.Empty;
+        txbxSearchBox.Text = string.Empty;
 
         lstbxSearchResults.Items.Clear();
 
-        spnlPatientDetails.Visibility  = Visibility.Collapsed;
-        spnlPatientMeetings.Visibility = Visibility.Collapsed;
-        spnlMeetingDetails.Visibility  = Visibility.Collapsed;
+        spnlPatientProviderDetailsComponents.Visibility  = Visibility.Collapsed;
+        spnlMeetingComponents.Visibility = Visibility.Collapsed;
+        spnlMeetingDetailsComponents.Visibility  = Visibility.Collapsed;
     }
 
     private void SetupPatientDetailUi(string patientName, string patientId)
     {
 
-        lblPatientHeader.Content      = "PATIENT";
-        lblPatientNameValue.Content   = patientName;
-        lblPatientIdValue.Content     = patientId;
-        spnlPatientDetails.Visibility = Visibility.Visible;
-        spnlPatientPhone.Visibility   = Visibility.Visible;
-        spnlPatientEmail.Visibility   = Visibility.Visible;
+        lblPatientProviderKey.Content      = "PATIENT";
+        lblPatientProviderNameValue.Content   = patientName;
+        lblPatientProviderIdValue.Content     = patientId;
+        spnlPatientProviderDetailsComponents.Visibility = Visibility.Visible;
+        spnlPatientPhoneComponents.Visibility   = Visibility.Visible;
+        spnlPatientEmailComponents.Visibility   = Visibility.Visible;
     }
 }

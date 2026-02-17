@@ -889,7 +889,7 @@
                                             </StackPanel>
 
                                             <!-- Meeting Error -->
-                                            <StackPanel x:Name=""
+                                            <StackPanel x:Name="spnlMeetingError"
                                                 Margin="0,2"
                                                 Orientation="Vertical">
 
@@ -962,7 +962,7 @@
                                             <!-- Left column -->
                                             <ColumnDefinition x:Name="colMeetingDetailsPatientLeft"
                                                 Width="201*" />
-                                            <ColumnDefinition Width="49*"/>
+                                            <ColumnDefinition Width="49*" />
                                             <!-- Center column -->
                                             <ColumnDefinition x:Name="colMeetingDetailsPatientCenter"
                                                 Width="250*" />
@@ -974,7 +974,8 @@
                                         <!-- Left column: Patient arrived, Patient dropped, Duration, Rating -->
                                         <StackPanel x:Name="spnlMeetingDetailsPatientLeftComponents"
                                             Grid.Column="0"
-                                            Margin="0,0,10,0" Grid.ColumnSpan="2">
+                                            Grid.ColumnSpan="2"
+                                            Margin="0,0,10,0">
 
                                             <!-- Patient Arrived -->
                                             <StackPanel x:Name="spnlPatientArrived"
@@ -1146,44 +1147,60 @@
                                         </StackPanel>
 
                                         <!-- Right column: Device, Operating System, Browser -->
-                                        <StackPanel x:Name="spnlRightColumn" Grid.Column="3">
+                                        <StackPanel x:Name="spnlMeetingDetailsPatientRightComponents"
+                                            Grid.Column="3">
+
                                             <!-- Device -->
-                                            <StackPanel
+                                            <StackPanel x:Name="spnlPatientDevice"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
-                                                <TextBlock
+
+                                                <!-- Device label -->
+                                                <TextBlock x:Name="txbkPatientDeviceKey"
                                                     Width="90"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Device:" />
-                                                <TextBlock x:Name="txtPatientDevice"
+
+                                                <!-- Device value -->
+                                                <TextBlock x:Name="txbkPatientDeviceValue"
                                                     FontSize="11"
                                                     Text="---" />
                                             </StackPanel>
+
                                             <!-- Operating System -->
-                                            <StackPanel
+                                            <StackPanel x:Name="spnlPatientOs"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
-                                                <TextBlock
+
+                                                <!-- Operating System label -->
+                                                <TextBlock x:Name="txbkPatientOsKey"
                                                     Width="90"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="OS:" />
-                                                <TextBlock x:Name="txtPatientOs"
+
+                                                <!-- Operating System value -->
+                                                <TextBlock x:Name="txbkPatientOsValue"
                                                     FontSize="11"
                                                     Text="---"
                                                     TextWrapping="Wrap" />
                                             </StackPanel>
+
                                             <!-- Browser -->
-                                            <StackPanel
+                                            <StackPanel x:Name="spnlPatientBrowser"
                                                 Margin="0,2"
                                                 Orientation="Horizontal">
-                                                <TextBlock
+
+                                                <!-- Browser label -->
+                                                <TextBlock x:Name="txbkPatientBrowserKey"
                                                     Width="90"
                                                     FontSize="11"
                                                     FontWeight="SemiBold"
                                                     Text="Browser:" />
-                                                <TextBlock x:Name="txtPatientBrowser"
+
+                                                <!-- Browser value -->
+                                                <TextBlock x:Name="txbkPatientBrowserValue"
                                                     FontSize="11"
                                                     Text="---"
                                                     TextWrapping="Wrap" />
@@ -1191,13 +1208,21 @@
                                         </StackPanel>
                                     </Grid>
 
-                                    <!-- Participant Meeting Quality Data - Spanning all columns -->
-                                    <StackPanel Margin="0,8,0,0">
-                                        <TextBlock
+                                    <!-- Participant Meeting Quality Data -->
+                                    <!--
+                                        This spans all three columns.
+                                    -->
+                                    <StackPanel x:Name="spnlMeetingQualityData"
+                                        Margin="0,8,0,0">
+
+                                        <!-- Participant Meeting Quality Data label -->
+                                        <TextBlock x:Name="txbkMeetingQualityDataKey"
                                             FontSize="11"
                                             FontWeight="SemiBold"
                                             Text="Participant Meeting Quality Data:" />
-                                        <TextBlock x:Name="txtMeetingQualityData"
+
+                                        <!-- Participant Meeting Quality Data value -->
+                                        <TextBlock x:Name="txbkMeetingQualityDataValue"
                                             Margin="0,2,0,0"
                                             FontSize="11"
                                             Text="---"
@@ -1206,12 +1231,19 @@
                                 </StackPanel>
                             </Border>
 
-                            <!-- Meeting Details (Provider) Section -->
-                            <Border x:Name="brdrMeetingDetailsProvider"
+
+                            <!-- Meeting Details (Provider) -->
+                            <!--
+                                This visible only in provider search mode.
+                            -->
+                            <Border x:Name="brdrMeetingDetailsProviderContainer"
                                 Margin="0,10,20,0"
                                 BorderBrush="Black"
                                 BorderThickness="1"
                                 CornerRadius="5">
+
+                                <!-- STOPPED HERE -->
+
                                 <StackPanel x:Name="spnlMeetingDetailsProvider"
                                     Margin="8">
                                     <StackPanel

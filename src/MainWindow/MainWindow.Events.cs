@@ -41,7 +41,7 @@ public partial class MainWindow : Window
     {
         lstbxSearchResults.Items.Clear();
 
-        var searchText = txbxSearch.Text?.Trim();
+        var searchText = txbxSearchBox.Text?.Trim();
 
         if (string.IsNullOrWhiteSpace(searchText))
         {

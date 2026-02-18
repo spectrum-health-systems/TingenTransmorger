@@ -42,44 +42,31 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Handles the copy meeting details patient button click event.</summary>
-    private void CopyMeetingDetailsPatientClicked()
+    /// <summary>Copy patient meeting details to the clipboard.</summary>
+    private void CopyPatientMeetingDetails()
     {
         try
         {
             var sb = new System.Text.StringBuilder();
 
-            // Header
-            sb.AppendLine("=== MEETING DETAILS (PATIENT) ===");
-            sb.AppendLine();
-
-            // Left column
-            sb.AppendLine("Patient arrived:  " + txbkPatientArrivedValue.Text);
-            sb.AppendLine("Patient dropped:  " + txbkPatientDroppedValue.Text);
-            sb.AppendLine("Duration:         " + txbkPatientDurationValue.Text);
-            sb.AppendLine("Rating:           " + txbkPatientRatingValue.Text);
-            sb.AppendLine();
-
-            // Center column
+            sb.AppendLine("    MEETING DETAILS");
+            sb.AppendLine("    ---------------");
+            sb.AppendLine("    Patient arrived: " + txbkPatientArrivedValue.Text);
+            sb.AppendLine("    Patient dropped: " + txbkPatientDroppedValue.Text);
+            sb.AppendLine("           Duration: " + txbkPatientDurationValue.Text);
+            sb.AppendLine("             Rating: " + txbkPatientRatingValue.Text);
             sb.AppendLine("Checked-In via chat: " + txbkCheckedInViaChatValue.Text);
-            sb.AppendLine("Check-In wait:    " + txbkCheckInWaitValue.Text);
-            sb.AppendLine("Wait for Care Team: " + txbkWaitForCareTeamValue.Text);
-            sb.AppendLine("Wait for provider: " + txbkWaitForProviderValue.Text);
-            sb.AppendLine("Check-out wait:   " + txbkCheckOutWaitValue.Text);
-            sb.AppendLine();
-
-            // Right column
-            sb.AppendLine("Device:           " + txbkPatientDeviceValue.Text);
-            sb.AppendLine("OS:               " + txbkPatientOsValue.Text);
-            sb.AppendLine("Browser:          " + txbkPatientBrowserValue.Text);
-            sb.AppendLine();
-
-            // Quality data (spanning section)
-            sb.AppendLine("Participant Meeting Quality Data:");
-            sb.AppendLine(txbkMeetingQualityDataValue.Text);
+            sb.AppendLine("      Check-In wait: " + txbkCheckInWaitValue.Text);
+            sb.AppendLine(" Wait for Care Team: " + txbkWaitForCareTeamValue.Text);
+            sb.AppendLine("  Wait for provider: " + txbkWaitForProviderValue.Text);
+            sb.AppendLine("     Check-out wait: " + txbkCheckOutWaitValue.Text);
+            sb.AppendLine("             Device: " + txbkPatientDeviceValue.Text);
+            sb.AppendLine("                 OS: " + txbkPatientOsValue.Text);
+            sb.AppendLine("            Browser: " + txbkPatientBrowserValue.Text);
+            sb.AppendLine("       Quality Data: " + txbkMeetingQualityDataValue.Text);
 
             Clipboard.SetText(sb.ToString());
-            MessageBox.Show(this, "Meeting details (Patient) copied to clipboard.", "Copied", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, "Meeting details copied to clipboard.", "Copied", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
@@ -87,23 +74,20 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Handles the copy meeting details provider button click event.</summary>
-    private void CopyMeetingDetailsProviderClicked()
+    /// <summary>Copy provider meeting details to the clipboard.</summary>
+    private void CopyProviderMeetingDetails()
     {
         try
         {
             var sb = new System.Text.StringBuilder();
 
-            // Header
-            sb.AppendLine("=== MEETING DETAILS (PROVIDER) ===");
-            sb.AppendLine();
 
-            // Participant names
-            sb.AppendLine("Participant Names:");
-            sb.AppendLine(txtProviderParticipantNames.Text);
+            sb.AppendLine("    MEETING DETAILS");
+            sb.AppendLine("    ---------------");
+            sb.AppendLine("  Participant Names: " + txtProviderParticipantNames.Text);
 
             Clipboard.SetText(sb.ToString());
-            MessageBox.Show(this, "Meeting details (Provider) copied to clipboard.", "Copied", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, "Meeting details copied to clipboard.", "Copied", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {

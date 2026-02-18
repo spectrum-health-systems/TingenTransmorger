@@ -153,8 +153,8 @@ public partial class MainWindow : Window
         => CopyGeneralMeetingDetails();
 
     private void btnCopyMeetingDetailsPatient_Click(object sender, RoutedEventArgs e)
-        => CopyMeetingDetailsPatientClicked();
+        => CopyPatientMeetingDetails();
 
     private void btnCopyMeetingDetailsProvider_Click(object sender, RoutedEventArgs e)
-        => CopyMeetingDetailsProviderClicked();
+        => CopyProviderMeetingDetails();
 }

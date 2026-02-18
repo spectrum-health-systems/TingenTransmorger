@@ -10,7 +10,7 @@ namespace TingenTransmorger;
 
 /// <summary>MainWindow user interface logic.</summary>
 /// <remarks>
-///     This is a partial class that handles the user interface functionality of the MainWindow. 
+///     This is a partial class that handles the user interface functionality of the MainWindow.
 /// </remarks>
 public partial class MainWindow : Window
 {
@@ -44,5 +44,35 @@ public partial class MainWindow : Window
         spnlPatientProviderDetailsComponents.Visibility = Visibility.Visible;
         spnlPatientPhoneComponents.Visibility   = Visibility.Visible;
         spnlPatientEmailComponents.Visibility   = Visibility.Visible;
+    }
+
+
+    /// <summary>Display search results..</summary>
+    /// <remarks>
+    ///     This method is called when the user types in the search text box. It filters and displays results based on
+    ///     the current search mode and search type (by name or ID).
+    /// </remarks>
+    /// <param name="searchText">Contents of the search box.</param>
+    private void DisplaySearchResults(string searchType, string searchText)
+    {
+        List<string> searchResults;
+
+        if (rbtnSearchByName.IsChecked == true)
+        {
+            searchResults = Database.SearchFor.PatientByName(searchText, TmDb);
+        }
+        else
+        {
+            searchResults = Database.SearchFor.PatientById(searchText, TmDb);
+        }
+
+        lstbxSearchResults.Items.Clear();
+
+
+
+        foreach (var result in searchResults)
+        {
+            lstbxSearchResults.Items.Add(result);
+        }
     }
 }

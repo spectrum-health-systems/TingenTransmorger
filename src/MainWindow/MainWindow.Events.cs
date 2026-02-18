@@ -14,7 +14,8 @@ namespace TingenTransmorger;
 /// </remarks>
 public partial class MainWindow : Window
 {
-    /* btnSearchToggle
+    /*
+     * btnSearchToggle
      */
 
     /// <summary>btnSearchToggle_clicked() => SearchToggleClicked().</summary>
@@ -39,18 +40,13 @@ public partial class MainWindow : Window
         ClearUi();
     }
 
-    /* rbtnSearchBy
+    /*
      * txbxSearch
-     */
+    */
 
-    /// <summary>rbtnSearchByName_clicked()/rbtnSearchById_clicked() => SearchTextChanged() </summary>
-    /// <remarks>
-    ///     This method handles the Checked event for both rbtnSearchByName and rbtnSearchById.
-    /// </remarks>
+    /// <summary>txbxSearch_TextChanged() => SearchTextChanged().</summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data.</param>
-    private void rbtnSearchBy_Checked(object sender, RoutedEventArgs e) => ClearUi(); //SearchTextChanged();
-
     private void txbxSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) => SearchTextChanged();
 
     /// <summary>The text in the search box was changed.</summary>
@@ -67,15 +63,22 @@ public partial class MainWindow : Window
 
         var searchText = txbxSearchBox.Text?.Trim();
 
-
-
         var searchType = btnSearchToggle.Content.ToString();
 
         DisplaySearchResults(searchType, searchText);
     }
 
 
+    /* rbtnSearchBy
+ */
 
+    /// <summary>rbtnSearchByName_clicked()/rbtnSearchById_clicked() => SearchTextChanged()</summary>
+    /// <remarks>
+    ///     This method handles the Checked event for both rbtnSearchByName and rbtnSearchById.
+    /// </remarks>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The event data.</param>
+    private void rbtnSearchBy_Checked(object sender, RoutedEventArgs e) => ClearUi();
 
 
 

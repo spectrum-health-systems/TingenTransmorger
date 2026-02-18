@@ -13,6 +13,7 @@
 - [ ] Version on title bar
 - [ ] Do the MeetingBreakdownComponents need to have text when launching?
 - [ ] What controls have text when launching that don't need text?
+- [ ] Tighter search (e.g., "scott" finds "Scott" or "Scotty", not "Ascott")
 
 - [ ] Review dgPatientProviderMeetings to make sure the comments work for both patients and providers
 

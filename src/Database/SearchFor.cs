@@ -6,23 +6,32 @@ namespace TingenTransmorger.Database;
 /// <summary>Database searches.</summary>
 internal static class SearchFor
 {
+    internal static List<string> PatientByName(string searchText, TransmorgerDatabase tmDb)
+    {
+        //TODO: Find a way to do this without passing the entire database.
+        List<(string name, string id)> allEntries = tmDb.GetPatients();
+
+        return SearchResult(searchText, allEntries, true);
+    }
+
+    internal static List<string> PatientById(string searchText, TransmorgerDatabase tmDb)
+    {
+        List<(string name, string id)> allEntries = tmDb.GetPatients();
+
+        return SearchResult(searchText, allEntries, false);
+    }
+
     /// <summary>Patient/provider search.</summary>
     /// <param name="searchType">The type of search.</param>
     /// <param name="searchText">The text to search for.</param>
-    /// <param name="tmDb">The Transmorger database instance.</param>
     /// <param name="searchByName">Indicates whether to search by name (true) or ID (false).</param>
-    internal static List<string> PatientOrProvider(string searchType, string searchText, TransmorgerDatabase tmDb, bool searchByName)
+    internal static List<string> SearchResult(string searchText, List<(string name, string id)> allEntries, bool searchByName)
     {
-        //TODO: Find a way to do this without passing the entire database.
-        List<(string name, string id)> allPeople = searchType == "Patient Search"
-            ? tmDb.GetPatients()
-            : tmDb.GetProviders();
-
         var nameAndId = new List<(string name, string id)>();
 
         nameAndId = searchByName
-            ? [.. allPeople.Where(p => p.name.Contains(searchText, StringComparison.OrdinalIgnoreCase)).OrderBy(p => p.name)]
-            : [.. allPeople.Where(p => p.id.Contains(searchText, StringComparison.OrdinalIgnoreCase)).OrderBy(p => p.name)];
+            ? [.. allEntries.Where(p => p.name.Contains(searchText, StringComparison.OrdinalIgnoreCase)).OrderBy(p => p.name)]
+            : [.. allEntries.Where(p => p.id.Contains(searchText, StringComparison.OrdinalIgnoreCase)).OrderBy(p => p.name)];
 
         List<string> resultList = [];
 

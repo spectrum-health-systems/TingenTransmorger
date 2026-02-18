@@ -112,21 +112,23 @@ public partial class MainWindow : Window
         Environment.Exit(0);
     }
 
-    /// <summary>Display search results..</summary>
-    /// <remarks>
-    ///     This method is called when the user types in the search text box. It filters and displays results based on
-    ///     the current search mode and search type (by name or ID).
-    /// </remarks>
-    /// <param name="searchText">Contents of the search box.</param>
-    private void DisplaySearchResults(string searchType, string searchText)
-    {
-        bool searchByName = rbtnSearchByName.IsChecked == true;
+    ///////// <summary>Display search results..</summary>
+    ///////// <remarks>
+    /////////     This method is called when the user types in the search text box. It filters and displays results based on
+    /////////     the current search mode and search type (by name or ID).
+    ///////// </remarks>
+    ///////// <param name="searchText">Contents of the search box.</param>
+    //////private void DisplaySearchResults(string searchType, string searchText)
+    //////{
+    //////    bool searchByName = rbtnSearchByName.IsChecked == true;
 
-        foreach (var result in Database.SearchFor.PatientOrProvider(searchType, searchText, TmDb, searchByName))
-        {
-            lstbxSearchResults.Items.Add(result);
-        }
-    }
+    //////    lstbxSearchResults.Items.Clear();
+
+    //////    foreach (var result in Database.SearchFor.PatientOrProvider(searchType, searchText, TmDb, searchByName))
+    //////    {
+    //////        lstbxSearchResults.Items.Add(result);
+    //////    }
+    //////}
 
 
 

@@ -8,6 +8,7 @@
   - MainWindow.DetailDisplay.cs
   - MainWindow.Events.cs
   - MainWindow.UserInterface.cs
+- Fixed the UI reset when changing search modes
 
 ## 0.9.27.1
 

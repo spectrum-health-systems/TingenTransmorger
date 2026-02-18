@@ -1,5 +1,9 @@
 # Tingen Transmorger: Changelog
 
+## 0.9.27.1
+
+- Code/comment cleanup
+
 ## 0.9.27.0
 
 - Finalized MainWindow.axml cleanup

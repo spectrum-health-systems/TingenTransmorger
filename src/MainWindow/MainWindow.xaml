@@ -4,33 +4,46 @@
 -->
 
 <!--
-    This is the main window of the Tingen Transmorger application. I am not a UI designer, so it probably
-    breaks a number of UI best practices, but I did my best! To that point, this window has a resolution of
-    1200x700, and is not  designed to be resized.
+    This is the main window of the Tingen Transmorger application. I am not a UI designer, so it probably breaks a
+    number of UI best practices, but I did my best! To that point, this window has a resolution of 1200x700, and is not
+    designed to be resized.
 
-    I've provided detailed comments throughout the XAML to explain the structure and purpose of each element
-    in the UI, and the code-behind contains is written to be as clear as possible.
+    I've provided detailed comments throughout the XAML to explain the structure and purpose of each element in the UI,
+    and the code-behind contains is written to be as clear as possible.
 
     A few things of note:
 
-    The brdrMainContainer control will be different colors, depending on what type of user is running the
-    application; standard users will see a SteelBlue background, admin users will see a DarkRed background
+    * The brdrMainContainer control will be different colors, depending on what type of user is running the  application;
+    standard users will see a SteelBlue background, admin users will see a DarkRed background
 
-    There are two main columns:
+    * There are two main columns:
     - The left column is for searching patients/providers
     - The right column is for displaying details about the selected patient/provider and their meetings
 
-    The btnSearchToggle control toggles between patient and provider search modes.
+    * The btnSearchToggle control toggles between patient and provider search modes.
 
-    When in patient search mode:
+    * When in patient search mode:
     - The brdrMeetingDetailsPatient control is visible
     - The spnlPatientPhoneAndEmail control is visible
     - The brdrMeetingDetailsProvider control is hidden
 
-    When in provider search mode:
+    * When in provider search mode:
     - The spnlPatientPhoneAndEmail control is hidden
     - The brdrMeetingDetailsProvider control is visible
     - The brdrMeetingDetailsPatient control is hidden
+
+    * If there are any errors with a meeting, the Meeting ID cell for that meeting will be highlighted in LightSalmon.
+
+    * If a patient has a phone number and/or email address, the user can click the btnPhoneDetails or btnPhoneDetails
+    buttons the to view more details about those pieces of information. These buttons will be different colors,
+    depending on the following:
+    - If the details are all success messages, the buttons will have a green background
+    - If the details are all failure messages, the buttons will have a red background
+    - If the details are a mix of success and failure messages, the buttons will have an orange background
+    - If the patient has a phone number/email address, but there are no details to show, the buttons will have a gray background
+    - If the patient does not have a phone number/email address, the buttons will have a black background
+
+    - There are various "copy" buttons that copy different pieces of information to the clipboard.
 -->
 
 <Window

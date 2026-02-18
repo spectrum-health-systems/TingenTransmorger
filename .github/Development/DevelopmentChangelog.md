@@ -1,6 +1,6 @@
 # Tingen Transmorger: Changelog
 
-## 0.9.27.2 - 0.9.27.x
+## 0.9.27.2 - 0.9.27.11
 
 - Cleanup of:
   - MainWindow.asmx.cs

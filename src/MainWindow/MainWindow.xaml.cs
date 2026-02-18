@@ -33,10 +33,6 @@ namespace TingenTransmorger;
 ///             <description>Detail display logic</description>
 ///         </item>
 ///         <item>
-///             <term>MainWindow.Events.cs</term>
-///             <description>Event handlers and event logic</description>
-///         </item>
-///         <item>
 ///             <term>MainWindow.UserInterface.cs</term>
 ///             <description>User interface logic</description>
 ///         </item>
@@ -140,14 +136,19 @@ public partial class MainWindow : Window
     private void rbtnSearchBy_Checked(object sender, RoutedEventArgs e)
         => ClearUi();
 
+    private void txbxSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        => DisplaySearchResults(btnSearchToggle.Content.ToString(), txbxSearchBox.Text?.Trim());
+
     private void btnPhoneDetails_Clicked(object sender, RoutedEventArgs e)
         => ShowPhoneDetails();
 
     private void btnEmailDetails_Clicked(object sender, RoutedEventArgs e)
         => ShowEmailDetails();
+    private void lstbxSearchResults_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    => DisplaySomeDeets(btnSearchToggle.Content.ToString(), lstbxSearchResults.SelectedItem as string);
 
-    private void SearchResultSelected()
-        => DisplaySomeDeets(btnSearchToggle.Content.ToString(), lstbxSearchResults.SelectedItem as string);
+    //private void SearchResultSelected()
+    //    => DisplaySomeDeets(btnSearchToggle.Content.ToString(), lstbxSearchResults.SelectedItem as string);
 
     private void dgPatientMeetings_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         => MeetingSelected();

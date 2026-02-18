@@ -111,7 +111,7 @@
                                 Height="42"
                                 Margin="10,10,0,8"
                                 HorizontalAlignment="left"
-                                Click="btnSearchToggle_Click"
+                                Click="btnSearchToggle_Clicked"
                                 Content="Patient Search"
                                 FontSize="18"
                                 FontWeight="SemiBold">

@@ -10,8 +10,8 @@ using TingenTransmorger.Database;
  */
 namespace TingenTransmorger;
 
-/// <summary>Admin mode logic.</summary>
-/// <remarks>This is a partial class that handles the admin mode functionality of the MainWindow.</remarks>
+/* Partial class MainWindow.AdminMode.cs.
+ */
 public partial class MainWindow : Window
 {
     /// <summary>Handles admin mode operations. </summary>

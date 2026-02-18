@@ -13,7 +13,3 @@ private void btnCopyMeetingDetailsProvider_Click(object sender, RoutedEventArgs 
 
 
 
-SearchToggleClicked --> ClearUi 
-
-ClearUi --> SearchBox = "" --> SearchTextChanged --> SearchResults.Clear -->
-        --> 

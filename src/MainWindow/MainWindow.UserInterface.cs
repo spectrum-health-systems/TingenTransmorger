@@ -1,6 +1,7 @@
 ﻿// 260212_code
 // 260212_documentation
 
+
 using System.Windows;
 
 /* I've moved the MainWindow partial classes to MainWindow/ to keep the code organized, but I'm leaving the namespace as
@@ -8,10 +9,8 @@ using System.Windows;
  */
 namespace TingenTransmorger;
 
-/// <summary>MainWindow user interface logic.</summary>
-/// <remarks>
-///     This is a partial class that handles the user interface functionality of the MainWindow.
-/// </remarks>
+/* Partial class MainWindow.UserInterface.cs.
+ */
 public partial class MainWindow : Window
 {
     /// <summary>Setup the initial user interface so the right panel is blank.</summary>
@@ -27,6 +26,9 @@ public partial class MainWindow : Window
     private void ClearUi()
     {
         txbxSearchBox.Text = string.Empty; // This will fire off the TextChanged event
+
+        /* The lstbxSearchResults control is cleared in SearchTextChanged(), which avoids a weird loop with ClearUi().
+         */
 
         //lstbxSearchResults.Items.Clear();
 
@@ -44,6 +46,39 @@ public partial class MainWindow : Window
         spnlPatientProviderDetailsComponents.Visibility = Visibility.Visible;
         spnlPatientPhoneComponents.Visibility   = Visibility.Visible;
         spnlPatientEmailComponents.Visibility   = Visibility.Visible;
+    }
+
+    private void DisplaySomeDeets(string searchMode, string selectedItem)
+    {
+        var lastParenIndex = selectedItem.LastIndexOf('(');
+        var name           = selectedItem.Substring(0, lastParenIndex).Trim();
+        var id             = selectedItem.Substring(lastParenIndex + 1).TrimEnd(')').Trim();
+
+        switch (btnSearchToggle.Content.ToString())
+        {
+            case "Patient Search":
+                DisplayPatientDetails(name, id);
+                break;
+
+            case "Provider Search":
+                DisplayProviderDetails(name, id);
+                break;
+        }
+    }
+
+
+    private void SetSearchToggleContent(string buttonContent)
+    {
+        switch (buttonContent)
+        {
+            case "Patient Search":
+                btnSearchToggle.Content = "Provider Search";
+                break;
+
+            case "Provider Search":
+                btnSearchToggle.Content = "Patient Search";
+                break;
+        }
     }
 
 
@@ -75,11 +110,7 @@ public partial class MainWindow : Window
             searchResults = new List<string>();
         }
 
-
-
         lstbxSearchResults.Items.Clear();
-
-
 
         foreach (string result in searchResults)
         {

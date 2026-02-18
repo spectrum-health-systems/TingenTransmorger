@@ -1,25 +1,14 @@
 ﻿// 260218_code
 // 260218_documentation
 
-/* The MainWindow class contains the following partial classes:
- *   - MainWindow.asmx             - XAML markup
- *   - MainWindow.asmx.cs          - General logic
- *   - MainWindow.AdminMode.cs     - Admin mode logic
- *   - MainWindow.DetailDisplay.cs - Detail display logic <-- [YOU ARE HERE]
- *   - MainWindow.Events.cs        - Event handlers and event logic
- *   - MainWindow.UserInterface.cs - User interface logic
- */
-
 using System.Text.Json;
 using System.Windows;
 using TingenTransmorger.Models;
 
 namespace TingenTransmorger;
 
-/// <summary>MainWindow user interface logic.</summary>
-/// <remarks>
-///     This is a partial class that handles display of patient/provider details.
-/// </remarks>
+/* Partial class MainWindow.DetailDisplay.cs.
+ */
 public partial class MainWindow : Window
 {
     /// <summary> Currently selected patient name.</summary>

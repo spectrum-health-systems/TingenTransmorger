@@ -8,41 +8,42 @@ using System.Windows;
  */
 namespace TingenTransmorger;
 
-/// <summary>Event and event handler logic.</summary>
-/// <remarks>
-///     This is a partial class that handles MainWindow events.
-/// </remarks>
+/* A NOTE ABOUT THIS PARTIAL CLASS
+ * ===============================
+ * This partial class contains the logic for the MainWindow event handlers and events.
+ *
+ * An event handler a method that is called directly from the XAML when an event occurs.  Event handlers should be
+ * simple, use expression-bodied syntax, and call a more descriptive method that contains the actual logic for handling
+ * the event.
+ *
+ * For example, when btnSearchToggle is clicked, the btnSearchToggle_Clicked() event handler method is called:
+ *
+ *  Click="btnSearchToggle_Click"
+ *
+ * Which in turn calls the SearchToggleClicked() method that does the heavy lifting:
+ *
+ *  private void btnSearchToggle_Click(object? sender, RoutedEventArgs e) => SearchToggleClicked();
+ */
+
+/* Partial class MainWindow.Events.cs.
+ */
 public partial class MainWindow : Window
 {
-    /*
-     * btnSearchToggle
-     */
+    /* btnSearchToggle */
 
     /// <summary>btnSearchToggle_clicked() => SearchToggleClicked().</summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data.</param>
-    private void btnSearchToggle_Click(object? sender, RoutedEventArgs e) => SearchToggleClicked();
+    private void btnSearchToggle_Clicked(object? sender, RoutedEventArgs e) => SearchToggleClicked();
 
     /// <summary>Set the search mode and clear the UI.</summary>
     private void SearchToggleClicked()
     {
-        switch (btnSearchToggle.Content)
-        {
-            case "Patient Search":
-                btnSearchToggle.Content = "Provider Search";
-                break;
-
-            case "Provider Search":
-                btnSearchToggle.Content = "Patient Search";
-                break;
-        }
-
+        SetSearchToggleContent(btnSearchToggle.Content.ToString());
         ClearUi();
     }
 
-    /*
-     * txbxSearch
-    */
+    /* txbxSearch */
 
     /// <summary>txbxSearch_TextChanged() => SearchTextChanged().</summary>
     /// <param name="sender">The source of the event.</param>
@@ -50,12 +51,11 @@ public partial class MainWindow : Window
     private void txbxSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) => SearchTextChanged();
 
     /// <summary>The text in the search box was changed.</summary>
-    /// <remarks>
-    ///     This method is called when the user types in the search text box. It filters and displays results based on
-    ///     the current search mode and search type (by name or ID).
-    /// </remarks>
     private void SearchTextChanged()
     {
+        /* This is here so we don't hit a weird loop with ClearUi(). We'll also clear the result list if txbxSearchBox
+         * is blank, which also avoids a weird loop with ClearUi().
+         */
         if (string.IsNullOrWhiteSpace(txbxSearchBox.Text))
         {
             lstbxSearchResults.Items.Clear();
@@ -63,32 +63,23 @@ public partial class MainWindow : Window
             return;
         }
 
-
-
-        //var searchText = txbxSearchBox.Text?.Trim();
-
-        //var searchType = btnSearchToggle.Content.ToString();
-
         DisplaySearchResults(btnSearchToggle.Content.ToString(), txbxSearchBox.Text?.Trim());
     }
 
-
-    /* rbtnSearchBy
- */
+    /* rbtnSearchBy */
 
     /// <summary>rbtnSearchByName_clicked()/rbtnSearchById_clicked() => SearchTextChanged()</summary>
-    /// <remarks>
-    ///     This method handles the Checked event for both rbtnSearchByName and rbtnSearchById.
-    /// </remarks>
+    /// <remarks>When either rbtnSearchByName or rbtnSearchById is checked, clear the UI.</remarks>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The event data.</param>
     private void rbtnSearchBy_Checked(object sender, RoutedEventArgs e) => ClearUi();
 
+    /* lstbxSearchResults */
 
-
-
-
-
+    /// <summary>lstbxSearchResults_SelectionChanged() => SearchResultSelected()</summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The event data.</param>
+    private void lstbxSearchResults_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => SearchResultSelected();
 
     /// <summary>Handles the selection changed event for the search results list.</summary>
     /// <remarks>
@@ -97,35 +88,22 @@ public partial class MainWindow : Window
     /// </remarks>
     private void SearchResultSelected()
     {
+        /* This is here so we don't hit a weird loop with ClearUi().
+         */
         if (lstbxSearchResults.SelectedItem == null)
         {
             return;
         }
 
-        var searchMode = btnSearchToggle.Content.ToString();
-
-        var selectedItem   = lstbxSearchResults.SelectedItem as string;
-        var lastParenIndex = selectedItem.LastIndexOf('(');
-        var name           = selectedItem.Substring(0, lastParenIndex).Trim();
-        var id             = selectedItem.Substring(lastParenIndex + 1).TrimEnd(')').Trim();
-
-        switch (searchMode)
-        {
-            case "Patient Search":
-                DisplayPatientDetails(name, id);
-                break;
-
-            case "Provider Search":
-                DisplayProviderDetails(name, id);
-                break;
-        }
+        DisplaySomeDeets(btnSearchToggle.Content.ToString(), lstbxSearchResults.SelectedItem as string);
     }
 
     /* EVENT HANDLERS */
 
 
 
-    private void lstbxSearchResults_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => SearchResultSelected();
+
+
     private void dgPatientMeetings_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => MeetingSelected();
     private void btnPhoneDetails_Click(object sender, RoutedEventArgs e) => PhoneDetailsClicked();
     private void btnEmailDetails_Click(object sender, RoutedEventArgs e) => EmailDetailsClicked();

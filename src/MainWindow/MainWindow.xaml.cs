@@ -1,15 +1,6 @@
 ﻿// 260218_code
 // 260218_documentation
 
-/* The MainWindow class contains the following partial classes:
- *   - MainWindow.asmx             - XAML markup
- *   - MainWindow.asmx.cs          - General logic <-- [YOU ARE HERE]
- *   - MainWindow.AdminMode.cs     - Admin mode logic
- *   - MainWindow.DetailDisplay.cs - Detail display logic
- *   - MainWindow.Events.cs        - Event handlers and event logic
- *   - MainWindow.UserInterface.cs - User interface logic
- */
-
 using System.IO;
 using System.Text.Json;
 using System.Windows;
@@ -25,6 +16,29 @@ using TingenTransmorger.Models;
 namespace TingenTransmorger;
 
 /// <summary>Entry class for Tingen Transmorger.</summary>
+/// <remarks>
+///  The MainWindow class contains the following partial classes:
+///     <list type="bullet">
+///     <item>
+///         <term>MainWindow.asmx</term>
+///         <description>XAML markup</description></item>
+///    <item>
+///         <term>MainWindow.asmx.cs</term>
+///         <description>General logic</description></item>
+///    <item>
+///         <term>MainWindow.AdminMode.cs</term>
+///         <description>Admin mode logic</description></item>
+///    <item>
+///         <term>MainWindow.DetailDisplay.cs</term>
+///         <description>Detail display logic</description></item>
+///    <item>
+///         <term>MainWindow.Events.cs</term>
+///         <description>Event handlers and event logic</description></item>
+///    <item>
+///         <term>MainWindow.UserInterface.cs</term>
+///         <description>User interface logic</description></item>
+///   </list>
+/// </remarks>
 public partial class MainWindow : Window
 {
     /// <summary>The Transmorger database.</summary>
@@ -111,26 +125,6 @@ public partial class MainWindow : Window
 
         Environment.Exit(0);
     }
-
-    ///////// <summary>Display search results..</summary>
-    ///////// <remarks>
-    /////////     This method is called when the user types in the search text box. It filters and displays results based on
-    /////////     the current search mode and search type (by name or ID).
-    ///////// </remarks>
-    ///////// <param name="searchText">Contents of the search box.</param>
-    //////private void DisplaySearchResults(string searchType, string searchText)
-    //////{
-    //////    bool searchByName = rbtnSearchByName.IsChecked == true;
-
-    //////    lstbxSearchResults.Items.Clear();
-
-    //////    foreach (var result in Database.SearchFor.PatientOrProvider(searchType, searchText, TmDb, searchByName))
-    //////    {
-    //////        lstbxSearchResults.Items.Add(result);
-    //////    }
-    //////}
-
-
 
     /* --- */
 

@@ -58,14 +58,18 @@ public partial class MainWindow : Window
     {
         if (string.IsNullOrWhiteSpace(txbxSearchBox.Text))
         {
+            lstbxSearchResults.Items.Clear();
+
             return;
         }
 
-        var searchText = txbxSearchBox.Text?.Trim();
 
-        var searchType = btnSearchToggle.Content.ToString();
 
-        DisplaySearchResults(searchType, searchText);
+        //var searchText = txbxSearchBox.Text?.Trim();
+
+        //var searchType = btnSearchToggle.Content.ToString();
+
+        DisplaySearchResults(btnSearchToggle.Content.ToString(), txbxSearchBox.Text?.Trim());
     }
 
 

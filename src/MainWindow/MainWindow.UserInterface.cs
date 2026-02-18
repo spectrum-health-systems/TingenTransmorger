@@ -28,7 +28,7 @@ public partial class MainWindow : Window
     {
         txbxSearchBox.Text = string.Empty; // This will fire off the TextChanged event
 
-        lstbxSearchResults.Items.Clear();
+        //lstbxSearchResults.Items.Clear();
 
         spnlPatientProviderDetailsComponents.Visibility  = Visibility.Collapsed;
         spnlMeetingComponents.Visibility = Visibility.Collapsed;
@@ -57,20 +57,31 @@ public partial class MainWindow : Window
     {
         List<string> searchResults;
 
-        if (rbtnSearchByName.IsChecked == true)
+        if (searchType.Contains("patient", StringComparison.OrdinalIgnoreCase))
         {
-            searchResults = Database.SearchFor.PatientByName(searchText, TmDb);
+            searchResults = rbtnSearchByName.IsChecked == true
+                ? Database.SearchFor.PatientByName(searchText, TmDb)
+                : Database.SearchFor.PatientById(searchText, TmDb);
+        }
+        else if (searchType.Contains("provider", StringComparison.OrdinalIgnoreCase))
+        {
+            searchResults =(rbtnSearchByName.IsChecked == true)
+                ? Database.SearchFor.ProviderByName(searchText, TmDb)
+                : Database.SearchFor.ProviderById(searchText, TmDb);
         }
         else
         {
-            searchResults = Database.SearchFor.PatientById(searchText, TmDb);
+            // Bad
+            searchResults = new List<string>();
         }
+
+
 
         lstbxSearchResults.Items.Clear();
 
 
 
-        foreach (var result in searchResults)
+        foreach (string result in searchResults)
         {
             lstbxSearchResults.Items.Add(result);
         }

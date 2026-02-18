@@ -21,6 +21,21 @@ internal static class SearchFor
         return SearchResult(searchText, allEntries, false);
     }
 
+    internal static List<string> ProviderByName(string searchText, TransmorgerDatabase tmDb)
+    {
+        //TODO: Find a way to do this without passing the entire database.
+        List<(string name, string id)> allEntries = tmDb.GetProviders();
+
+        return SearchResult(searchText, allEntries, true);
+    }
+
+    internal static List<string> ProviderById(string searchText, TransmorgerDatabase tmDb)
+    {
+        List<(string name, string id)> allEntries = tmDb.GetProviders();
+
+        return SearchResult(searchText, allEntries, false);
+    }
+
     /// <summary>Patient/provider search.</summary>
     /// <param name="searchType">The type of search.</param>
     /// <param name="searchText">The text to search for.</param>

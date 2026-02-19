@@ -134,7 +134,7 @@ public partial class MainWindow : Window
     private void ModifyPatientPhoneNumber(JsonElement? patientDetails)
     {
         var phoneNumbers = GetPatientPhoneNumbers(patientDetails);
-        DisplayPatientPhoneNumber(phoneNumbers);
+        ShowPatientPhoneNumber(phoneNumbers);
         GetSmsStats(phoneNumbers);
         UpdateDetailsButtonColor(_smsFailures.Count > 0, _smsDeliveries.Count > 0, btnPhoneDetails);
     }
@@ -169,7 +169,7 @@ public partial class MainWindow : Window
         return phoneNumbers;
     }
 
-    private void DisplayPatientPhoneNumber(List<string> phoneNumbers)
+    private void ShowPatientPhoneNumber(List<string> phoneNumbers)
     {
         lblPatientPhoneValue.Content = phoneNumbers.Count > 0
             ? string.Join(", ", phoneNumbers)

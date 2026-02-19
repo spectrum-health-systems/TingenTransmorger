@@ -578,23 +578,23 @@
         <member name="M:TingenTransmorger.MainWindow.CopyProviderMeetingDetails">
             <summary>Copy provider meeting details to the clipboard.</summary>
         </member>
-        <member name="F:TingenTransmorger.MainWindow._smsFailures">
-            <summary>SMS failure records for the current patient's phone numbers.</summary>
-        </member>
-        <member name="F:TingenTransmorger.MainWindow._smsDeliveries">
-            <summary>Message delivery records for the current patient's phone numbers.</summary>
-        </member>
-        <member name="F:TingenTransmorger.MainWindow._emailFailures">
-            <summary>Email failure records for the current patient's email addresses.</summary>
-        </member>
-        <member name="F:TingenTransmorger.MainWindow._emailDeliveries">
-            <summary>Email delivery records for the current patient's email addresses.</summary>
-        </member>
         <member name="F:TingenTransmorger.MainWindow._currentPatientName">
             <summary> Currently selected patient name.</summary>
         </member>
         <member name="F:TingenTransmorger.MainWindow._currentPatientId">
             <summary>Currently selected patient ID.</summary>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._smsDeliveries">
+            <summary>Message delivery records for the current patient's phone numbers.</summary>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._emailDeliveries">
+            <summary>Email delivery records for the current patient's email addresses.</summary>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._smsFailures">
+            <summary>SMS failure records for the current patient's phone numbers.</summary>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._emailFailures">
+            <summary>Email failure records for the current patient's email addresses.</summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ModifySearchResults">
             <summary>Modifies the search results based on the current search type and search text.</summary>
@@ -612,6 +612,55 @@
         <member name="M:TingenTransmorger.MainWindow.DisplayPatientDetails(System.String,System.String)">
             <summary>Displays patient details in the UI.</summary>
         </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayPatientPhoneNumber(System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Displays the patient's phone numbers in the UI.</summary>
+            <param name="patientDetails">The JSON element containing the patient's details.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetPatientPhoneNumbers(System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Get a list of formatted phone numbers for a patient.</summary>
+            <param name="patientDetails">The JSON representation of the patient's details.</param>
+            <returns>A list of strings representing the formatted phone numbers of the patient.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ShowPatientPhoneNumber(System.Collections.Generic.List{System.String})">
+            <summary>Show the patient phone number.</summary>
+            <param name="phoneNumbers">A list of formatted phone numbers for the patient.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetSmsStats(System.Collections.Generic.List{System.String})">
+            <summary>Gets the SMS statistics for the provided phone numbers.</summary>
+            <param name="phoneNumbers">A list of formatted phone numbers for the patient.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayPatientEmailAddress(System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Gets the patient's email addresses from the patient details and displays them in the UI.</summary>
+            <param name="patientDetails">The JSON element containing the patient's details.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetPatientEmailAddresses(System.Nullable{System.Text.Json.JsonElement})">
+            <summary>
+            Retrieves a list of email addresses associated with the specified patient details.
+            </summary>
+            <remarks>This method extracts email addresses from the provided JSON object. It only includes
+            non-empty addresses in the returned list.</remarks>
+            <param name="patientDetails">A JSON element representing the patient's details. This element is expected to contain an 'EmailAddresses'
+            property with an array of email address objects. This parameter cannot be null.</param>
+            <returns>A list of strings containing the email addresses of the patient. The list will be empty if no email addresses
+            are found.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetEmailStats(System.Collections.Generic.List{System.String})">
+            <summary>Gets the email statistics for the provided email addresses.</summary>
+            <param name="emailAddresses">A list of email addresses for the patient.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ShowPatientEmailAddress(System.Collections.Generic.List{System.String})">
+            <summary>Shows the patient's email addresses in the UI.</summary>
+            <param name="emailAddresses">A list of email addresses for the patient.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.MeetingSelected">
+            <summary>Handles the selection changed event for the meetings DataGrid.</summary>
+            <remarks>
+            <para>
+            This method is called when the user selects a meeting from the meetings table.
+            It retrieves the full meeting details and displays them in the details section.
+            </para>
+            </remarks>
+        </member>
         <member name="M:TingenTransmorger.MainWindow.UpdateDetailsButtonColor(System.Boolean,System.Boolean,System.Windows.Controls.Button)">
             <summary>Updates the btnPhoneDetails button appearance based on SMS failure and delivery records.</summary>
         </member>
@@ -627,14 +676,8 @@
         <member name="M:TingenTransmorger.MainWindow.ClearUi">
             <summary>Clears user interface components.</summary>
         </member>
-        <member name="M:TingenTransmorger.MainWindow.MeetingSelected">
-            <summary>Handles the selection changed event for the meetings DataGrid.</summary>
-            <remarks>
-            <para>
-            This method is called when the user selects a meeting from the meetings table.
-            It retrieves the full meeting details and displays them in the details section.
-            </para>
-            </remarks>
+        <member name="M:TingenTransmorger.MainWindow.SetSearchToggleContent">
+            <summary>Toggle the search type button text.</summary>
         </member>
         <member name="P:TingenTransmorger.MainWindow.TmDb">
             <summary>The Transmorger database.</summary>

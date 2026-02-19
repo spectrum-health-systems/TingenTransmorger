@@ -10,20 +10,78 @@ private void btnEmailDetails_Click(object sender, RoutedEventArgs e) => EmailDet
 private void btnCopyMeetingDetailsGeneral_Click(object sender, RoutedEventArgs e) => CopyMeetingDetailsGeneralClicked();
 private void btnCopyMeetingDetailsPatient_Click(object sender, RoutedEventArgs e) => CopyMeetingDetailsPatientClicked();
 private void btnCopyMeetingDetailsProvider_Click(object sender, RoutedEventArgs e) => CopyMeetingDetailsProviderClicked();
+   
+   
+    /// <summary>Displays the patient's phone numbers in the UI.</summary>
+    /// <param name="patientDetails">The JSON element containing the patient's details.</param>
+    private void DisplayPatientPhoneNumber(JsonElement? patientDetails)
+    {
+        var phoneNumbers = GetPatientPhoneNumbers(patientDetails);
+        ShowPatientPhoneNumber(phoneNumbers);
+        GetSmsStats(phoneNumbers);
+        UpdateDetailsButtonColor(_smsFailures.Count > 0, _smsDeliveries.Count > 0, btnPhoneDetails);
+    }
 
-        if (searchType.Contains("patient", StringComparison.OrdinalIgnoreCase))
+    /// <summary>Get a list of formatted phone numbers for a patient.</summary>
+    /// <param name="patientDetails">The JSON representation of the patient's details.</param>
+    /// <returns>A list of strings representing the formatted phone numbers of the patient.</returns>
+    private static List<string> GetPatientPhoneNumbers(JsonElement? patientDetails)
+    {
+        var phoneNumbers = new List<string>();
+
+        if (patientDetails?.TryGetProperty("PhoneNumbers", out var phoneNumbersArray) == true && phoneNumbersArray.ValueKind == JsonValueKind.Array)
         {
-            return rbtnSearchByName.IsChecked == true
-                ? Database.SearchFor.PatientByName(searchText, TmDb)
-                : Database.SearchFor.PatientById(searchText, TmDb);
+            foreach (var phoneNumberEntry in phoneNumbersArray.EnumerateArray())
+            {
+                if (phoneNumberEntry.TryGetProperty("Number", out var number))
+                {
+                    var phoneNumber = number.GetString();
+
+                    if (!string.IsNullOrWhiteSpace(phoneNumber))
+                    {
+                        var phoneNumberDigits = new string(phoneNumber.Where(char.IsDigit).ToArray());
+
+                        if (phoneNumberDigits.Length == 10)
+                        {
+                            phoneNumber = $"{phoneNumberDigits.Substring(0, 3)}-{phoneNumberDigits.Substring(3, 3)}-{phoneNumberDigits.Substring(6, 4)}"; // Format as ###-###-#### if 10 digits
+                        }
+
+                        phoneNumbers.Add(phoneNumber);
+                    }
+                }
+            }
         }
-        else if (searchType.Contains("provider", StringComparison.OrdinalIgnoreCase))
+
+        return phoneNumbers;
+    }
+
+    /// <summary>Show the patient phone number.</summary>
+    /// <param name="phoneNumbers">A list of formatted phone numbers for the patient.</param>
+    private void ShowPatientPhoneNumber(List<string> phoneNumbers)
+    {
+        lblPatientPhoneValue.Content = phoneNumbers.Count > 0
+            ? string.Join(", ", phoneNumbers)
+            : "No phone numbers on file";
+    }
+
+    /// <summary>Gets the SMS statistics for the provided phone numbers.</summary>
+    /// <param name="phoneNumbers">A list of formatted phone numbers for the patient.</param>
+    private void GetSmsStats(List<string> phoneNumbers)
+    {
+        _smsFailures.Clear();
+        _smsDeliveries.Clear();
+
+        for (int i = 0; i < phoneNumbers.Count; i++)
         {
-            return rbtnSearchByName.IsChecked == true
-                ? Database.SearchFor.ProviderByName(searchText, TmDb)
-                : Database.SearchFor.ProviderById(searchText, TmDb);
+            var normalizedPhoneNumber = new string(phoneNumbers[i].Where(char.IsDigit).ToArray()).Trim();
+
+            if (normalizedPhoneNumber.Length == 10)
+            {
+                var failures = TmDb.GetSmsFailureStats(normalizedPhoneNumber);
+                _smsFailures.AddRange(failures);
+
+                var deliveries = TmDb.GetMessageDeliveryStats(normalizedPhoneNumber);
+                _smsDeliveries.AddRange(deliveries);
+            }
         }
-        else
-        {
-            return [];
-        }
+    }

@@ -477,7 +477,7 @@
                                 CanUserSortColumns="True"
                                 HeadersVisibility="Column"
                                 IsReadOnly="True"
-                                SelectionChanged="dgPatientMeetings_SelectionChanged"
+                                SelectionChanged="dgMeetingResults_SelectionChanged"
                                 SelectionMode="Single"
                                 VerticalScrollBarVisibility="Auto">
                                 <DataGrid.Resources>

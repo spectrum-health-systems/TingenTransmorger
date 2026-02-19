@@ -614,14 +614,20 @@
         <member name="M:TingenTransmorger.MainWindow.ClearUi">
             <summary>Clears user interface components.</summary>
         </member>
-        <member name="M:TingenTransmorger.MainWindow.DisplaySearchResults(System.String,System.String)">
-            <summary>Display search results..</summary>
-            <remarks>
-                This method is called when the user types in the search text box. It filters and displays results based on
-                the current search mode and search type (by name or ID).
-            </remarks>
+        <member name="M:TingenTransmorger.MainWindow.ModifySearchResults(System.String,System.String)">
+            <summary>Modifies the search results based on the current search type and search text.</summary>
             <param name="searchType">The type of search.</param>
             <param name="searchText">Contents of the search box.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetSearchResults(System.String,System.String)">
+            <summary>Get a list of patient/provider search results.</summary>
+            <param name="searchType">The type of search.</param>
+            <param name="searchText">Contents of the search box.</param>
+            <returns>The search results.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplaySearchResults(System.Collections.Generic.List{System.String})">
+            <summary>Display search results.</summary>
+            <param name="searchResults">The list of search results to display.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.MeetingSelected">
             <summary>Handles the selection changed event for the meetings DataGrid.</summary>

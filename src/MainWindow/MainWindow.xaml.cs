@@ -118,7 +118,7 @@ public partial class MainWindow : Window
      */
     private void btnSearchToggle_Clicked(object? sender, RoutedEventArgs e) => SetSearchToggleContent(btnSearchToggle.Content.ToString());
     private void rbtnSearchBy_Checked(object sender, RoutedEventArgs e) => ClearUi();
-    private void txbxSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) => DisplaySearchResults(btnSearchToggle.Content.ToString(), txbxSearchBox.Text?.Trim());
+    private void txbxSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) => ModifySearchResults(btnSearchToggle.Content.ToString(), txbxSearchBox.Text?.Trim());
     private void btnPhoneDetails_Clicked(object sender, RoutedEventArgs e) => ShowPhoneDetails();
     private void btnEmailDetails_Clicked(object sender, RoutedEventArgs e) => ShowEmailDetails();
     private void lstbxSearchResults_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => DisplayDetails(btnSearchToggle.Content.ToString(), lstbxSearchResults.SelectedItem as string);

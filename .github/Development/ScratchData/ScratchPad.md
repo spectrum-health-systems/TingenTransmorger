@@ -11,6 +11,19 @@ private void btnCopyMeetingDetailsGeneral_Click(object sender, RoutedEventArgs e
 private void btnCopyMeetingDetailsPatient_Click(object sender, RoutedEventArgs e) => CopyMeetingDetailsPatientClicked();
 private void btnCopyMeetingDetailsProvider_Click(object sender, RoutedEventArgs e) => CopyMeetingDetailsProviderClicked();
 
-    MEETING DETAILS
-    ---------------
-  Participant Names: JESSICA WOLFORD;KIM HEGARTY;JOHN F RUFO;KEVIN ROBERTS;CHARLES W HALL;ELIZABETH PHINNEY;ROY ADAMS;JAMES HASHEM;MARJORIE BYRNE
+        if (searchType.Contains("patient", StringComparison.OrdinalIgnoreCase))
+        {
+            return rbtnSearchByName.IsChecked == true
+                ? Database.SearchFor.PatientByName(searchText, TmDb)
+                : Database.SearchFor.PatientById(searchText, TmDb);
+        }
+        else if (searchType.Contains("provider", StringComparison.OrdinalIgnoreCase))
+        {
+            return rbtnSearchByName.IsChecked == true
+                ? Database.SearchFor.ProviderByName(searchText, TmDb)
+                : Database.SearchFor.ProviderById(searchText, TmDb);
+        }
+        else
+        {
+            return [];
+        }

@@ -33,97 +33,70 @@ public partial class MainWindow : Window
         spnlMeetingDetailsComponents.Visibility          = Visibility.Collapsed;
     }
 
-    /// <summary>Display search results..</summary>
-    /// <remarks>
-    ///     This method is called when the user types in the search text box. It filters and displays results based on
-    ///     the current search mode and search type (by name or ID).
-    /// </remarks>
+    /// <summary>Modifies the search results based on the current search type and search text.</summary>
     /// <param name="searchType">The type of search.</param>
     /// <param name="searchText">Contents of the search box.</param>
-    private void DisplaySearchResults(string searchType, string searchText)
+    private void ModifySearchResults(string searchType, string searchText)
     {
-        /* This is here so we don't hit a weird loop with ClearUi().
-         */
-        if (string.IsNullOrWhiteSpace(txbxSearchBox.Text))
-        {
-            return;
-        }
-
-        lstbxSearchResults.Items.Clear();
-
         var searchResults = GetSearchResults(searchType, searchText);
-
-        if (searchResults.Count == 0)
-        {
-            lstbxSearchResults.Items.Add("No results found.");
-
-            return;
-        }
-        else
-        {
-            foreach (string result in searchResults)
-            {
-                lstbxSearchResults.Items.Add(result);
-            }
-        }
-
-        //List<string> searchResults = new List<string>();
-
-        //// TODO Try/Catch here?
-        //if (searchType.Contains("patient", StringComparison.OrdinalIgnoreCase))
-        //{
-        //    searchResults = rbtnSearchByName.IsChecked == true
-        //        ? Database.SearchFor.PatientByName(searchText, TmDb)
-        //        : Database.SearchFor.PatientById(searchText, TmDb);
-        //}
-        //else if (searchType.Contains("provider", StringComparison.OrdinalIgnoreCase))
-        //{
-        //    searchResults = rbtnSearchByName.IsChecked == true
-        //        ? Database.SearchFor.ProviderByName(searchText, TmDb)
-        //        : Database.SearchFor.ProviderById(searchText, TmDb);
-        //}
-
-        if (searchResults.Count == 0)
-        {
-            lstbxSearchResults.Items.Add("No results found.");
-
-            return;
-        }
-        else
-        {
-            foreach (string result in searchResults)
-            {
-                lstbxSearchResults.Items.Add(result);
-            }
-        }
+        DisplaySearchResults(searchResults);
     }
 
+    /// <summary>Get a list of patient/provider search results.</summary>
+    /// <param name="searchType">The type of search.</param>
+    /// <param name="searchText">Contents of the search box.</param>
+    /// <returns>The search results.</returns>
     private List<string> GetSearchResults(string searchType, string searchText)
     {
-        List<string> searchResults = new List<string>();
-
-        // TODO Try/Catch here?
-        if (searchType.Contains("patient", StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrWhiteSpace(txbxSearchBox.Text))
         {
-            searchResults = rbtnSearchByName.IsChecked == true
+            return [];
+        }
+
+        /* If the search box contains only an asterisk, treat it as a wildcard to return all results
+         */
+        if (txbxSearchBox.Text == "*")
+        {
+            searchText = string.Empty;
+        }
+
+        return searchType.Contains("patient", StringComparison.OrdinalIgnoreCase)
+            ? rbtnSearchByName.IsChecked == true
                 ? Database.SearchFor.PatientByName(searchText, TmDb)
-                : Database.SearchFor.PatientById(searchText, TmDb);
-        }
-        else if (searchType.Contains("provider", StringComparison.OrdinalIgnoreCase))
-        {
-            searchResults = rbtnSearchByName.IsChecked == true
-                ? Database.SearchFor.ProviderByName(searchText, TmDb)
-                : Database.SearchFor.ProviderById(searchText, TmDb);
-        }
-
-        return searchResults;
+                : Database.SearchFor.PatientById(searchText, TmDb)
+            : searchType.Contains("provider", StringComparison.OrdinalIgnoreCase)
+                ? rbtnSearchByName.IsChecked == true
+                            ? Database.SearchFor.ProviderByName(searchText, TmDb)
+                            : Database.SearchFor.ProviderById(searchText, TmDb)
+                : [];
     }
+
+    /// <summary>Display search results.</summary>
+    /// <param name="searchResults">The list of search results to display.</param>
+    private void DisplaySearchResults(List<string> searchResults)
+    {
+        lstbxSearchResults.Items.Clear();
+
+        if (searchResults.Count == 0)
+        {
+            lstbxSearchResults.Items.Add("No results found.");
+        }
+        else
+        {
+            foreach (string result in searchResults)
+            {
+                lstbxSearchResults.Items.Add(result);
+            }
+        }
+    }
+
+
 
     private void DisplayDetails(string searchMode, string selectedItem)
     {
         /* This is here so we don't hit a weird loop with ClearUi().
-         */
-        if (lstbxSearchResults.SelectedItem == null)
+        */
+        if (lstbxSearchResults.Items.Count == 0)
         {
             return;
         }

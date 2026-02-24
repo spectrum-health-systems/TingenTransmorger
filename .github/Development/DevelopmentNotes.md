@@ -57,3 +57,7 @@ Open excel files for detailed research
 <a target="_blank" href="https://icons8.com/icon/43011/copy">Copy</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 
 
+## ERROR CODES
+
+- [ERR-MW8000]
+- [ERR-MW8001]

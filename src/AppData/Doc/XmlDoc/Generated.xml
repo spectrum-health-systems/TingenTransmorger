@@ -663,6 +663,12 @@
             <summary>Shows the patient's email addresses in the UI.</summary>
             <param name="emailAddresses">A list of email addresses for the patient.</param>
         </member>
+        <member name="F:TingenTransmorger.MainWindow._currentProviderName">
+            <summary> Currently selected provider name.</summary>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._currentProviderId">
+            <summary>Currently selected provider ID.</summary>
+        </member>
         <member name="M:TingenTransmorger.MainWindow.DisplayProviderDetails(System.String,System.String)">
             <summary>Displays provider details in the UI.</summary>
         </member>
@@ -686,6 +692,11 @@
             <summary>Setup the user interface for displaying patient details.</summary>
             <param name="patientName">The name of the patient.</param>
             <param name="patientId">The ID of the patient.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.SetProviderDetailUi(System.String,System.String)">
+            <summary>Setup the user interface for displaying patient details.</summary>
+            <param name="providerName">The name of the provider.</param>
+            <param name="providerId">The ID of the provider.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ClearUi">
             <summary>Clears user interface components.</summary>

@@ -39,7 +39,7 @@ public partial class MainWindow : Window
 
         if (patientDetails == null)
         {
-            StopApp($"Critical error! [ERR-8151]");
+            StopApp($"Critical error! [ERR-MW8000]");
         }
 
         SetPatientDetailUi(patientName, patientId);

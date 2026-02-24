@@ -32,6 +32,20 @@ public partial class MainWindow : Window
         spnlPatientEmailComponents.Visibility           = Visibility.Visible;
     }
 
+    /// <summary>Setup the user interface for displaying patient details.</summary>
+    /// <param name="providerName">The name of the provider.</param>
+    /// <param name="providerId">The ID of the provider.</param>
+    private void SetProviderDetailUi(string providerName, string providerId)
+    {
+        lblPatientProviderKey.Content                   = "PROVIDER";
+        lblPatientProviderNameValue.Content             = providerName;
+        lblPatientProviderIdValue.Content               = providerId;
+        spnlPatientProviderDetailsComponents.Visibility = Visibility.Visible;
+        spnlPatientPhoneComponents.Visibility           = Visibility.Collapsed;
+        spnlPatientEmailComponents.Visibility           = Visibility.Collapsed;
+    }
+
+
     /// <summary>Clears user interface components.</summary>
     private void ClearUi()
     {

@@ -11,40 +11,49 @@ namespace TingenTransmorger;
  */
 public partial class MainWindow : Window
 {
+    /// <summary> Currently selected provider name.</summary>
+    private string _currentProviderName = string.Empty;
+
+    /// <summary>Currently selected provider ID.</summary>
+    private string _currentProviderId = string.Empty;
 
     /// <summary>Displays provider details in the UI.</summary>
     private void DisplayProviderDetails(string providerName, string providerId)
     {
-        // Show provider details section
-        spnlPatientProviderDetailsComponents.Visibility = Visibility.Visible;
-
-        // Set header to PROVIDER
-        lblPatientProviderKey.Content = "PROVIDER";
-
-        /* TODO: These are related to the potentially unused fields at the top of this class.
-         */
-        //////// Store current provider info
-        //////_currentProviderName = providerName;
-        //////_currentProviderId = providerId;
+        _currentProviderName = providerName;
+        _currentProviderId   = providerId;
 
         // Get provider details from database
-        var providerDetails = TmDb.GetProviderDetails(providerName);
+        JsonElement? providerDetails = TmDb.GetProviderDetails(providerName);
+
         if (providerDetails == null)
         {
-            return;
+            StopApp($"Critical error! [MW8001]");
         }
 
-        // Display provider name and ID
-        lblPatientProviderNameValue.Content = providerName;
-        lblPatientProviderIdValue.Content = providerId;
+        SetProviderDetailUi(providerName, providerId);
 
-        // Hide phone and email sections for providers
-        spnlPatientPhoneComponents.Visibility = Visibility.Collapsed;
-        spnlPatientEmailComponents.Visibility = Visibility.Collapsed;
+        /* This is taken care of */
+        //////////// Show provider details section
+        //////////spnlPatientProviderDetailsComponents.Visibility = Visibility.Visible;
+
+        //////////// Set header to PROVIDER
+        //////////lblPatientProviderKey.Content = "PROVIDER";
+
+        //////////// Display provider name and ID
+        //////////lblPatientProviderNameValue.Content = providerName;
+        //////////lblPatientProviderIdValue.Content = providerId;
+
+        //////////// Hide phone and email sections for providers
+        //////////spnlPatientPhoneComponents.Visibility = Visibility.Collapsed;
+        //////////spnlPatientEmailComponents.Visibility = Visibility.Collapsed;
+
+
 
         // Still collect email data in the background (hidden from UI)
         // Display email addresses (hidden from user but still processed)
         var emailAddresses = new List<string>();
+
         if (providerDetails.Value.TryGetProperty("EmailAddresses", out var emailAddressesArray))
         {
             if (emailAddressesArray.ValueKind == JsonValueKind.Array)

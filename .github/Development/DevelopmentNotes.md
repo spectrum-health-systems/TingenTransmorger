@@ -27,7 +27,7 @@
     - If the patient has a phone number/email address, but there are no details to show, the buttons will have a gray background
     - If the patient does not have a phone number/email address, the buttons will have a black background
 
-
+- [X] Remove System.Diagnostics.Debug lines
 - [X] Details for phone messages
 - [X] Add "-" to phone numbers
 - [X] Remove leading "+1" on phone numbers

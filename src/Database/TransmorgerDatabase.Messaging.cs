@@ -14,24 +14,20 @@ public partial class TransmorgerDatabase
     public List<(string PhoneNumber, string ErrorMessage, string ScheduledStartTime)> GetSmsFailureStats(string phoneNumber)
     {
         var results = new List<(string, string, string)>();
-        
+
         if (!_hasData || string.IsNullOrWhiteSpace(phoneNumber))
             return results;
 
         // Get the Patients array from the root
         if (!_jsonRoot.TryGetProperty("Patients", out var patients))
         {
-            System.Diagnostics.Debug.WriteLine("Patients property not found in database root");
             return results;
         }
 
         if (patients.ValueKind != JsonValueKind.Array)
         {
-            System.Diagnostics.Debug.WriteLine($"Patients is not an array, it's a {patients.ValueKind}");
             return results;
         }
-
-        System.Diagnostics.Debug.WriteLine($"Searching {patients.GetArrayLength()} patients for phone number {phoneNumber}");
 
         // Iterate through all patients
         foreach (var patient in patients.EnumerateArray())
@@ -65,8 +61,6 @@ public partial class TransmorgerDatabase
                 if (normalizedPhoneFromJson != phoneNumber)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"Found matching phone number: {phoneNumberFromJson}");
-
                 // Get DeliveryFailure array
                 if (!phoneEntry.TryGetProperty("DeliveryFailure", out var deliveryFailures))
                     continue;
@@ -74,15 +68,13 @@ public partial class TransmorgerDatabase
                 if (deliveryFailures.ValueKind != JsonValueKind.Array)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"  Found {deliveryFailures.GetArrayLength()} delivery failures");
-
                 // Extract each failure record
                 foreach (var failure in deliveryFailures.EnumerateArray())
                 {
                     var errorMessage = failure.TryGetProperty("ErrorMessage", out var errElem)
                         ? errElem.GetString() ?? string.Empty
                         : string.Empty;
-                    
+
                     var scheduledStart = failure.TryGetProperty("ScheduledStart", out var startElem)
                         ? startElem.GetString() ?? string.Empty
                         : string.Empty;
@@ -92,13 +84,11 @@ public partial class TransmorgerDatabase
                         ? $"{normalizedPhoneFromJson.Substring(0, 3)}-{normalizedPhoneFromJson.Substring(3, 3)}-{normalizedPhoneFromJson.Substring(6, 4)}"
                         : phoneNumberFromJson;
 
-                    System.Diagnostics.Debug.WriteLine($"    Adding failure: {errorMessage} at {scheduledStart}");
                     results.Add((formattedPhone, errorMessage, scheduledStart));
                 }
             }
         }
 
-        System.Diagnostics.Debug.WriteLine($"Total SMS failures found: {results.Count}");
         return results;
     }
 
@@ -108,24 +98,21 @@ public partial class TransmorgerDatabase
     public List<(string PhoneNumber, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> GetMessageDeliveryStats(string phoneNumber)
     {
         var results = new List<(string, string, string, string, string, string)>();
-        
+
         if (!_hasData || string.IsNullOrWhiteSpace(phoneNumber))
             return results;
 
         // Get the Patients array from the root
         if (!_jsonRoot.TryGetProperty("Patients", out var patients))
         {
-            System.Diagnostics.Debug.WriteLine("Patients property not found in database root");
             return results;
         }
 
         if (patients.ValueKind != JsonValueKind.Array)
         {
-            System.Diagnostics.Debug.WriteLine($"Patients is not an array, it's a {patients.ValueKind}");
+
             return results;
         }
-
-        System.Diagnostics.Debug.WriteLine($"Searching {patients.GetArrayLength()} patients for phone number {phoneNumber}");
 
         // Iterate through all patients
         foreach (var patient in patients.EnumerateArray())
@@ -159,8 +146,6 @@ public partial class TransmorgerDatabase
                 if (normalizedPhoneFromJson != phoneNumber)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"Found matching phone number: {phoneNumberFromJson}");
-
                 // Get DeliverySuccess array
                 if (!phoneEntry.TryGetProperty("DeliverySuccess", out var deliverySuccesses))
                     continue;
@@ -168,27 +153,25 @@ public partial class TransmorgerDatabase
                 if (deliverySuccesses.ValueKind != JsonValueKind.Array)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"  Found {deliverySuccesses.GetArrayLength()} successful deliveries");
-
                 // Extract each delivery record
                 foreach (var delivery in deliverySuccesses.EnumerateArray())
                 {
                     var deliveryStatus = delivery.TryGetProperty("DeliveryStatus", out var statusElem)
                         ? statusElem.GetString() ?? string.Empty
                         : string.Empty;
-                    
+
                     var messageType = delivery.TryGetProperty("MessageType", out var typeElem)
                         ? typeElem.GetString() ?? string.Empty
                         : string.Empty;
-                    
+
                     var errorMessage = delivery.TryGetProperty("ErrorMessage", out var errElem)
                         ? errElem.GetString() ?? string.Empty
                         : string.Empty;
-                    
+
                     var dateSent = delivery.TryGetProperty("DateSent", out var dateElem)
                         ? dateElem.GetString() ?? string.Empty
                         : string.Empty;
-                    
+
                     var timeSent = delivery.TryGetProperty("TimeSent", out var timeElem)
                         ? timeElem.GetString() ?? string.Empty
                         : string.Empty;
@@ -198,14 +181,12 @@ public partial class TransmorgerDatabase
                         ? $"{normalizedPhoneFromJson.Substring(0, 3)}-{normalizedPhoneFromJson.Substring(3, 3)}-{normalizedPhoneFromJson.Substring(6, 4)}"
                         : phoneNumberFromJson;
 
-                    System.Diagnostics.Debug.WriteLine($"    Adding delivery: {messageType} - {deliveryStatus} on {dateSent} at {timeSent}");
+
                     results.Add((formattedPhone, deliveryStatus, messageType, errorMessage, dateSent, timeSent));
                 }
             }
         }
 
-
-        System.Diagnostics.Debug.WriteLine($"Total message deliveries found: {results.Count}");
         return results;
     }
 
@@ -215,24 +196,20 @@ public partial class TransmorgerDatabase
     public List<(string EmailAddress, string ErrorMessage, string ScheduledStartTime)> GetEmailFailureStats(string emailAddress)
     {
         var results = new List<(string, string, string)>();
-        
+
         if (!_hasData || string.IsNullOrWhiteSpace(emailAddress))
             return results;
 
         // Get the Patients array from the root
         if (!_jsonRoot.TryGetProperty("Patients", out var patients))
         {
-            System.Diagnostics.Debug.WriteLine("Patients property not found in database root");
             return results;
         }
 
         if (patients.ValueKind != JsonValueKind.Array)
         {
-            System.Diagnostics.Debug.WriteLine($"Patients is not an array, it's a {patients.ValueKind}");
             return results;
         }
-
-        System.Diagnostics.Debug.WriteLine($"Searching {patients.GetArrayLength()} patients for email address {emailAddress}");
 
         // Iterate through all patients
         foreach (var patient in patients.EnumerateArray())
@@ -259,8 +236,6 @@ public partial class TransmorgerDatabase
                 if (!emailAddressFromJson.Equals(emailAddress, StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"Found matching email address: {emailAddressFromJson}");
-
                 // Get DeliveryFailure array
                 if (!emailEntry.TryGetProperty("DeliveryFailure", out var deliveryFailures))
                     continue;
@@ -268,26 +243,22 @@ public partial class TransmorgerDatabase
                 if (deliveryFailures.ValueKind != JsonValueKind.Array)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"  Found {deliveryFailures.GetArrayLength()} delivery failures");
-
                 // Extract each failure record
                 foreach (var failure in deliveryFailures.EnumerateArray())
                 {
                     var errorMessage = failure.TryGetProperty("ErrorMessage", out var errElem)
                         ? errElem.GetString() ?? string.Empty
                         : string.Empty;
-                    
+
                     var scheduledStart = failure.TryGetProperty("ScheduledStart", out var startElem)
                         ? startElem.GetString() ?? string.Empty
                         : string.Empty;
 
-                    System.Diagnostics.Debug.WriteLine($"    Adding failure: {errorMessage} at {scheduledStart}");
                     results.Add((emailAddressFromJson, errorMessage, scheduledStart));
                 }
             }
         }
 
-        System.Diagnostics.Debug.WriteLine($"Total email failures found: {results.Count}");
         return results;
     }
 
@@ -297,24 +268,21 @@ public partial class TransmorgerDatabase
     public List<(string EmailAddress, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> GetEmailDeliveryStats(string emailAddress)
     {
         var results = new List<(string, string, string, string, string, string)>();
-        
+
         if (!_hasData || string.IsNullOrWhiteSpace(emailAddress))
             return results;
 
         // Get the Patients array from the root
         if (!_jsonRoot.TryGetProperty("Patients", out var patients))
         {
-            System.Diagnostics.Debug.WriteLine("Patients property not found in database root");
             return results;
         }
 
         if (patients.ValueKind != JsonValueKind.Array)
         {
-            System.Diagnostics.Debug.WriteLine($"Patients is not an array, it's a {patients.ValueKind}");
             return results;
         }
 
-        System.Diagnostics.Debug.WriteLine($"Searching {patients.GetArrayLength()} patients for email address {emailAddress}");
 
         // Iterate through all patients
         foreach (var patient in patients.EnumerateArray())
@@ -341,8 +309,6 @@ public partial class TransmorgerDatabase
                 if (!emailAddressFromJson.Equals(emailAddress, StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"Found matching email address: {emailAddressFromJson}");
-
                 // Get DeliverySuccess array
                 if (!emailEntry.TryGetProperty("DeliverySuccess", out var deliverySuccesses))
                     continue;
@@ -350,38 +316,34 @@ public partial class TransmorgerDatabase
                 if (deliverySuccesses.ValueKind != JsonValueKind.Array)
                     continue;
 
-                System.Diagnostics.Debug.WriteLine($"  Found {deliverySuccesses.GetArrayLength()} successful deliveries");
-
                 // Extract each delivery record
                 foreach (var delivery in deliverySuccesses.EnumerateArray())
                 {
                     var deliveryStatus = delivery.TryGetProperty("DeliveryStatus", out var statusElem)
                         ? statusElem.GetString() ?? string.Empty
                         : string.Empty;
-                    
+
                     var messageType = delivery.TryGetProperty("MessageType", out var typeElem)
                         ? typeElem.GetString() ?? string.Empty
                         : string.Empty;
-                    
+
                     var errorMessage = delivery.TryGetProperty("ErrorMessage", out var errElem)
                         ? errElem.GetString() ?? string.Empty
                         : string.Empty;
-                    
+
                     var dateSent = delivery.TryGetProperty("DateSent", out var dateElem)
                         ? dateElem.GetString() ?? string.Empty
                         : string.Empty;
-                    
+
                     var timeSent = delivery.TryGetProperty("TimeSent", out var timeElem)
                         ? timeElem.GetString() ?? string.Empty
                         : string.Empty;
 
-                    System.Diagnostics.Debug.WriteLine($"    Adding delivery: {messageType} - {deliveryStatus} on {dateSent} at {timeSent}");
                     results.Add((emailAddressFromJson, deliveryStatus, messageType, errorMessage, dateSent, timeSent));
                 }
             }
         }
 
-        System.Diagnostics.Debug.WriteLine($"Total email deliveries found: {results.Count}");
         return results;
     }
 }

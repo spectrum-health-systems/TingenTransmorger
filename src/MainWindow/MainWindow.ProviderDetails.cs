@@ -81,21 +81,16 @@ public partial class MainWindow : Window
             if (emailAddress != "No email addresses on file")
             {
                 // DEBUG: Show what we're searching for
-                System.Diagnostics.Debug.WriteLine($"Searching for provider email: {emailAddress}");
 
                 // Query email failures
                 var failures = TmDb.GetEmailFailureStats(emailAddress);
-                System.Diagnostics.Debug.WriteLine($"Found {failures.Count} email failures");
                 _emailFailures.AddRange(failures);
 
                 // Query email deliveries
                 var deliveries = TmDb.GetEmailDeliveryStats(emailAddress);
-                System.Diagnostics.Debug.WriteLine($"Found {deliveries.Count} email deliveries");
                 _emailDeliveries.AddRange(deliveries);
             }
         }
-
-        System.Diagnostics.Debug.WriteLine($"Total provider email failures: {_emailFailures.Count}, Total provider email deliveries: {_emailDeliveries.Count}");
 
         // Display meetings for this provider
         var meetingRows = new List<PatientMeetingRow>();

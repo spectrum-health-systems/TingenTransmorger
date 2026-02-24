@@ -30,6 +30,7 @@
 
 - Fixed the UI reset when changing search modes
 - Cleaned up the copied details
+- Removed System.Diagnostics.Debug statements
 - Removed MainWindow.DisplayDetails.cs
 - Removed MainWindow.Events.cs
 

@@ -1,6 +1,6 @@
 # Tingen Transmorger: Changelog
 
-## 0.9.27.2 - 0.9.27.11
+## 0.9.27.2 - **0.9.28.0**
 
 - Cleanup of:
 
@@ -41,11 +41,11 @@
 
 - Finalized MainWindow.xaml cleanup
 
-## 0.9.26.1 - 0.9.26.7
+## 0.9.26.1 - **0.9.27.0**
 
 - Continued to clean up MainWindow.xaml
 
-## 0.9.26.0
+## **0.9.26.0**
 
 - Removed Settings button
 - Started to cleanup MainWindow.xaml
@@ -89,23 +89,23 @@
 
 - Unused/abandoned code
 
-## 0.9.25.0 - 2/11/2026
+## **0.9.25.0**
 
 - Meeting Details (Provider) component
 - Disabled the meeting search functionality for now
 
-## 0.9.24.0
+## **0.9.24.0**
 
 - Functionality to copy Meeting Details (General)
 - Functionality to copy Meeting Details (Patient)
 - DiagnosticWindow
 - EmailSummaryWindow
 
-## 0.9.23.0
+## **0.9.23.0**
 
 - Migrated the EmailSummaryWindow functionality into MessageHistoryWindow
 
-## 0.9.22.0
+## **0.9.22.0**
 
 - Functionality to copy the following message histories to the clipboard:
   - All message history
@@ -117,11 +117,11 @@
   - Renamed TingenTransmorger.Database.MessageSummaryWindow -> TingenTransmorger.Database.MessageHistoryWindow
   - Minor changes to user interface
 
-## 0.9.21.0
+## **0.9.21.0**
 
 - ProjectInfo.cs
 - The "opted-out" message properly displays
 
-## 0.9.20.0 - 2/10/2026
+## **0.9.20.0**
 
 - Fixed an issue where a clean install without a local database would not download the master database.

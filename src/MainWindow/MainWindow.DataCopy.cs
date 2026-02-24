@@ -1,5 +1,8 @@
 ﻿// 260219_code
-// 260219_documentation
+// 260224_documentation
+
+/* TODO: Eventually we should find a way to put some/all of this into Core.Catalog.cs.
+ */
 
 using System.Windows;
 

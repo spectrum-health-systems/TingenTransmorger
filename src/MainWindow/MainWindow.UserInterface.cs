@@ -1,14 +1,12 @@
 ﻿// 260219_code
-// 260219_documentation
+// 260224_documentation
 
 using System.Windows;
 using System.Windows.Controls;
 
 namespace TingenTransmorger;
 
-/* The MainWindow.UserInterface partial class contains logic specific to the user interface, such as showing/hiding components,
- * updating button colors, and displaying search results. This is separate from the logic for displaying meeting details and copying data,
- * which are in their own partial classes, to keep the code organized and easier to navigate.
+/* The MainWindow.UserInterface partial class contains logic specific to the user interface.
  */
 public partial class MainWindow : Window
 {

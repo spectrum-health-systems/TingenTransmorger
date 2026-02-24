@@ -536,8 +536,20 @@
                   <description>Details that are copied to the clipboard</description>
                 </item>
                 <item>
-                  <term>MainWindow.DetailDisplay.cs</term>
+                  <term>MainWindow.Details.cs</term>
                   <description>Logic for displaying information</description>
+                </item>
+                <item>
+                  <term>MainWindow.MeetingDetails.cs</term>
+                  <description>Logic for displaying meeting information</description>
+                </item>
+                <item>
+                  <term>MainWindow.PatientDetails.cs</term>
+                  <description>Logic for displaying patient information</description>
+                </item>
+                <item>
+                  <term>MainWindow.ProviderDetails.cs</term>
+                  <description>Logic for displaying provider information</description>
                 </item>
                 <item>
                   <term>MainWindow.UserInterface.cs</term>
@@ -567,7 +579,7 @@
             <returns>True if the user confirms, otherwise false.</returns>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetAdminModeTheme">
-            <summary>Sets the theme for admin mode.</summary>
+            <summary>Set the theme for admin mode.</summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.CopyGeneralMeetingDetails">
             <summary>Copy general meeting details to the clipboard.</summary>
@@ -578,6 +590,9 @@
         <member name="M:TingenTransmorger.MainWindow.CopyProviderMeetingDetails">
             <summary>Copy provider meeting details to the clipboard.</summary>
         </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayDetails">
+            <summary>Display details for the selected item in the search results.</summary>
+        </member>
         <member name="M:TingenTransmorger.MainWindow.MeetingSelected">
             <summary>Handles the selection changed event for the meetings DataGrid.</summary>
             <remarks>
@@ -586,9 +601,6 @@
             It retrieves the full meeting details and displays them in the details section.
             </para>
             </remarks>
-        </member>
-        <member name="M:TingenTransmorger.MainWindow.DisplayProviderDetails(System.String,System.String)">
-            <summary>Displays provider details in the UI.</summary>
         </member>
         <member name="F:TingenTransmorger.MainWindow._currentPatientName">
             <summary> Currently selected patient name.</summary>
@@ -650,6 +662,9 @@
         <member name="M:TingenTransmorger.MainWindow.ShowPatientEmailAddress(System.Collections.Generic.List{System.String})">
             <summary>Shows the patient's email addresses in the UI.</summary>
             <param name="emailAddresses">A list of email addresses for the patient.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayProviderDetails(System.String,System.String)">
+            <summary>Displays provider details in the UI.</summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ModifySearchResults">
             <summary>Modifies the search results based on the current search type and search text.</summary>

@@ -5,7 +5,7 @@
 - Cleanup of:
 
 
-  - MainWindow.DetailDisplay.cs
+  - MainWindow.Detail.cs
 
 - MainWindow.xaml
   - Verified all controls are named

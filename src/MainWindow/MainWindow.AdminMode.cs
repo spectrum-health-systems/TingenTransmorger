@@ -44,7 +44,7 @@ public partial class MainWindow : Window
         return rebuildResponse == MessageBoxResult.Yes;
     }
 
-    /// <summary>Sets the theme for admin mode.</summary>
+    /// <summary>Set the theme for admin mode.</summary>
     private void SetAdminModeTheme()
     {
         this.Background = System.Windows.Media.Brushes.Red;

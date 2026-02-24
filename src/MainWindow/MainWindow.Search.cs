@@ -1,5 +1,5 @@
-﻿// 260219_code
-// 260219_documentation
+﻿// 260224_code
+// 260224_documentation
 
 using System.Windows;
 
@@ -13,6 +13,7 @@ public partial class MainWindow : Window
     private void ModifySearchResults()
     {
         var searchResults = GetSearchResults(btnSearchToggle.Content.ToString(), txbxSearchBox.Text?.Trim());
+
         DisplaySearchResults(searchResults);
     }
 
@@ -22,12 +23,14 @@ public partial class MainWindow : Window
     /// <returns>The search results.</returns>
     private List<string> GetSearchResults(string searchType, string searchText)
     {
+        /* Don't try and get search results when there isn't anything to search against.
+*/
         if (string.IsNullOrWhiteSpace(txbxSearchBox.Text))
         {
             return [];
         }
 
-        /* If the search box contains only an asterisk, treat it as a wildcard to return all results
+        /* If the search box contains only an asterisk, treat it as a wildcard to return all results.
          */
         if (txbxSearchBox.Text == "*")
         {

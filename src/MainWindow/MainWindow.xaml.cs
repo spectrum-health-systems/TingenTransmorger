@@ -1,5 +1,5 @@
 ﻿// 260219_code
-// 260219_documentation
+// 260224_documentation
 
 using System.IO;
 using System.Windows;
@@ -28,8 +28,20 @@ namespace TingenTransmorger;
 ///       <description>Details that are copied to the clipboard</description>
 ///     </item>
 ///     <item>
-///       <term>MainWindow.DetailDisplay.cs</term>
+///       <term>MainWindow.Details.cs</term>
 ///       <description>Logic for displaying information</description>
+///     </item>
+///     <item>
+///       <term>MainWindow.MeetingDetails.cs</term>
+///       <description>Logic for displaying meeting information</description>
+///     </item>
+///     <item>
+///       <term>MainWindow.PatientDetails.cs</term>
+///       <description>Logic for displaying patient information</description>
+///     </item>
+///     <item>
+///       <term>MainWindow.ProviderDetails.cs</term>
+///       <description>Logic for displaying provider information</description>
 ///     </item>
 ///     <item>
 ///       <term>MainWindow.UserInterface.cs</term>

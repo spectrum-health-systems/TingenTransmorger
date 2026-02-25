@@ -596,7 +596,7 @@
         <member name="M:TingenTransmorger.MainWindow.MeetingSelected">
             <summary>Handles the selection changed event for the meetings DataGrid.</summary>
         </member>
-        <member name="M:TingenTransmorger.MainWindow.DisplayGeneralDetails(TingenTransmorger.Models.PatientMeetingRow,System.Nullable{System.Text.Json.JsonElement},System.String)">
+        <member name="M:TingenTransmorger.MainWindow.DisplayGeneralDetails(TingenTransmorger.Models.MeetingRow,System.Nullable{System.Text.Json.JsonElement},System.String)">
             <summary></summary>
             <param name="selectedMeeting"></param>
             <param name="meetingDetail"></param>
@@ -735,34 +735,34 @@
             InitializeComponent
             </summary>
         </member>
-        <member name="T:TingenTransmorger.Models.PatientMeetingRow">
+        <member name="T:TingenTransmorger.Models.MeetingRow">
             <summary>Represents a row in the patient meetings table.</summary>
         </member>
-        <member name="P:TingenTransmorger.Models.PatientMeetingRow.MeetingId">
+        <member name="P:TingenTransmorger.Models.MeetingRow.MeetingId">
             <summary>Gets or sets the meeting ID.</summary>
         </member>
-        <member name="P:TingenTransmorger.Models.PatientMeetingRow.Start">
+        <member name="P:TingenTransmorger.Models.MeetingRow.Start">
             <summary>Gets or sets the scheduled start time.</summary>
         </member>
-        <member name="P:TingenTransmorger.Models.PatientMeetingRow.Arrived">
+        <member name="P:TingenTransmorger.Models.MeetingRow.Arrived">
             <summary>Gets or sets the time the patient arrived.</summary>
         </member>
-        <member name="P:TingenTransmorger.Models.PatientMeetingRow.Dropped">
+        <member name="P:TingenTransmorger.Models.MeetingRow.Dropped">
             <summary>Gets or sets the time the patient dropped from the meeting.</summary>
         </member>
-        <member name="P:TingenTransmorger.Models.PatientMeetingRow.Duration">
+        <member name="P:TingenTransmorger.Models.MeetingRow.Duration">
             <summary>Gets or sets the duration of the meeting.</summary>
         </member>
-        <member name="P:TingenTransmorger.Models.PatientMeetingRow.Status">
+        <member name="P:TingenTransmorger.Models.MeetingRow.Status">
             <summary>Gets or sets the meeting status.</summary>
         </member>
-        <member name="P:TingenTransmorger.Models.PatientMeetingRow.HasError">
+        <member name="P:TingenTransmorger.Models.MeetingRow.HasError">
             <summary>Gets or sets whether this meeting has an error in the MeetingError collection.</summary>
         </member>
-        <member name="P:TingenTransmorger.Models.PatientMeetingRow.IsCancelled">
+        <member name="P:TingenTransmorger.Models.MeetingRow.IsCancelled">
             <summary>Gets or sets whether this meeting has been cancelled.</summary>
         </member>
-        <member name="P:TingenTransmorger.Models.PatientMeetingRow.IsCompleted">
+        <member name="P:TingenTransmorger.Models.MeetingRow.IsCompleted">
             <summary>Gets or sets whether this meeting has been completed.</summary>
         </member>
         <member name="F:TingenTransmorger.TeleHealthReport.ProcessWorkbook.ExcelConfig">

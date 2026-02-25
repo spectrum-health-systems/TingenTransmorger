@@ -16,6 +16,7 @@
 - [ ] Tighter search (e.g., "scott" finds "Scott" or "Scotty", not "Ascott")
 - [ ] Use explicit types when it's not obvious
 - [ ] If a meeting error is over a specific number of chars, truncate
+- [ ] Make the meetings whatever/whatever/whatever look nicer
 
 - [ ] Review dgPatientProviderMeetings to make sure the comments work for both patients and providers
 

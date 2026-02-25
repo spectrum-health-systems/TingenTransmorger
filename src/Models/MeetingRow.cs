@@ -4,7 +4,7 @@
 namespace TingenTransmorger.Models;
 
 /// <summary>Represents a row in the patient meetings table.</summary>
-public class PatientMeetingRow
+public class MeetingRow
 {
     /// <summary>Gets or sets the meeting ID.</summary>
     public string MeetingId { get; set; } = string.Empty;

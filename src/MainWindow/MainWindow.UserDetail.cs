@@ -5,8 +5,12 @@ using System.Windows;
 
 namespace TingenTransmorger;
 
-/* The MainWindow.Details partial class contains logic related to displaying details in the UI that are not specific to
- * patients, providers, or meetings.
+/* The MainWindow.Details partial class contains logic related to displaying user details in the right column, when a
+ * user is selected from the search results.
+ * 
+ * For example, when doing a patient search and selecting a patient from the search results, this class will:
+ * 
+ * 
  */
 public partial class MainWindow : Window
 {

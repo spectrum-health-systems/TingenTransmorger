@@ -4,31 +4,21 @@
 
 - Cleanup of:
 
-
-  - MainWindow.Detail.cs
-
+- MainWindow.AdminMode.cs
+- MainWindow.DataCopy.cs (new)
+  - Catalog information for copies to the clipboard
+- MainWindow.MeetingDetails.cs
+  - Moved the '''ReplaceNulls''' helper function to ```ReplaceNullValues()```
+- MainWindow.PatientDetail.cs
+- MainWindow.ProviderDetail.cs
+- MainWindow.Search.cs (new)
+- MainWindow.UserDetail.cs (new)
+- MainWindow.UserInterface.cs
 - MainWindow.xaml
   - Verified all controls are named correctly
   - Commented all controls
 - MainWindow.xaml.cs
   - Moved most stuff out to other partial classes
-- MainWindow.AdminMode.cs
-
-- MainWindow.MeetingDetails.cs
-  - Moved the '''ReplaceNulls''' helper function to ```ReplaceNullValues()```
-
-- MainWindow.PatientDetails.cs
-
-- MainWindow.ProviderDetails.cs
-
-- MainWindow.Search.cs (new)
-
-- MainWindow.UserInterface.cs
-
-- MainWindow.DataCopy.cs (new)
-  - Catalog information for copies to the clipboard
-
-
 - Fixed the UI reset when changing search modes
 - Cleaned up the copied details
 - Removed provider email logic

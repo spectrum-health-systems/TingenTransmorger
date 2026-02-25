@@ -10,40 +10,6 @@
     
     I've provided detailed comments throughout the XAML to explain the structure and purpose of each element in the UI,
     and the code-behind contains is written to be as clear as possible.
-    
-    A few things of note:
-    
-    * The brdrMainContainer control will be different colors, depending on what type of user is running the  application;
-    standard users will see a SteelBlue background, admin users will see a DarkRed background
-    
-    * There are two main columns:
-    - The left column is for searching patients/providers
-    - The right column is for displaying details about the selected patient/provider and their meetings
-    
-    * The btnSearchToggle control toggles between patient and provider search modes.
-    
-    * When in patient search mode:
-    - The brdrMeetingDetailsPatient control is visible
-    - The spnlPatientPhoneAndEmail control is visible
-    - The brdrMeetingDetailsProvider control is hidden
-    
-    * When in provider search mode:
-    - The spnlPatientPhoneAndEmail control is hidden
-    - The brdrMeetingDetailsProvider control is visible
-    - The brdrMeetingDetailsPatient control is hidden
-    
-    * If there are any errors with a meeting, the Meeting ID cell for that meeting will be highlighted in LightSalmon.
-    
-    * If a patient has a phone number and/or email address, the user can click the btnPhoneDetails or btnPhoneDetails
-    buttons the to view more details about those pieces of information. These buttons will be different colors,
-    depending on the following:
-    - If the details are all success messages, the buttons will have a green background
-    - If the details are all failure messages, the buttons will have a red background
-    - If the details are a mix of success and failure messages, the buttons will have an orange background
-    - If the patient has a phone number/email address, but there are no details to show, the buttons will have a gray background
-    - If the patient does not have a phone number/email address, the buttons will have a black background
-    
-    - There are various "copy" buttons that copy different pieces of information to the clipboard.
 -->
 
 <Window
@@ -59,10 +25,14 @@
     ResizeMode="NoResize"
     mc:Ignorable="d">
 
-    <!-- Main -->
+    <!-- MainWindow grid -->
     <Grid x:Name="grdMainWindow">
 
-        <!-- Holds all of the UI -->
+        <!--
+            MainWindow border
+            Contains all of the UI components of the main window.
+            The background color of this border changes depending on the mode Tingen Transmorger is in.
+        -->
         <Border x:Name="brdrMainWindow"
             Margin="10"
             Background="SteelBlue">
@@ -72,18 +42,22 @@
                 </Style>
             </Border.Resources>
 
-            <!-- Defines the two main columns of the UI -->
-            <Grid x:Name="grdMainWindowColumnsDefinition">
+            <!--
+                MainWindow grid column definitions
+                Left column: Components related to searching for patients/providers
+                Right column: Components related to patient/provider/meetings details.
+            -->
+            <Grid x:Name="gridMainWindowColumnsDefinition">
                 <Grid.ColumnDefinitions>
-                    <!-- Left column: Search -->
+                    <!-- Left column definition -->
                     <ColumnDefinition x:Name="colMainWindowLeftColumnDefinition"
                         Width="360" />
-                    <!-- Right column: Details -->
+                    <!-- Right column definition -->
                     <ColumnDefinition x:Name="colMainWindowRightColumnDefinition"
                         Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Left column -->
+                <!-- Left column border -->
                 <Border x:Name="brdrLeftColumn"
                     Grid.Column="0"
                     Margin="12,12,4,12"
@@ -91,18 +65,25 @@
                     Background="White"
                     CornerRadius="6,0,0,6">
 
-                    <!-- Search UI -->
+                    <!--
+                        Search panel
+                        Contains all of the components related to searching for patients/providers, viewing the results,
+                        and some space at the bottom for additional information.
+                    -->
                     <StackPanel x:Name="spnlSearch"
                         Orientation="Vertical">
 
-                        <!-- Search option components -->
-                        <StackPanel x:Name="spnlSearchOptionsComponents"
+                        <!--
+                            Search options panel
+                            Contains the search toggle button, and the search by name/ID radio buttons.
+                        -->
+                        <StackPanel x:Name="spnlSearchOptions"
                             Grid.Column="0"
                             Background="White"
                             Orientation="Horizontal">
 
-                            <!-- Search toggle -->
                             <!--
+                                Search toggle button
                                 When this button is clicked, it toggles between patient and provider search modes, and
                                 the content of the button is updated accordingly.
                             -->
@@ -122,11 +103,11 @@
                                 </Button.Resources>
                             </Button>
 
-                            <!-- Search by name/ID components -->
+                            <!-- Search by name/ID buttons -->
                             <StackPanel x:Name="spnlSearchByNameOrIdComponents"
                                 Orientation="Vertical">
 
-                                <!-- Search by name -->
+                                <!-- Search by name button -->
                                 <RadioButton x:Name="rbtnSearchByName"
                                     Width="116"
                                     Margin="5,12,0,0"
@@ -135,7 +116,7 @@
                                     Content="By name"
                                     FontSize="14" />
 
-                                <!-- Search by ID -->
+                                <!-- Search by ID button -->
                                 <RadioButton x:Name="rbtnSearchById"
                                     Width="116"
                                     Margin="5,5,0,0"
@@ -146,12 +127,12 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <!-- Search bar and results components -->
-                        <StackPanel x:Name="spnlSearchBar"
+                        <!-- Search box -->
+                        <StackPanel x:Name="spnlSearchBox"
                             Margin="0,0,0,6"
                             Orientation="Horizontal">
 
-                            <!-- Search bar -->
+                            <!-- Search box -->
                             <TextBox x:Name="txbxSearchBox"
                                 Width="310"
                                 Height="32"
@@ -168,7 +149,7 @@
                             </TextBox>
                         </StackPanel>
 
-                        <!-- Search results -->
+                        <!-- Search result list -->
                         <ListBox x:Name="lstbxSearchResults"
                             Height="476"
                             SelectionChanged="lstbxSearchResults_SelectionChanged">
@@ -179,21 +160,27 @@
                             </ListBox.Resources>
                         </ListBox>
                     </StackPanel>
+
+                    <!-- This space is reserved for future use and additional information. -->
+                    
                 </Border>
 
-                <!-- Right column -->
-                <Border x:Name="brdrRightPanelContainer"
+                <!-- Right column border -->
+                <Border x:Name="brdrRightColumn"
                     Grid.Column="1"
                     Margin="4,12,12,12"
                     Padding="8"
                     Background="White"
                     CornerRadius="0,6,6,0">
 
-                    <!-- Patient/provider details components -->
-                    <StackPanel x:Name="spnlPatientProviderDetailsComponents">
+                    <!--
+                        Details panel
+                        Contains all of the components related to patient/provider/meetings details.
+                    -->
+                    <StackPanel x:Name="spnlDetails">
 
                         <!-- Patient/provider name, and patient phone/email components. -->
-                        <StackPanel x:Name="spnlNamePhoneEmailComponents"
+                        <StackPanel x:Name="spnlUserDetails"
                             Height="65"
                             Margin="0"
                             Background="White"

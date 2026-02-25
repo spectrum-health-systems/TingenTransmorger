@@ -1,5 +1,5 @@
-﻿// 260224_code
-// 260224_documentation
+﻿// 260225_code
+// 260225_documentation
 
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +14,7 @@ public partial class MainWindow : Window
     private void SetInitialUi()
     {
         rbtnSearchByName.IsChecked                       = true;
-        spnlPatientProviderDetailsComponents.Visibility  = Visibility.Collapsed;
+        spnlDetails.Visibility  = Visibility.Collapsed;
         spnlMeetingComponents.Visibility                 = Visibility.Collapsed;
         spnlMeetingDetailsComponents.Visibility          = Visibility.Collapsed;
     }
@@ -27,7 +27,7 @@ public partial class MainWindow : Window
         lblPatientProviderKey.Content                   = "PATIENT";
         lblPatientProviderNameValue.Content             = patientName;
         lblPatientProviderIdValue.Content               = patientId;
-        spnlPatientProviderDetailsComponents.Visibility  = Visibility.Visible;
+        spnlDetails.Visibility  = Visibility.Visible;
         spnlMeetingComponents.Visibility                = Visibility.Visible;
         spnlMeetingDetailsComponents.Visibility          = Visibility.Visible;
         brdrMeetingDetailsGeneralContainer.Visibility   = Visibility.Visible;
@@ -44,7 +44,7 @@ public partial class MainWindow : Window
         lblPatientProviderKey.Content                   = "PROVIDER";
         lblPatientProviderNameValue.Content             = providerName;
         lblPatientProviderIdValue.Content               = providerId;
-        spnlPatientProviderDetailsComponents.Visibility  = Visibility.Visible;
+        spnlDetails.Visibility  = Visibility.Visible;
         spnlMeetingComponents.Visibility                 = Visibility.Visible;
         brdrMeetingDetailsProviderContainer.Visibility  = Visibility.Visible;
         brdrMeetingDetailsGeneralContainer.Visibility   = Visibility.Collapsed;
@@ -59,7 +59,7 @@ public partial class MainWindow : Window
     {
         txbxSearchBox.Text = string.Empty;
         lstbxSearchResults.Items.Clear();
-        spnlPatientProviderDetailsComponents.Visibility  = Visibility.Collapsed;
+        spnlDetails.Visibility  = Visibility.Collapsed;
         spnlMeetingComponents.Visibility                 = Visibility.Collapsed;
         spnlMeetingDetailsComponents.Visibility          = Visibility.Collapsed;
     }

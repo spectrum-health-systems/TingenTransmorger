@@ -15,8 +15,8 @@ public partial class MainWindow : Window
     {
         rbtnSearchByName.IsChecked                       = true;
         spnlDetail.Visibility  = Visibility.Collapsed;
-        spnlMeetingDetail.Visibility                 = Visibility.Collapsed;
-        spnlMeetingDetailsComponents.Visibility          = Visibility.Collapsed;
+        spnlMeeting.Visibility                 = Visibility.Collapsed;
+        spnlMeetingDetail.Visibility          = Visibility.Collapsed;
     }
 
     /// <summary>Setup the user interface for displaying patient details.</summary>
@@ -28,9 +28,9 @@ public partial class MainWindow : Window
         lblUserNameValue.Content             = patientName;
         lblUserIdValue.Content               = patientId;
         spnlDetail.Visibility  = Visibility.Visible;
-        spnlMeetingDetail.Visibility                = Visibility.Visible;
-        spnlMeetingDetailsComponents.Visibility          = Visibility.Visible;
-        brdrMeetingDetailsGeneralContainer.Visibility   = Visibility.Visible;
+        spnlMeeting.Visibility                = Visibility.Visible;
+        spnlMeetingDetail.Visibility          = Visibility.Visible;
+        brdrGeneralMeetingDetail.Visibility   = Visibility.Visible;
         brdrMeetingDetailsPatientContainer.Visibility   = Visibility.Visible;
         spnlUserContacts.Visibility   = Visibility.Visible;
         brdrMeetingDetailsProviderContainer.Visibility  = Visibility.Collapsed;
@@ -45,9 +45,9 @@ public partial class MainWindow : Window
         lblUserNameValue.Content             = providerName;
         lblUserIdValue.Content               = providerId;
         spnlDetail.Visibility  = Visibility.Visible;
-        spnlMeetingDetail.Visibility                 = Visibility.Visible;
-        brdrMeetingDetailsProviderContainer.Visibility  = Visibility.Visible;
-        brdrMeetingDetailsGeneralContainer.Visibility   = Visibility.Collapsed;
+        spnlMeeting.Visibility                = Visibility.Visible;
+        spnlMeetingDetail.Visibility          = Visibility.Visible;
+        brdrGeneralMeetingDetail.Visibility   = Visibility.Collapsed;
         brdrMeetingDetailsPatientContainer.Visibility   = Visibility.Collapsed;
         spnlUserContacts.Visibility   = Visibility.Collapsed;
 
@@ -60,8 +60,8 @@ public partial class MainWindow : Window
         txbxSearchBox.Text = string.Empty;
         lstbxSearchResults.Items.Clear();
         spnlDetail.Visibility  = Visibility.Collapsed;
-        spnlMeetingDetail.Visibility                 = Visibility.Collapsed;
-        spnlMeetingDetailsComponents.Visibility          = Visibility.Collapsed;
+        spnlMeeting.Visibility                 = Visibility.Collapsed;
+        spnlMeetingDetail.Visibility          = Visibility.Collapsed;
     }
 
     /// <summary>Toggle the search type button text.</summary>

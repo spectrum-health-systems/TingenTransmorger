@@ -393,7 +393,7 @@
                             Contains all of the meeting detail components, including the meeting breakdown, the meeting
                             list, and the three sections of meeting details information.
                         -->
-                        <StackPanel x:Name="spnlMeetingDetail"
+                        <StackPanel x:Name="spnlMeeting"
                             Margin="0,10,0,0">
 
                             <!--
@@ -559,21 +559,19 @@
                         </StackPanel>
 
                         <!--
-                            This contains three sections of meeting details information:
-                            - Meeting Details (General)
-                            - Meeting Details (Patient)
-                            - Meeting Details (Provider)
+                            Meeting detail panel
+                            Contains the general and user meeting detail sections.
                         -->
-                        <StackPanel x:Name="spnlMeetingDetailsComponents"
+                        <StackPanel x:Name="spnlMeetingDetail"
                             Width="788"
                             Margin="0,10,20,0"
                             Orientation="Vertical">
 
-                            <!-- Meeting Details (General) -->
-                            <!--
+                            <!-- 
+                                General Meeting detail border 
                                 This visible for both patient and provider search modes.
                             -->
-                            <Border x:Name="brdrMeetingDetailsGeneralContainer"
+                            <Border x:Name="brdrGeneralMeetingDetail"
                                 Margin="0,0,20,0"
                                 BorderBrush="Black"
                                 BorderThickness="1"

@@ -19,7 +19,7 @@ public partial class MainWindow : Window
          */
         if (TmDb == null)
         {
-            spnlMeetingDetailsComponents.Visibility = Visibility.Collapsed;
+            spnlMeetingDetail.Visibility = Visibility.Collapsed;
 
             return;
         }
@@ -30,7 +30,7 @@ public partial class MainWindow : Window
          */
         if (dgrdMeetingResult.SelectedItem is not MeetingRow selectedMeeting || string.IsNullOrWhiteSpace(selectedMeeting.MeetingId))
         {
-            spnlMeetingDetailsComponents.Visibility = Visibility.Collapsed;
+            spnlMeetingDetail.Visibility = Visibility.Collapsed;
 
             return;
         }
@@ -43,7 +43,7 @@ public partial class MainWindow : Window
          */
         if (meetingDetail == null)
         {
-            spnlMeetingDetailsComponents.Visibility = Visibility.Collapsed;
+            spnlMeetingDetail.Visibility = Visibility.Collapsed;
 
             return;
         }
@@ -61,7 +61,7 @@ public partial class MainWindow : Window
         if (lblUserTypeKey.Content?.ToString() == "PROVIDER")
         {
             //spnlMeetingDetailsComponents.Visibility = Visibility.Visible;
-            brdrMeetingDetailsGeneralContainer.Visibility = Visibility.Visible;
+            brdrGeneralMeetingDetail.Visibility = Visibility.Visible;
             brdrMeetingDetailsProviderContainer.Visibility = Visibility.Visible;
 
             DisplayGeneralDetails(selectedMeeting, meetingDetail, meetingId);
@@ -82,7 +82,7 @@ public partial class MainWindow : Window
         else
         {
             //spnlMeetingDetailsComponents.Visibility = Visibility.Visible;
-            brdrMeetingDetailsGeneralContainer.Visibility = Visibility.Visible;
+            brdrGeneralMeetingDetail.Visibility = Visibility.Visible;
             brdrMeetingDetailsPatientContainer.Visibility  = Visibility.Visible;
 
             DisplayGeneralDetails(selectedMeeting, meetingDetail, meetingId);
@@ -91,7 +91,7 @@ public partial class MainWindow : Window
         }
 
         // Show the meeting details section
-        spnlMeetingDetailsComponents.Visibility = Visibility.Visible;
+        spnlMeetingDetail.Visibility = Visibility.Visible;
     }
 
 
@@ -253,7 +253,7 @@ public partial class MainWindow : Window
             ? Visibility.Visible
             : Visibility.Collapsed;
 
-        spnlMeetingDetailsComponents.Visibility = Visibility.Collapsed;
+        spnlMeetingDetail.Visibility = Visibility.Collapsed;
     }
 
 
@@ -431,7 +431,7 @@ public partial class MainWindow : Window
             : Visibility.Collapsed;
 
         // Hide meeting details until a meeting is selected
-        spnlMeetingDetailsComponents.Visibility = Visibility.Collapsed;
+        spnlMeetingDetail.Visibility = Visibility.Collapsed;
     }
 
 

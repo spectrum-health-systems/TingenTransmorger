@@ -1,4 +1,4 @@
-﻿// 260224_code
+﻿// 260226_code
 // 260224_documentation
 
 using System.Windows;
@@ -28,7 +28,7 @@ public partial class MainWindow : Window
 
         if (!RebuildDatabaseYes())
         {
-            MainWindow.StopApp();
+            StopApp();
         }
 
         return await TransmorgerDatabase.Rebuild(importDir, tmpDir, masterDbDir, this);

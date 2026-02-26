@@ -590,9 +590,6 @@
         <member name="M:TingenTransmorger.MainWindow.CopyProviderMeetingDetails">
             <summary>Copy provider meeting details to the clipboard.</summary>
         </member>
-        <member name="M:TingenTransmorger.MainWindow.DisplayDetails">
-            <summary>Display details for the selected item in the search results.</summary>
-        </member>
         <member name="M:TingenTransmorger.MainWindow.MeetingSelected">
             <summary>Handles the selection changed event for the meetings DataGrid.</summary>
         </member>
@@ -684,6 +681,9 @@
         <member name="M:TingenTransmorger.MainWindow.DisplaySearchResults(System.Collections.Generic.List{System.String})">
             <summary>Display search results.</summary>
             <param name="searchResults">The list of search results to display.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayDetails">
+            <summary>Display details for the selected item in the search results.</summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetInitialUi">
             <summary>Setup the initial user interface.</summary>

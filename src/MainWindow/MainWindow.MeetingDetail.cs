@@ -1,4 +1,4 @@
-﻿// 260225_code
+﻿// 260226_code
 // 260225_documentation
 
 using System.Text.Json;
@@ -61,7 +61,7 @@ public partial class MainWindow : Window
         if (lblUserTypeKey.Content?.ToString() == "PROVIDER")
         {
             //spnlMeetingDetailsComponents.Visibility = Visibility.Visible;
-            brdrGeneralMeetingDetail.Visibility = Visibility.Visible;
+            brdrGeneralMeetingDetail.Visibility  = Visibility.Visible;
             brdrProviderMeetingDetail.Visibility = Visibility.Visible;
 
             DisplayGeneralDetails(selectedMeeting, meetingDetail, meetingId);
@@ -83,7 +83,7 @@ public partial class MainWindow : Window
         {
             //spnlMeetingDetailsComponents.Visibility = Visibility.Visible;
             brdrGeneralMeetingDetail.Visibility = Visibility.Visible;
-            brdrPatientMeetingDetail.Visibility  = Visibility.Visible;
+            brdrPatientMeetingDetail.Visibility = Visibility.Visible;
 
             DisplayGeneralDetails(selectedMeeting, meetingDetail, meetingId);
             DisplayPatientMeetingDetails(selectedMeeting);
@@ -256,8 +256,6 @@ public partial class MainWindow : Window
         spnlMeetingDetail.Visibility = Visibility.Collapsed;
     }
 
-
-
     private void DisplayPatientMeetingResults(JsonElement? patientDetails)
     {
         // Display meetings
@@ -330,7 +328,6 @@ public partial class MainWindow : Window
                         {
                             return "";
                         }
-
 
                         // Replace all occurrences of "null" (case-insensitive) with a placeholder
                         var result = System.Text.RegularExpressions.Regex.Replace(value, @"\bnull\b", "<<NULL>>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);

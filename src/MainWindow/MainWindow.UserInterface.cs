@@ -53,7 +53,6 @@ public partial class MainWindow : Window
 
     }
 
-
     /// <summary>Clears user interface components.</summary>
     private void ClearUi()
     {

@@ -1,9 +1,10 @@
-﻿// 260225_code
+﻿// 260226_code
 // 260225_documentation
 
 /* TODO: Eventually we should find a way to put some/all of this into Core.Catalog.cs.
  */
 
+using System.Text;
 using System.Windows;
 
 namespace TingenTransmorger;
@@ -17,7 +18,7 @@ public partial class MainWindow : Window
     {
         try
         {
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine("    MEETING DETAILS");
             sb.AppendLine("    ---------------");
@@ -52,7 +53,7 @@ public partial class MainWindow : Window
     {
         try
         {
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine("    MEETING DETAILS");
             sb.AppendLine("    ---------------");
@@ -84,7 +85,7 @@ public partial class MainWindow : Window
     {
         try
         {
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine("    MEETING DETAILS");
             sb.AppendLine("    ---------------");

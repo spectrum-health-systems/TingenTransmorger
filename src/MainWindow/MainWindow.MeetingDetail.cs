@@ -14,19 +14,11 @@ public partial class MainWindow : Window
     /// <summary>Handles the selection changed event for the meetings DataGrid.</summary>
     private void MeetingSelected()
     {
-        /* Don't process selection if database is not yet initialized
-         * TODO: Move
-         */
-        if (TmDb == null)
-        {
-            spnlMeetingDetail.Visibility = Visibility.Collapsed;
+        //var selectedMeeting = dgrdMeetingList.SelectedItem as MeetingRow;
 
-            return;
-        }
-
-        /* Verify the selected DataGrid item is a valid PatientMeetingRow with a non-empty MeetingId.  If the selection
-         * is invalid or the MeetingId is missing, collapse the meeting details panel and exit early.
-         * TODO: Move
+        /* If no valid meeting is selected, or the selected item does not have a MeetingId, collapse the meeting
+         * details panel and exit early.
+         * TODO: Move / Test
          */
         if (dgrdMeetingList.SelectedItem is not MeetingRow selectedMeeting || string.IsNullOrWhiteSpace(selectedMeeting.MeetingId))
         {
@@ -39,13 +31,11 @@ public partial class MainWindow : Window
 
         /* If the meeting detail could not be retrieved from the database, collapse the meeting details panel and exit
          * early.
-         * TODO: Move
+         * TODO: Move / Test
          */
         if (meetingDetail == null)
         {
-            spnlMeetingDetail.Visibility = Visibility.Collapsed;
-
-            return;
+            StopApp($"Meeting details could not be retrieved.{Environment.NewLine}{Environment.NewLine}The application will now exit.");
         }
 
         /* Extract generic meeting detail properties. Use MeetingId directly from selectedMeeting since we already have it
@@ -93,6 +83,7 @@ public partial class MainWindow : Window
         // Show the meeting details section
         spnlMeetingDetail.Visibility = Visibility.Visible;
     }
+
 
 
     /// <summary></summary>

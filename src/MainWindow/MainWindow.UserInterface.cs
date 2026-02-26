@@ -85,10 +85,6 @@ public partial class MainWindow : Window
 
         SetUserDetail("PATIENT", patientName, patientId);
 
-        //lblUserTypeKey.Content   = "PATIENT";
-        //lblUserNameValue.Content = patientName;
-        //lblUserIdValue.Content   = patientId;
-
         spnlUserDetail.Visibility            = Visibility.Visible;
         spnlMeetingResult.Visibility         = Visibility.Visible;
         brdrGeneralMeetingDetail.Visibility  = Visibility.Visible;
@@ -104,21 +100,18 @@ public partial class MainWindow : Window
     {
         SetUserDetail("PROVIDER", providerName, providerId);
 
-        //lblUserTypeKey.Content              = "PROVIDER";
-        //lblUserNameValue.Content            = providerName;
-        //lblUserIdValue.Content              = providerId;
-
         spnlUserDetail.Visibility            = Visibility.Visible;
         spnlMeetingResult.Visibility         = Visibility.Visible;
         brdrGeneralMeetingDetail.Visibility  = Visibility.Visible;
         brdrProviderMeetingDetail.Visibility = Visibility.Visible;
 
+        /* Not currently needed for providers.
+         */
         spnlUserContacts.Visibility         = Visibility.Collapsed;
         brdrPatientMeetingDetail.Visibility = Visibility.Collapsed;
 
         spnlDetail.Visibility               = Visibility.Visible;
     }
-
 
     private void SetUserDetail(string searchType, string userName, string userId)
     {
@@ -126,7 +119,6 @@ public partial class MainWindow : Window
         lblUserNameValue.Content = userName;
         lblUserIdValue.Content   = userId;
     }
-
 
     /// <summary>Toggle the search type button text.</summary>
     private void SetSearchToggleUi()
@@ -145,11 +137,7 @@ public partial class MainWindow : Window
         lstbxSearchResults.Items.Clear();
 
         ResetAllComponents();
-
-        //spnlDetail.Visibility        = Visibility.Collapsed;
     }
-
-
 
     /// <summary>Updates the btnPhoneDetails and btnEmailDetails button appearance based on SMS failure and delivery records.</summary>
     private static void UpdateDetailsButtonColor(bool hasFailures, bool hasDeliveries, Button theButton)

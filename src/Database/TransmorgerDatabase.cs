@@ -142,10 +142,6 @@ public partial class TransmorgerDatabase
         }
     }
 
-
-
-
-
     /// <summary> Loads a TransmorgerDatabase instance from the specified local database file path. </summary>
     /// <remarks>
     ///     If the specified file does not exist, the application will stop and notify the user. Ensure that the file

@@ -99,8 +99,26 @@ public partial class MainWindow : Window
 
         Database.TransmorgerDatabase.Update(localDbPath, masterDbPath);
 
-        // TODO: Make sure that is this fails, the app exits and doesn't continue.
-        TmDb = Database.TransmorgerDatabase.Load(localDbPath);
+        /* TODO: This should probably be moved to Database.TransmorgerDatabase.cs
+         */
+
+        try
+        {
+            TmDb = Database.TransmorgerDatabase.Load(localDbPath);
+        }
+        catch (Exception ex)
+        {
+            StopApp($"The database could not be loaded: {ex.Message}{Environment.NewLine}{Environment.NewLine}The application will now exit.");
+
+            // return;
+        }
+
+        if (TmDb is null)
+        {
+            StopApp("The database could not be loaded. The application will now exit.");
+
+            //return;
+        }
 
         SetInitialUi();
     }

@@ -18,6 +18,8 @@ namespace TingenTransmorger;
  * 6. Display the patient meeting breakdown
  * 7. Display the patient meeting list.
  *
+ * The same steps are taken for providers.
+ *
  * This class does not handle any of the meeting-specific details, that is handled in MainWindow.MeetingDetails.
  */
 public partial class MainWindow : Window

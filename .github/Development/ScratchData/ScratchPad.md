@@ -44,27 +44,4 @@ private void btnCopyMeetingDetailsProvider_Click(object sender, RoutedEventArgs 
     - There are various "copy" buttons that copy different pieces of information to the clipboard.
 
 
-
-                               <!--
-                                General meeting detail border
-                                This visible for both patient and provider search modes.
-                            -->
-                            <Border x:Name="brdrGeneralMeetingDetail"
-                                Margin="0,0,0,0"
-                                BorderBrush="Black"
-                                BorderThickness="1"
-                                CornerRadius="5">
-
-                                <!--
-                                    General meeting detail panel
-                                -->
-                                <StackPanel x:Name="spnlGeneralMeetingDetail"
-                                    Margin="5,5,0,0">
-
-                                    <!--
-                                        General meeting detail top panel
-                                        Contains the header and copy button for the general meeting details section.
-                                    -->
-                                    <StackPanel x:Name="spnlGeneralMeetingDetailTop"
-                                        Margin="0,0,0,4"
-                                        Orientation="Horizontal">
+StopApp($"Meeting and/or MeetingId is invalid.{Environment.NewLine}{Environment.NewLine}The application will now exit.");

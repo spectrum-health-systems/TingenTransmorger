@@ -28,7 +28,7 @@ public partial class MainWindow : Window
          * is invalid or the MeetingId is missing, collapse the meeting details panel and exit early.
          * TODO: Move
          */
-        if (dgrdMeetingResult.SelectedItem is not MeetingRow selectedMeeting || string.IsNullOrWhiteSpace(selectedMeeting.MeetingId))
+        if (dgrdMeetingList.SelectedItem is not MeetingRow selectedMeeting || string.IsNullOrWhiteSpace(selectedMeeting.MeetingId))
         {
             spnlMeetingDetail.Visibility = Visibility.Collapsed;
 
@@ -103,7 +103,7 @@ public partial class MainWindow : Window
     {
         /* This is pretty dense, but it does cut down on the amount of repetitive code, and the underlying logic is
          * fairly simple:
-         * 
+         *
          * The <c>whatever.Text</c> value is set to the result of the <c>propertyName</c> if it exists, and converted
          * to "---" if it does not.
          */
@@ -248,7 +248,7 @@ public partial class MainWindow : Window
         txbkMeetingsCancelledValue.Text  = $"{cancelledCount} Cancelled";
         txbkMeetingsScheduledValue.Text  = $"{scheduledCount} Scheduled";
 
-        dgrdMeetingResult.ItemsSource = meetingRows;
+        dgrdMeetingList.ItemsSource = meetingRows;
 
         spnlMeetingDetail.Visibility = meetingRows.Count > 0
             ? Visibility.Visible
@@ -421,7 +421,7 @@ public partial class MainWindow : Window
         txbkMeetingsScheduledValue.Text  = $"{scheduledCount} Scheduled";
 
         // Bind to DataGrid
-        dgrdMeetingResult.ItemsSource = meetingRows;
+        dgrdMeetingList.ItemsSource = meetingRows;
 
         // Show meetings section if there are meetings
         spnlMeetingDetail.Visibility = meetingRows.Count > 0

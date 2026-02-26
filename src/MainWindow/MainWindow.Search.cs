@@ -1,5 +1,5 @@
-﻿// 260224_code
-// 260224_documentation
+﻿// 260226_code
+// 260226_documentation
 
 using System.Windows;
 
@@ -28,6 +28,7 @@ public partial class MainWindow : Window
         if (string.IsNullOrWhiteSpace(txbxSearchBox.Text))
         {
             ClearUi();
+
             return [];
         }
 

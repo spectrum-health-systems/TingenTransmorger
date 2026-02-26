@@ -1,5 +1,5 @@
 ﻿// 260226_code
-// 260224_documentation
+// 260226_documentation
 
 using System.Windows;
 using TingenTransmorger.Core;

@@ -1,6 +1,6 @@
 ﻿<!--
-    260225_code
-    260225_documentation
+    260226_code
+    260226_documentation
 -->
 
 <!--
@@ -397,7 +397,7 @@
                             Contains all of the meeting detail components, including the meeting breakdown, the meeting
                             list, and the three sections of meeting details information.
                         -->
-                        <StackPanel x:Name="spnlMeeting"
+                        <StackPanel x:Name="spnlMeetingResult"
                             Margin="0,10,0,0">
 
                             <!--
@@ -475,7 +475,7 @@
                                 Meeting result list datagrid
                                 Displays the user meeting with some special effects.
                             -->
-                            <DataGrid x:Name="dgrdMeetingResult"
+                            <DataGrid x:Name="dgrdMeetingList"
                                 Height="120"
                                 MaxHeight="120"
                                 AutoGenerateColumns="False"

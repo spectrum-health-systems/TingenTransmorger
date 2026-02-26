@@ -11,21 +11,54 @@ namespace TingenTransmorger;
 public partial class MainWindow : Window
 {
     /// <summary>Setup the initial user interface.</summary>
-    /// <remarks>
-    ///     When Tingen Transmorger starts:
-    ///     <list type="bullet">
-    ///     <item>Set the search type to "PATIENT"</item>
-    ///     <item>Set the search by to "Name"</item>
-    ///     <item>Hide the detail panel</item>
-    /// </list>
-    /// </remarks>
     private void SetInitialUi()
     {
-        ResetUi();
+        ClearUi();
 
-        //ClearUi();
-        //rbtnSearchByName.IsChecked   = true;
-        //spnlDetail.Visibility        = Visibility.Collapsed;
+        btnSearchToggle.Content    = "Patient Search";
+        rbtnSearchByName.IsChecked = true;
+
+        // User details
+        spnlUserNameAndId.Visibility = Visibility.Visible; // User name/id
+        spnlUserContacts.Visibility  = Visibility.Collapsed; // User contacts
+        spnlUserDetail.Visibility    = Visibility.Collapsed; // User name/id/contacts container
+
+        // Meeting results
+        spnlMeetingBreakdown.Visibility = Visibility.Visible; // Meeting breakdown
+        dgrdMeetingList.Visibility    = Visibility.Visible; // Meeting list
+        spnlMeetingResult.Visibility    = Visibility.Collapsed; // Meeting breakdown/list container
+
+        spnlGeneralMeetingDetailTop.Visibility          = Visibility.Visible; // General meeting details top section - meeting name/date
+        spnlGeneralMeetingDetailLeftColumn.Visibility   = Visibility.Visible; // General meeting details left column - meeting type/participants
+        spnlGeneralMeetingDetailCenterColumn.Visibility = Visibility.Visible;
+        spnlGeneralMeetingDetailRightColumn.Visibility  = Visibility.Visible;
+        brdrGeneralMeetingDetail.Visibility             = Visibility.Collapsed; // General meeting details border container - pick one
+
+        spnlPatientMeetingDetailTop.Visibility          = Visibility.Visible; // Patient meeting details top section - meeting name/date
+        spnlPatientMeetingDetailLeftColumn.Visibility   = Visibility.Visible; // Patient meeting details left column - meeting type/participants
+        spnlPatientMeetingDetailCenterColumn.Visibility = Visibility.Visible;
+        spnlPatientMeetingDetailRightColumn.Visibility  = Visibility.Visible;
+        brdrPatientMeetingDetail.Visibility= Visibility.Collapsed; // Patient meeting details border container - pick one
+
+        spnlProviderMeetingDetailTop.Visibility          = Visibility.Visible; // Provider meeting details top section - meeting name/date  
+        spnlProviderParticipantNames.Visibility = Visibility.Visible; // Provider meeting details participant names section 
+        brdrProviderMeetingDetail.Visibility = Visibility.Collapsed; // Provider meeting details border container 
+
+
+
+
+
+        spnlMeetingDetail.Visibility = Visibility.Collapsed; // General/patient/provider meeting details container
+
+
+
+
+
+
+
+
+        spnlDetail.Visibility = Visibility.Collapsed; // All other detail panels
+
     }
 
     /// <summary>Setup the user interface for displaying patient details.</summary>
@@ -33,11 +66,15 @@ public partial class MainWindow : Window
     /// <param name="patientId">The ID of the patient.</param>
     private void SetPatientDetailUi(string patientName, string patientId)
     {
-        lblUserTypeKey.Content               = "PATIENT";
-        lblUserNameValue.Content             = patientName;
-        lblUserIdValue.Content               = patientId;
+        lblUserTypeKey.Content   = "PATIENT";
+        lblUserNameValue.Content = patientName;
+        lblUserIdValue.Content   = patientId;
+
+        spnlUserDetail.Visibility               = Visibility.Visible;
+
+
         spnlDetail.Visibility                = Visibility.Visible;
-        spnlMeeting.Visibility               = Visibility.Visible;
+        spnlMeetingResult.Visibility               = Visibility.Visible;
         spnlMeetingDetail.Visibility         = Visibility.Visible;
         brdrGeneralMeetingDetail.Visibility  = Visibility.Visible;
         brdrPatientMeetingDetail.Visibility  = Visibility.Visible;
@@ -54,7 +91,7 @@ public partial class MainWindow : Window
         lblUserNameValue.Content            = providerName;
         lblUserIdValue.Content              = providerId;
         spnlDetail.Visibility               = Visibility.Visible;
-        spnlMeeting.Visibility              = Visibility.Visible;
+        spnlMeetingResult.Visibility              = Visibility.Visible;
         spnlMeetingDetail.Visibility        = Visibility.Visible;
         brdrGeneralMeetingDetail.Visibility = Visibility.Collapsed;
         brdrPatientMeetingDetail.Visibility = Visibility.Collapsed;
@@ -79,25 +116,8 @@ public partial class MainWindow : Window
         lstbxSearchResults.Items.Clear();
 
         spnlDetail.Visibility        = Visibility.Collapsed;
-        //spnlMeeting.Visibility       = Visibility.Collapsed;
-        //spnlMeetingDetail.Visibility = Visibility.Collapsed;
     }
 
-    /// <summary>Clears user interface components.</summary>
-    private void ResetUi()
-    {
-        ClearUi();
-
-        //txbxSearchBox.Text = string.Empty;
-        //lstbxSearchResults.Items.Clear();
-
-        btnSearchToggle.Content = "Patient Search";
-        rbtnSearchByName.IsChecked   = true;
-
-        //spnlDetail.Visibility        = Visibility.Collapsed;
-        //spnlMeeting.Visibility       = Visibility.Collapsed;
-        //spnlMeetingDetail.Visibility = Visibility.Collapsed;
-    }
 
 
     /// <summary>Updates the btnPhoneDetails and btnEmailDetails button appearance based on SMS failure and delivery records.</summary>

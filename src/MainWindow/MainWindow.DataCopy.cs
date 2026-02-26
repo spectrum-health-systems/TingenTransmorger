@@ -1,5 +1,5 @@
 ﻿// 260226_code
-// 260225_documentation
+// 260226_documentation
 
 /* TODO: Eventually we should find a way to put some/all of this into Core.Catalog.cs.
  */

@@ -73,7 +73,7 @@ public partial class MainWindow : Window
             }
         }
 
-        meetingRows = meetingRows.OrderByDescending(m => m.ScheuledStart).ToList();
+        meetingRows = meetingRows.OrderByDescending(m => m.ScheduledStart).ToList();
 
         var totalCount     = meetingRows.Count;
         var completedCount = meetingRows.Count(m => m.IsCompleted);
@@ -134,7 +134,7 @@ public partial class MainWindow : Window
         return new MeetingRow
         {
             MeetingId     = meetingId,
-            ScheuledStart = ReplaceNullValues(GetStringProperty(meetingDetail.Value, "ScheduledStart")),
+            ScheduledStart = ReplaceNullValues(GetStringProperty(meetingDetail.Value, "ScheduledStart")),
             ActualStart   = ReplaceNullValues(GetStringProperty(meetingDetail.Value, "ActualStart")),
             ScheduledEnd  = ReplaceNullValues(GetStringProperty(meetingDetail.Value, "ScheduledEnd")),
             ActualEnd     = ReplaceNullValues(GetStringProperty(meetingDetail.Value, "ActualEnd")),

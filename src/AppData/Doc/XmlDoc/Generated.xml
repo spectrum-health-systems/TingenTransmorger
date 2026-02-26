@@ -761,7 +761,7 @@
         <member name="P:TingenTransmorger.Models.MeetingRow.MeetingId">
             <summary>Gets or sets the meeting ID.</summary>
         </member>
-        <member name="P:TingenTransmorger.Models.MeetingRow.ScheuledStart">
+        <member name="P:TingenTransmorger.Models.MeetingRow.ScheduledStart">
             <summary>Gets or sets the scheduled start time.</summary>
         </member>
         <member name="P:TingenTransmorger.Models.MeetingRow.ActualStart">

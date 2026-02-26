@@ -10,7 +10,7 @@ public class MeetingRow
     public string MeetingId { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the scheduled start time.</summary>
-    public string ScheuledStart { get; set; } = string.Empty;
+    public string ScheduledStart { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the actual start time.</summary>
     public string ActualStart { get; set; } = string.Empty;

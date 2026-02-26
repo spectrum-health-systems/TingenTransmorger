@@ -531,7 +531,7 @@
                                     <!-- Scheduled start date/time -->
                                     <DataGridTextColumn
                                         Width="135"
-                                        Binding="{Binding Start}"
+                                        Binding="{Binding ScheduledStart}"
                                         Header="Scheduled Start" />
                                     <!-- Actual start date/time -->
                                     <DataGridTextColumn

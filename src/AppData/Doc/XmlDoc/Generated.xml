@@ -681,10 +681,6 @@
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetInitialUi">
             <summary>Setup the initial user interface.</summary>
-            <remarks>
-                When the user interface is initialized, all interior components are visible, but containers are hidden. This
-                way we can show/hide entire sections of the UI by toggling the container visibility.
-            </remarks>  
         </member>
         <member name="M:TingenTransmorger.MainWindow.ResetAllComponents">
             <summary>Reset all of the UI components.</summary>

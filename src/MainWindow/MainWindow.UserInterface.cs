@@ -11,15 +11,9 @@ namespace TingenTransmorger;
 public partial class MainWindow : Window
 {
     /// <summary>Setup the initial user interface.</summary>
-    /// <remarks>
-    ///     When the user interface is initialized, all interior components are visible, but containers are hidden. This
-    ///     way we can show/hide entire sections of the UI by toggling the container visibility.
-    /// </remarks>  
     private void SetInitialUi()
     {
         ClearUi();
-
-
 
         btnSearchToggle.Content    = "Patient Search";
         rbtnSearchByName.IsChecked = true;
@@ -89,15 +83,17 @@ public partial class MainWindow : Window
     {
         ResetAllComponents();
 
+        SetUserDetail("PATIENT", patientName, patientId);
 
-        lblUserTypeKey.Content   = "PATIENT";
-        lblUserNameValue.Content = patientName;
-        lblUserIdValue.Content   = patientId;
+        //lblUserTypeKey.Content   = "PATIENT";
+        //lblUserNameValue.Content = patientName;
+        //lblUserIdValue.Content   = patientId;
 
         spnlUserDetail.Visibility            = Visibility.Visible;
         spnlMeetingResult.Visibility         = Visibility.Visible;
         brdrGeneralMeetingDetail.Visibility  = Visibility.Visible;
         brdrPatientMeetingDetail.Visibility  = Visibility.Visible;
+
         spnlDetail.Visibility                = Visibility.Visible;
     }
 
@@ -106,18 +102,31 @@ public partial class MainWindow : Window
     /// <param name="providerId">The ID of the provider.</param>
     private void SetProviderDetailUi(string providerName, string providerId)
     {
-        lblUserTypeKey.Content              = "PROVIDER";
-        lblUserNameValue.Content            = providerName;
-        lblUserIdValue.Content              = providerId;
+        SetUserDetail("PROVIDER", providerName, providerId);
+
+        //lblUserTypeKey.Content              = "PROVIDER";
+        //lblUserNameValue.Content            = providerName;
+        //lblUserIdValue.Content              = providerId;
 
         spnlUserDetail.Visibility            = Visibility.Visible;
-        spnlUserContacts.Visibility          = Visibility.Collapsed;
         spnlMeetingResult.Visibility         = Visibility.Visible;
         brdrGeneralMeetingDetail.Visibility  = Visibility.Visible;
-        brdrPatientMeetingDetail.Visibility = Visibility.Collapsed;
         brdrProviderMeetingDetail.Visibility = Visibility.Visible;
-        spnlDetail.Visibility                = Visibility.Visible;
+
+        spnlUserContacts.Visibility         = Visibility.Collapsed;
+        brdrPatientMeetingDetail.Visibility = Visibility.Collapsed;
+
+        spnlDetail.Visibility               = Visibility.Visible;
     }
+
+
+    private void SetUserDetail(string searchType, string userName, string userId)
+    {
+        lblUserTypeKey.Content   = searchType;
+        lblUserNameValue.Content = userName;
+        lblUserIdValue.Content   = userId;
+    }
+
 
     /// <summary>Toggle the search type button text.</summary>
     private void SetSearchToggleUi()

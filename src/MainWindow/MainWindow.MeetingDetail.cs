@@ -54,20 +54,17 @@ public partial class MainWindow : Window
         }
     }
 
-
-
-    /// <summary></summary>
-    /// <param name="selectedMeeting"></param>
-    /// <param name="meetingDetail"></param>
-    /// <param name="meetingId"></param>
+    /// <summary>Displays the general meeting details.</summary>
+    /// <remarks>
+    ///     This is pretty dense, but it does cut down on the amount of repetitive code, and the underlying logic is
+    ///     fairly simple: the<c> whatever.Text</c> value is set to the result of the <c>propertyName</c> if it exists,
+    ///     and converted to "---" if it does not.
+    /// </remarks>
+    /// <param name="selectedMeeting">The selected meeting row.</param>
+    /// <param name="meetingDetail">The meeting detail JSON element.</param>
+    /// <param name="meetingId">The meeting ID.</param>
     private void DisplayGeneralDetails(MeetingRow selectedMeeting, JsonElement? meetingDetail, string meetingId)
     {
-        /* This is pretty dense, but it does cut down on the amount of repetitive code, and the underlying logic is
-         * fairly simple:
-         *
-         * The <c>whatever.Text</c> value is set to the result of the <c>propertyName</c> if it exists, and converted
-         * to "---" if it does not.
-         */
         txbkMeetingIdValue.Text                   = ReplaceNullValues(meetingId);
         txbkMeetingStatusValue.Text               = ReplaceNullValues(GetStringProperty("Status", meetingDetail));
         txbkMeetingTitleValue.Text                = ReplaceNullValues(GetStringProperty("MeetingTitle", meetingDetail));
@@ -88,9 +85,6 @@ public partial class MainWindow : Window
          */
         DisplayMeetingError(selectedMeeting);
     }
-
-
-
 
     private void DisplayProviderMeetingResults(string providerName)
     {

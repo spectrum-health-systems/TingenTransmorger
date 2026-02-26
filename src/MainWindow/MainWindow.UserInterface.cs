@@ -1,5 +1,5 @@
-﻿// 260225_code
-// 260225_documentation
+﻿// 260226_code
+// 260226_documentation
 
 using System.Windows;
 using System.Windows.Controls;
@@ -11,12 +11,21 @@ namespace TingenTransmorger;
 public partial class MainWindow : Window
 {
     /// <summary>Setup the initial user interface.</summary>
+    /// <remarks>
+    ///     When Tingen Transmorger starts:
+    ///     <list type="bullet">
+    ///     <item>Set the search type to "PATIENT"</item>
+    ///     <item>Set the search by to "Name"</item>
+    ///     <item>Hide the detail panel</item>
+    /// </list>
+    /// </remarks>
     private void SetInitialUi()
     {
-        rbtnSearchByName.IsChecked                       = true;
-        spnlDetail.Visibility  = Visibility.Collapsed;
-        spnlMeeting.Visibility                 = Visibility.Collapsed;
-        spnlMeetingDetail.Visibility          = Visibility.Collapsed;
+        ResetUi();
+
+        //ClearUi();
+        //rbtnSearchByName.IsChecked   = true;
+        //spnlDetail.Visibility        = Visibility.Collapsed;
     }
 
     /// <summary>Setup the user interface for displaying patient details.</summary>
@@ -53,17 +62,6 @@ public partial class MainWindow : Window
 
     }
 
-    /// <summary>Clears user interface components.</summary>
-    private void ClearUi()
-    {
-        txbxSearchBox.Text = string.Empty;
-        lstbxSearchResults.Items.Clear();
-
-        spnlDetail.Visibility        = Visibility.Collapsed;
-        spnlMeeting.Visibility       = Visibility.Collapsed;
-        spnlMeetingDetail.Visibility = Visibility.Collapsed;
-    }
-
     /// <summary>Toggle the search type button text.</summary>
     private void SetSearchToggleUi()
     {
@@ -73,6 +71,34 @@ public partial class MainWindow : Window
 
         ClearUi();
     }
+
+    /// <summary>Clears user interface components.</summary>
+    private void ClearUi()
+    {
+        txbxSearchBox.Text = string.Empty;
+        lstbxSearchResults.Items.Clear();
+
+        spnlDetail.Visibility        = Visibility.Collapsed;
+        //spnlMeeting.Visibility       = Visibility.Collapsed;
+        //spnlMeetingDetail.Visibility = Visibility.Collapsed;
+    }
+
+    /// <summary>Clears user interface components.</summary>
+    private void ResetUi()
+    {
+        ClearUi();
+
+        //txbxSearchBox.Text = string.Empty;
+        //lstbxSearchResults.Items.Clear();
+
+        btnSearchToggle.Content = "Patient Search";
+        rbtnSearchByName.IsChecked   = true;
+
+        //spnlDetail.Visibility        = Visibility.Collapsed;
+        //spnlMeeting.Visibility       = Visibility.Collapsed;
+        //spnlMeetingDetail.Visibility = Visibility.Collapsed;
+    }
+
 
     /// <summary>Updates the btnPhoneDetails and btnEmailDetails button appearance based on SMS failure and delivery records.</summary>
     private static void UpdateDetailsButtonColor(bool hasFailures, bool hasDeliveries, Button theButton)

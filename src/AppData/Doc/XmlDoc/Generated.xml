@@ -681,6 +681,14 @@
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetInitialUi">
             <summary>Setup the initial user interface.</summary>
+            <remarks>
+                When Tingen Transmorger starts:
+                <list type="bullet">
+                <item>Set the search type to "PATIENT"</item>
+                <item>Set the search by to "Name"</item>
+                <item>Hide the detail panel</item>
+            </list>
+            </remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetPatientDetailUi(System.String,System.String)">
             <summary>Setup the user interface for displaying patient details.</summary>
@@ -692,11 +700,14 @@
             <param name="providerName">The name of the provider.</param>
             <param name="providerId">The ID of the provider.</param>
         </member>
+        <member name="M:TingenTransmorger.MainWindow.SetSearchToggleUi">
+            <summary>Toggle the search type button text.</summary>
+        </member>
         <member name="M:TingenTransmorger.MainWindow.ClearUi">
             <summary>Clears user interface components.</summary>
         </member>
-        <member name="M:TingenTransmorger.MainWindow.SetSearchToggleUi">
-            <summary>Toggle the search type button text.</summary>
+        <member name="M:TingenTransmorger.MainWindow.ResetUi">
+            <summary>Clears user interface components.</summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.UpdateDetailsButtonColor(System.Boolean,System.Boolean,System.Windows.Controls.Button)">
             <summary>Updates the btnPhoneDetails and btnEmailDetails button appearance based on SMS failure and delivery records.</summary>

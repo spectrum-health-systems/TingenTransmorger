@@ -27,6 +27,7 @@ public partial class MainWindow : Window
          */
         if (string.IsNullOrWhiteSpace(txbxSearchBox.Text))
         {
+            ClearUi();
             return [];
         }
 

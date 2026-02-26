@@ -23,6 +23,7 @@
 - [ ] Make sure error messages are where they should be
 - [ ] Meeting Error should be a popup
 - [ ] Patient Meeting Quality Data should be a popup?
+- [ ] Clearing the search box should clear the details panel
 
 
 - [ ] Review dgPatientProviderMeetings to make sure the comments work for both patients and providers

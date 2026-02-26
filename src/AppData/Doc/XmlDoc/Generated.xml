@@ -660,13 +660,11 @@
             <summary>Shows the patient's email addresses in the UI.</summary>
             <param name="emailAddresses">A list of email addresses for the patient.</param>
         </member>
-        <member name="F:TingenTransmorger.MainWindow._currentProviderName">
-            <summary> Currently selected provider name.</summary>
-        </member>
-        <member name="F:TingenTransmorger.MainWindow._currentProviderId">
-            <summary>Currently selected provider ID.</summary>
-        </member>
         <member name="M:TingenTransmorger.MainWindow.DisplayProviderDetails(System.String,System.String)">
+             <summary> Currently selected provider name.</summary>
+            private string _currentProviderName = string.Empty;
+             <summary>Currently selected provider ID.</summary>
+            private string _currentProviderId = string.Empty;
             <summary>Displays provider details in the UI.</summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ModifySearchResults">

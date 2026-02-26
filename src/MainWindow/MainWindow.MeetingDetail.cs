@@ -1,5 +1,5 @@
 ﻿// 260226_code
-// 260225_documentation
+// 260226_documentation
 
 using System.Text.Json;
 using System.Windows;
@@ -131,11 +131,12 @@ public partial class MainWindow : Window
 
 
 
-    private void DisplayProviderMeetingResults()
+    private void DisplayProviderMeetingResults(string providerName)
     {
         var meetingRows = new List<MeetingRow>();
 
-        var providerDetails = TmDb.GetProviderDetails(_currentProviderName);
+        // var providerDetails = TmDb.GetProviderDetails(_currentProviderName);
+        var providerDetails = TmDb.GetProviderDetails(providerName);
 
         if (providerDetails != null && providerDetails.Value.TryGetProperty("Meetings", out var meetingsArray))
         {

@@ -18,11 +18,8 @@ public partial class MainWindow : Window
     private void SetInitialUi()
     {
         ClearUi();
-        ResetAllComponents();
 
-        spnlMeetingDetail.Visibility = Visibility.Collapsed; // General/patient/provider meeting details container
 
-        spnlDetail.Visibility = Visibility.Collapsed; // Details container
 
         btnSearchToggle.Content    = "Patient Search";
         rbtnSearchByName.IsChecked = true;
@@ -36,6 +33,9 @@ public partial class MainWindow : Window
         ResetGeneralMeetingDetailUi();
         ResetPatientMeetingDetailUi();
         ResetProviderMeetingDetailUi();
+
+        spnlMeetingDetail.Visibility = Visibility.Collapsed;
+        spnlDetail.Visibility        = Visibility.Collapsed;
     }
 
     /// <summary>Reset the user detail UI components.</summary>
@@ -89,6 +89,7 @@ public partial class MainWindow : Window
     {
         ResetAllComponents();
 
+
         lblUserTypeKey.Content   = "PATIENT";
         lblUserNameValue.Content = patientName;
         lblUserIdValue.Content   = patientId;
@@ -134,7 +135,9 @@ public partial class MainWindow : Window
         txbxSearchBox.Text = string.Empty;
         lstbxSearchResults.Items.Clear();
 
-        spnlDetail.Visibility        = Visibility.Collapsed;
+        ResetAllComponents();
+
+        //spnlDetail.Visibility        = Visibility.Collapsed;
     }
 
 

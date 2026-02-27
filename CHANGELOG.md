@@ -4,29 +4,29 @@
 
 > There were a lot of under-the-hood changes/updates for this release, focusing on cleaning up the code and making things clearer.
 
-`ADDED` Catalog information for copies to the clipboard  
-`MODIFIED` Moved '''ReplaceNulls''' helper function to ```ReplaceNullValues()```  
-`MODIFIED` Background border (but needs more work)  
-`UPDATED` Fixed alignments  
-`UPDATED` Verified all controls are named correctly  
-`UPDATED` Commented all controls  
-`FIXED` Admin mode background border color  
-`FIXED` Meeting participant names display  
-`FIXED` UI reset when changing search modes  
-`REFACTORED` Moved most stuff out of MainWindow.xaml.cs to other partial classes  
-`REFACTORED` MainWindow.AdminMode.cs  
-`REFACTORED` MainWindow.DataCopy.cs  
-`REFACTORED` MainWindow.MeetingDetails.cs  
-`REFACTORED` MainWindow.PatientDetail.cs  
-`REFACTORED` MainWindow.ProviderDetail.cs  
-`REFACTORED` MainWindow.Search.cs  
-`REFACTORED` MainWindow.UserDetail.cs  
-`REFACTORED` MainWindow.UserInterface.cs  
-`REFACTORED` MainWindow.xaml  
-`REMOVED` Provider email logic  
-`REMOVED` System.Diagnostics.Debug statements  
-`REMOVED` MainWindow.DisplayDetails.cs  
-`REMOVED` MainWindow.Events.cs  
+- `ADDED` Catalog information for copies to the clipboard
+- `MODIFIED` Moved '''ReplaceNulls''' helper function to ```ReplaceNullValues()```
+- `MODIFIED` Background border (but needs more work)
+- `UPDATED` Fixed alignments
+- `UPDATED` Verified all controls are named correctly
+- `UPDATED` Commented all controls
+- `FIXED` Admin mode background border color
+- `FIXED` Meeting participant names display
+- `FIXED` UI reset when changing search modes
+- `REFACTORED` Moved most stuff out of MainWindow.xaml.cs to other partial classes
+- `REFACTORED` MainWindow.AdminMode.cs
+- `REFACTORED` MainWindow.DataCopy.cs
+- `REFACTORED` MainWindow.MeetingDetails.cs
+- `REFACTORED` MainWindow.PatientDetail.cs
+- `REFACTORED` MainWindow.ProviderDetail.cs
+- `REFACTORED` MainWindow.Search.cs
+- `REFACTORED` MainWindow.UserDetail.cs
+- `REFACTORED` MainWindow.UserInterface.cs
+- `REFACTORED` MainWindow.xaml
+- `REMOVED` Provider email logic
+- `REMOVED` System.Diagnostics.Debug statements
+- `REMOVED` MainWindow.DisplayDetails.cs
+- `REMOVED` MainWindow.Events.cs
 
 ## 0.9.27.0 - 2/18/25
 

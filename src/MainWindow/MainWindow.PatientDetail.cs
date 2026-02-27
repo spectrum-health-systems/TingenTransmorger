@@ -204,6 +204,8 @@ public partial class MainWindow : Window
         lblUserEmailValue.Content = string.Join(", ", emailAddresses);
     }
 
+    /// <summary>Displays the message history for the specified message type, either phone or email.</summary>
+    /// <param name="messageType">The type of message.</param>
     private void ShowMessageDetails(string messageType)
     {
         MessageHistoryWindow messageHistoryWindow;

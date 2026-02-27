@@ -5,12 +5,12 @@ using System.Windows;
 
 namespace TingenTransmorger;
 
-/* The MainWindow.Search partial class contains logic related to searching for patients/providers in the UI.
+/* The MainWindow.Search partial class contains logic related to searching for patients/providers.
  */
 public partial class MainWindow : Window
 {
     /// <summary>Modifies the search results based on the current search type and search text.</summary>
-    private void ModifySearchResults()
+    private void UpdateSearchResults()
     {
         var searchResults = GetSearchResults(btnSearchToggle.Content.ToString(), txbxSearchBox.Text?.Trim());
 

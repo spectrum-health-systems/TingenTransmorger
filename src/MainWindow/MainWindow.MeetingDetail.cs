@@ -86,8 +86,8 @@ public partial class MainWindow : Window
         DisplayMeetingError(selectedMeeting);
     }
 
-
-
+    /// <summary>Displays the results of patient meeting.</summary>
+    /// <param name="patientDetails">The patient details.</param>
     private void DisplayPatientMeetingResults(JsonElement? patientDetails)
     {
         // Display meetings
@@ -272,7 +272,7 @@ public partial class MainWindow : Window
 
     private void DisplayProviderMeetingDetails(MeetingRow selectedMeeting)
     {
-
+        //TBD
     }
 
     private void DisplayPatientMeetingDetails(MeetingRow selectedMeeting)

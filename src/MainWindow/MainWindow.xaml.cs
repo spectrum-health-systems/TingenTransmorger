@@ -49,13 +49,11 @@ public partial class MainWindow : Window
     /// <summary>Start the application.</summary>
     private async Task StartApp()
     {
-        // TODO: Make sure this is verified properly.
         var config = Configuration.Load();
 
-        // TODO: Verify this is working. If the config file doesn't have an Import path, the app crashes.
         Framework.Verify(config);
 
-        /* If the mode is set to Admin, let's do some admin stuff before we load the database.
+        /* If the mode is set to Admin...
          */
         if (string.Equals(config.Mode.Trim(), "admin", StringComparison.OrdinalIgnoreCase))
         {
@@ -67,7 +65,6 @@ public partial class MainWindow : Window
              */
             if (!flowControl)
             {
-                // TODO: Test this - the app should exit before it even gets to the main UI.
                 return;
             }
         }
@@ -77,8 +74,6 @@ public partial class MainWindow : Window
 
         TransmorgerDatabase.Update(localDbPath, masterDbPath);
 
-        /* TODO: These try...catch/if blocks should probably be moved to Database.TransmorgerDatabase.cs
-         */
         try
         {
             _tmDb = TransmorgerDatabase.Load(localDbPath);
@@ -96,16 +91,13 @@ public partial class MainWindow : Window
         SetInitialUi();
     }
 
-
-
-    /* EVENT HANDLERS
-     */
+    /* EVENT HANDLERS */
     private void btnSearchToggle_Clicked(object? sender, RoutedEventArgs e) => SetSearchToggleUi();
     private void rbtnSearchBy_Checked(object sender, RoutedEventArgs e) => ClearUi();
     private void txbxSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) => ModifySearchResults();
     private void btnUserPhoneDetail_Clicked(object sender, RoutedEventArgs e) => ShowMessageDetails("phone");
     private void btnUserEmailDetail_Clicked(object sender, RoutedEventArgs e) => ShowMessageDetails("email");
-    private void lstbxSearchResults_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => DisplayDetails();
+    private void lstbxSearchResults_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => Display();
     private void dgMeetingResults_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e) => MeetingSelected();
     private void btnCopyGeneralMeetingDetail_Click(object sender, RoutedEventArgs e) => CopyGeneralMeetingDetails();
     private void btnCopyPatientMeetingDetail_Click(object sender, RoutedEventArgs e) => CopyPatientMeetingDetails();

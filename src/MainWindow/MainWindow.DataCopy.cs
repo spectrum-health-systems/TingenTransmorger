@@ -1,9 +1,6 @@
 ﻿// 260227_code
 // 260227_documentation
 
-/* TODO: Eventually we should find a way to put some/all of this into Core.Catalog.cs.
- */
-
 using System.Text;
 using System.Windows;
 

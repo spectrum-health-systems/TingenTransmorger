@@ -5,27 +5,29 @@ using System.Windows;
 
 namespace TingenTransmorger;
 
-/* The MainWindow.UserDetails partial class contains logic related to displaying user details in the right column, when a
- * user is selected from the search results.
+/* The MainWindow.UserDetails partial class contains logic related to displaying user (either a patient or a provider)
+ * details.
  *
- * For example, when doing a patient search and selecting a patient from the search results, this class will:
- *
- * 1. Change the UserHeaderKey contents to "PATIENTS"
- * 2. Display the patient name
- * 3. Display the patient ID
- * 4. Display the patient phone (if one exists), and set the phone details button.
- * 5. Display the patient email address (if one exists), and set the email details button.
- * 6. Display the patient meeting breakdown
- * 7. Display the patient meeting list.
- *
- * The same steps are taken for providers.
- *
- * This class does not handle any of the meeting-specific details, that is handled in MainWindow.MeetingDetails.
+ * This class does not handle any meeting-specific details, those are handled in MainWindow.MeetingDetails.
  */
 public partial class MainWindow : Window
 {
-    /// <summary>Display details for the selected item in the search results.</summary>
-    private void DisplayDetails()
+    /// <summary>Display details for the selected user.</summary>
+    /// <remarks>
+    /// A "user" in this context refers to either a patient or a provider.<br/>
+    /// <br/>
+    /// When a user is selected from the search results, this method will:
+    /// <list type="number">
+    /// <item>Change the UserTypeKey contents to "PATIENTS" or "PROVIDERS" based on the search type</item>
+    /// <item>Display the user name</item>
+    /// <item>Display the user ID</item>
+    /// <item>Display the patient phone number(s), and set the detail button</item>
+    /// <item>Display the patient email addresses(s), and set the detail button</item>
+    /// <item>Display the user's meting breakdown</item>
+    /// <item>Display the user's meting list</item>
+    /// </list>
+    /// </remarks>
+    private void Display()
     {
         var selectedItem = lstbxSearchResults.SelectedItem as string;
 
@@ -36,17 +38,26 @@ public partial class MainWindow : Window
             return;
         }
 
-        var lastParenthesisIndex = selectedItem.LastIndexOf('(');
-        var name                 = selectedItem.Substring(0, lastParenthesisIndex).Trim();
-        var id                   = selectedItem.Substring(lastParenthesisIndex + 1).TrimEnd(')').Trim();
+        var nameId = ExtractNameId(selectedItem);
 
         if (btnSearchToggle.Content.ToString().Contains("patient", StringComparison.OrdinalIgnoreCase))
         {
-            DisplayPatientDetails(name, id);
+            DisplayPatientDetails(nameId[0], nameId[1]);
         }
         else if (btnSearchToggle.Content.ToString().Contains("provider", StringComparison.OrdinalIgnoreCase))
         {
-            DisplayProviderDetails(name, id);
+            DisplayProviderDetails(nameId[0], nameId[1]);
         }
+    }
+
+    /// <summary>Extract the user name and ID.</summary>
+    /// <param name="selectedItem">The string containing the name and ID.</param>
+    /// <returns>A string array where [0] = name and [1] = ID.</returns>
+    private static string[] ExtractNameId(string selectedItem)
+    {
+        int lastParenthesisIndex = selectedItem.LastIndexOf('(');
+
+        return [selectedItem.Substring(0, lastParenthesisIndex).Trim(),
+                selectedItem.Substring(lastParenthesisIndex + 1).TrimEnd(')').Trim()];
     }
 }

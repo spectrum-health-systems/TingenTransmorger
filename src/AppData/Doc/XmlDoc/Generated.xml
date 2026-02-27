@@ -530,20 +530,27 @@
         <member name="M:TingenTransmorger.MainWindow.EnterAdminMode(System.String,System.String,System.String)">
             <summary>Handle admin mode operations.</summary>
             <remarks>
-                Currently admin mode is focused on rebuilding the Transmorger database, but I'm leaving this the way it is
-                for now in case we want to add more admin-related operations in the future.
+            Currently admin mode is focused on rebuilding the Transmorger database, but I'm leaving this the way it is for
+            now in case we want to add more admin-related operations in the future.
             </remarks>
             <param name="importDir">The directory for importing data.</param>
             <param name="tmpDir">The temporary directory for various operations.</param>
             <param name="masterDbDir">The directory of the master database.</param>
             <returns>Asynchronous task.</returns>
         </member>
-        <member name="M:TingenTransmorger.MainWindow.RebuildDatabaseYes">
+        <member name="M:TingenTransmorger.MainWindow.RebuildDatabase(System.String,System.String,System.String)">
+            <summary> Rebuild the Transmorger database.</summary>
+            <param name="importDir">The directory for importing data.</param>
+            <param name="tmpDir">The temporary directory for various operations.</param>
+            <param name="masterDbDir">The directory of the master database.</param>
+            <returns>The Transmorger database.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.RebuildDatabasePrompt">
             <summary>Prompts the user to confirm if they want to rebuild the database.</summary>
             <returns>True if the user confirms, otherwise false.</returns>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetAdminModeTheme">
-            <summary>Set the theme for admin mode.</summary>
+            <summary>Set the UI theme for admin mode.</summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.CopyGeneralMeetingDetails">
             <summary>Copy general meeting details to the clipboard.</summary>
@@ -648,8 +655,22 @@
             <summary>Display search results.</summary>
             <param name="searchResults">The list of search results to display.</param>
         </member>
-        <member name="M:TingenTransmorger.MainWindow.DisplayDetails">
-            <summary>Display details for the selected item in the search results.</summary>
+        <member name="M:TingenTransmorger.MainWindow.Display">
+            <summary>Display details for the selected user.</summary>
+            <remarks>
+            A "user" in this context refers to either a patient or a provider.<br/>
+            <br/>
+            When a user is selected from the search results, this method will:
+            <list type="number">
+            <item>Change the UserTypeKey contents to "PATIENTS" or "PROVIDERS" based on the search type</item>
+            <item>Display the user name</item>
+            <item>Display the user ID</item>
+            <item>Display the patient phone number(s), and set the detail button</item>
+            <item>Display the patient email addresses(s), and set the detail button</item>
+            <item>Display the user's meting breakdown</item>
+            <item>Display the user's meting list</item>
+            </list>
+            </remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetInitialUi">
             <summary>Setup the initial user interface.</summary>
@@ -682,14 +703,20 @@
             <param name="providerName">The name of the provider.</param>
             <param name="providerId">The ID of the provider.</param>
         </member>
+        <member name="M:TingenTransmorger.MainWindow.SetUserDetail(System.String,System.String,System.String)">
+            <summary>Update user detail UI</summary>
+            <param name="searchType">The context or category of the search operation, used to indicate the type of user information being displayed.</param>
+            <param name="userName">The name of the user to be shown in the user interface.</param>
+            <param name="userId">The unique identifier of the user to be presented in the user interface.</param>
+        </member>
         <member name="M:TingenTransmorger.MainWindow.SetSearchToggleUi">
             <summary>Toggle the search type button text.</summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ClearUi">
-            <summary>Clears user interface components.</summary>
+            <summary>Clear user interface components.</summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.UpdateDetailsButtonColor(System.Boolean,System.Boolean,System.Windows.Controls.Button)">
-            <summary>Updates the btnPhoneDetails and btnEmailDetails button appearance based on SMS failure and delivery records.</summary>
+            <summary>Update the btnPhoneDetails/btnEmailDetails appearance.</summary>
         </member>
         <member name="F:TingenTransmorger.MainWindow._tmDb">
             <summary>The Transmorger database.</summary>

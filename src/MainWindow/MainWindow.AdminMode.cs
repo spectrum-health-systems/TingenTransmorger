@@ -13,8 +13,8 @@ public partial class MainWindow : Window
 {
     /// <summary>Handle admin mode operations.</summary>
     /// <remarks>
-    ///     Currently admin mode is focused on rebuilding the Transmorger database, but I'm leaving this the way it is
-    ///     for now in case we want to add more admin-related operations in the future.
+    /// Currently admin mode is focused on rebuilding the Transmorger database, but I'm leaving this the way it is for
+    /// now in case we want to add more admin-related operations in the future.
     /// </remarks>
     /// <param name="importDir">The directory for importing data.</param>
     /// <param name="tmpDir">The temporary directory for various operations.</param>

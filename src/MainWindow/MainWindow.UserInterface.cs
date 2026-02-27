@@ -106,7 +106,7 @@ public partial class MainWindow : Window
         brdrGeneralMeetingDetail.Visibility  = Visibility.Visible;
         brdrProviderMeetingDetail.Visibility = Visibility.Visible;
 
-        /* Not currently needed for providers.
+        /* These panels are not currently used with provider details, so they are hidden.
          */
         spnlUserContacts.Visibility         = Visibility.Collapsed;
         brdrPatientMeetingDetail.Visibility = Visibility.Collapsed;
@@ -115,6 +115,10 @@ public partial class MainWindow : Window
         spnlDetail.Visibility               = Visibility.Visible;
     }
 
+    /// <summary>Update user detail UI</summary>
+    /// <param name="searchType">The context or category of the search operation, used to indicate the type of user information being displayed.</param>
+    /// <param name="userName">The name of the user to be shown in the user interface.</param>
+    /// <param name="userId">The unique identifier of the user to be presented in the user interface.</param>
     private void SetUserDetail(string searchType, string userName, string userId)
     {
         lblUserTypeKey.Content   = searchType;
@@ -132,7 +136,7 @@ public partial class MainWindow : Window
         ClearUi();
     }
 
-    /// <summary>Clears user interface components.</summary>
+    /// <summary>Clear user interface components.</summary>
     private void ClearUi()
     {
         txbxSearchBox.Text = string.Empty;
@@ -141,7 +145,7 @@ public partial class MainWindow : Window
         ResetAllComponents();
     }
 
-    /// <summary>Updates the btnPhoneDetails and btnEmailDetails button appearance based on SMS failure and delivery records.</summary>
+    /// <summary>Update the btnPhoneDetails/btnEmailDetails appearance.</summary>
     private static void UpdateDetailsButtonColor(bool hasFailures, bool hasDeliveries, Button theButton)
     {
         theButton.IsEnabled = true;

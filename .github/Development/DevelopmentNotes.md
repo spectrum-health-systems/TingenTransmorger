@@ -1,5 +1,46 @@
 # Tingen Muno: Development Notes
 
+## TESTS
+
+- [ ] `private async Task StartApp()`
+```csharp
+var config = Configuration.Load(); <--[Verify]-->
+...
+Framework.Verify(config); <--[If the config file does not have an Import path, the app crashes.]-->
+...
+if (!flowControl)
+{
+    return; <--[The app should exit before it even gets to the main UI.]-->
+}
+```
+
+## REFACTORS
+
+- [ ] `private async Task StartApp()`
+```csharp
+<--[These try...catch/if blocks should probably be moved to Database.TransmorgerDatabase.cs]-->
+try
+{
+    _tmDb = TransmorgerDatabase.Load(localDbPath);
+}
+catch (Exception ex)
+{
+    StopApp($"The database could not be loaded: {ex.Message}{Environment.NewLine}{Environment.NewLine}The application will now exit.");
+}
+
+if (_tmDb is null)
+{
+    StopApp("The database could not be loaded. The application will now exit.");
+}
+```
+
+
+
+
+
+
+## TODO
+
 - [ ] Break up TransmorgerDatabase.cs
 - [ ] Clean up Database classes
 - [ ] Details for email messages
@@ -27,6 +68,8 @@
 - [ ] Auto close the database rebuild window?
 - [ ] brdrMainWindow is wonky
 - [ ] Make sure all paramater names are the same
+- [ ] Move the catalog stuff out of MainWindow.DataCopy.cs and into Core.Catalog.cs
+- [ ] Make sure the same wording is used across methods/comments (e.g., "Clear" instead of "Clears")
 
 
 - [ ] Review dgPatientProviderMeetings to make sure the comments work for both patients and providers

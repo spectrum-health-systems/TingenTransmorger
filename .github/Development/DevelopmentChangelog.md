@@ -1,6 +1,6 @@
-# Tingen Transmorger: Changelog
+# Tingen Transmorger: Development Changelog
 
-## 0.9.27.2 - **0.9.28.0**
+## 0.9.28.0
 
 - MainWindow.AdminMode.cs
   - Fixed admin mode background border color
@@ -34,41 +34,22 @@
 - Removed System.Diagnostics.Debug statements
 - Removed MainWindow.DisplayDetails.cs
 - Removed MainWindow.Events.cs
-
-## 0.9.27.1
-
 - Code/comment cleanup
 
 ## 0.9.27.0
 
-- Finalized MainWindow.xaml cleanup
+- MainWindow.xaml cleanup, first pass
 
-## 0.9.26.1 - **0.9.27.0**
-
-- Continued to clean up MainWindow.xaml
-
-## **0.9.26.0**
+## 0.9.26.0
 
 - Removed Settings button
 - Started to cleanup MainWindow.xaml
-
-## 0.9.25.8
-
 - Working on breaking the patient display logic up into more manageable pieces.
-
-## 0.9.25.7
-
 - Combined the patient and provider search methods into a single method
-
-## 0.9.25.5 - 0.9.25.6
-
 - Made significant changes to the following classes:
   - MainWindow.xaml.cs
   - MainWindow.AdminMode.cs
   - TransmorgerDatabase.cs
-
-## 0.9.25.3 - 0.9.25.4
-
 - MainWindow/
   - Moved MainWindow classes to MainWindow/
 - MainWindow.UserInterface.cs
@@ -76,9 +57,6 @@
   - MainWindow.xaml.cs
   - MainWindow.AdminMode.cs
   - TransmorgerDatabase.cs
-
-## 0.9.25.2
-
 - The default configuration file now defines both the LocalDb and Tmp directories under /AppData
 - MainWindow
   - Commented out some code that may not be needed
@@ -86,28 +64,25 @@
   - Minor refactoring/code/comment cleanup
 - DatabaseRebuildWindow
   - Minor UI tweaks
-
-## 0.9.25.1
-
 - Unused/abandoned code
 
-## **0.9.25.0**
+## 0.9.25.0
 
 - Meeting Details (Provider) component
 - Disabled the meeting search functionality for now
 
-## **0.9.24.0**
+## 0.9.24.0
 
 - Functionality to copy Meeting Details (General)
 - Functionality to copy Meeting Details (Patient)
 - DiagnosticWindow
 - EmailSummaryWindow
 
-## **0.9.23.0**
+## 0.9.23.0
 
 - Migrated the EmailSummaryWindow functionality into MessageHistoryWindow
 
-## **0.9.22.0**
+## 0.9.22.0
 
 - Functionality to copy the following message histories to the clipboard:
   - All message history
@@ -119,11 +94,11 @@
   - Renamed TingenTransmorger.Database.MessageSummaryWindow -> TingenTransmorger.Database.MessageHistoryWindow
   - Minor changes to user interface
 
-## **0.9.21.0**
+## 0.9.21.0
 
 - ProjectInfo.cs
 - The "opted-out" message properly displays
 
-## **0.9.20.0**
+## 0.9.20.0
 
 - Fixed an issue where a clean install without a local database would not download the master database.

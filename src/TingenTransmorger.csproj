@@ -6,10 +6,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <Version>0.9.27.57</Version>
-    <AssemblyVersion>0.9.27.57</AssemblyVersion>
-    <FileVersion>0.9.27.57</FileVersion>
-    <InformationalVersion>0.9.27.57</InformationalVersion>
+    <Version>0.9.28.0</Version>
+    <AssemblyVersion>0.9.28.0</AssemblyVersion>
+    <FileVersion>0.9.28.0</FileVersion>
+    <InformationalVersion>0.9.28.0</InformationalVersion>
     <DebugType>embedded</DebugType>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <RuntimeFrameworkVersion>10.0.2</RuntimeFrameworkVersion>

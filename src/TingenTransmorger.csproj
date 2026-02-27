@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Version>0.9.28.0</Version>
+    <AssemblyVersion>0.9.28.0</AssemblyVersion>
+    <FileVersion>0.9.28.0</FileVersion>
+    <InformationalVersion>0.9.28.0</InformationalVersion>
+    <DebugType>embedded</DebugType>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <RuntimeFrameworkVersion>10.0.2</RuntimeFrameworkVersion>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>AppData\Doc\XmlDoc\Generated.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="src\**" />
+    <EmbeddedResource Remove="src\**" />
+    <None Remove="src\**" />
+    <Page Remove="src\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="AppData\Image\Control\Button\Copy-40x40.png" />
+    <None Remove="AppData\Image\Control\Button\CopyAll-40x40.png" />
+    <None Remove="AppData\Image\Control\Button\CopyError-40x40.png" />
+    <None Remove="AppData\Image\Control\Button\CopySuccess-40x40.png" />
+    <None Remove="AppData\Image\Control\Button\CopyTen-40x40.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ExcelDataReader" Version="3.6.0" />
+    <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="AppData\Image\Control\Button\Copy-40x40.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="AppData\Image\Control\Button\CopyAll-40x40.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="AppData\Image\Control\Button\CopyError-40x40.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="AppData\Image\Control\Button\CopySuccess-40x40.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="AppData\Image\Control\Button\CopyTen-40x40.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="AppData\Doc\README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AppData\Doc\XmlDoc\README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AppData\Image\Control\Button\README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AppData\Image\Control\README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AppData\Image\README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AppData\README - Copy.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="AppData\README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -4,16 +4,23 @@
 
 - MainWindow.AdminMode.cs
   - Fixed admin mode background border color
-  - Refactored a bit
+  - Refactored
 - MainWindow.DataCopy.cs (new)
   - Catalog information for copies to the clipboard
 - MainWindow.MeetingDetails.cs
+  - Fixed participant name display
   - Moved the '''ReplaceNulls''' helper function to ```ReplaceNullValues()```
+  - Refactored
 - MainWindow.PatientDetail.cs
+  - Refactored
 - MainWindow.ProviderDetail.cs
+  - Refactored
 - MainWindow.Search.cs (new)
+  - Refactored
 - MainWindow.UserDetail.cs (new)
+  - Refactored
 - MainWindow.UserInterface.cs
+  - Refactored, the goal being more control over the UI
 - MainWindow.xaml
   - Modified the background border, but this needs more work.
   - Fixed alignments

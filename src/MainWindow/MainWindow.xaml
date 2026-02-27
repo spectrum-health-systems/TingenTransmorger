@@ -1339,7 +1339,7 @@
                                             Text="Participant Names:" />
 
                                         <!-- Provider participant names textblock -->
-                                        <TextBlock x:Name="txtProviderParticipantNames"
+                                        <TextBlock x:Name="txbkProviderParticipantNames"
                                             Margin="0,2,0,0"
                                             FontSize="11"
                                             Text="---"

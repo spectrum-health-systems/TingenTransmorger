@@ -6,9 +6,6 @@ This is a list of upcoming changes/updates that are planned for future versions:
 
 ## On deck
 
-- Figure out what's going on with {} provider IDs
-- Figure out what's going on with participants being "---"
-
 ## Updated/modified functionality
 
 - The phone and email buttons should be more descriptive than just changing colors
@@ -18,6 +15,8 @@ This is a list of upcoming changes/updates that are planned for future versions:
 - If participant data is over a certain number of characters, display seperately (either a MsgBox or window)
 - Tighter searching (e.g., "scott" finds "Scott" or "Scotty", not "Ascott")
 - Auto close the database update window (low priority, admin mode)
+- Standardize Lastname, Firstname
+- Fix {} provider IDs
 
 ## New functionality
 

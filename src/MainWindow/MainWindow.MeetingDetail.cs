@@ -263,16 +263,30 @@ public partial class MainWindow : Window
         spnlMeetingDetail.Visibility = Visibility.Collapsed;
     }
 
-
-
     /*
      * me
      */
 
-
     private void DisplayProviderMeetingDetails(MeetingRow selectedMeeting)
     {
-        //TBD
+        var meetingDetail = _tmDb.GetMeetingDetail(selectedMeeting.MeetingId);
+
+        var participantNamesRaw = meetingDetail != null
+            ? GetStringProperty("ParticipantNames", meetingDetail)
+            : string.Empty;
+
+        if (string.IsNullOrWhiteSpace(participantNamesRaw))
+        {
+            txbkProviderParticipantNames.Text = "---";
+            return;
+        }
+
+        char delimiter    = participantNamesRaw.Contains(';') ? ';' : ',';
+        var  parsedNames  = participantNamesRaw
+            .Split(delimiter, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(n => !string.IsNullOrWhiteSpace(n));
+
+        txbkProviderParticipantNames.Text = string.Join(", ", parsedNames);
     }
 
     private void DisplayPatientMeetingDetails(MeetingRow selectedMeeting)
@@ -293,9 +307,9 @@ public partial class MainWindow : Window
         var browser = string.Empty;
 
         // Retrieve the patient details to access the meetings array
-        var patientDetailsForQuality = _tmDb.GetPatientDetails(_currentPatientName, _currentPatientId);
+        var patientDetails = _tmDb.GetPatientDetails(_currentPatientName, _currentPatientId);
 
-        if (patientDetailsForQuality != null && patientDetailsForQuality.Value.TryGetProperty("Meetings", out var meetingsArray))
+        if (patientDetails != null && patientDetails.Value.TryGetProperty("Meetings", out var meetingsArray))
         {
             if (meetingsArray.ValueKind == JsonValueKind.Array)
             {

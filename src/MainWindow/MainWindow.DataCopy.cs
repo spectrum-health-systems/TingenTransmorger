@@ -86,7 +86,7 @@ public partial class MainWindow : Window
 
             sb.AppendLine("    MEETING DETAILS");
             sb.AppendLine("    ---------------");
-            sb.AppendLine("  Participant Names: " + txtProviderParticipantNames.Text);
+            sb.AppendLine("  Participant Names: " + txbkProviderParticipantNames.Text);
 
             Clipboard.SetText(sb.ToString());
             MessageBox.Show(this, "Meeting details copied to clipboard.", "Copied", MessageBoxButton.OK, MessageBoxImage.Information);

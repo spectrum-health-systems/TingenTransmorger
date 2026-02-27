@@ -575,6 +575,10 @@
             <param name="meetingDetail">The meeting detail JSON element.</param>
             <param name="meetingId">The meeting ID.</param>
         </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayPatientMeetingResults(System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Displays the results of patient meeting.</summary>
+            <param name="patientDetails">The patient details.</param>
+        </member>
         <member name="F:TingenTransmorger.MainWindow._currentPatientName">
             <summary> Currently selected patient name.</summary>
         </member>
@@ -636,6 +640,10 @@
             <summary>Shows the patient's email addresses in the UI.</summary>
             <param name="emailAddresses">A list of email addresses for the patient.</param>
         </member>
+        <member name="M:TingenTransmorger.MainWindow.ShowMessageDetails(System.String)">
+            <summary>Displays the message history for the specified message type, either phone or email.</summary>
+            <param name="messageType">The type of message.</param>
+        </member>
         <member name="M:TingenTransmorger.MainWindow.GetStringProperty(System.Text.Json.JsonElement,System.String)">
             <summary>Returns the string value of a named property on a <see cref="T:System.Text.Json.JsonElement"/>, or <see cref="F:System.String.Empty"/> if the property is absent or null.</summary>
         </member>
@@ -647,6 +655,12 @@
         <member name="M:TingenTransmorger.MainWindow.DisplayProviderMeetingResults(System.String)">
             <summary>Display meeting statistics and details for the specified provider. </summary>
             <param name="providerName">The name of the provider.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.BuildMeetingList(System.Collections.Generic.List{TingenTransmorger.Models.MeetingRow},System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Build a list of meeting details.</summary>
+            <remarks>This will go through all of the meeting IDs for the provider, and add valid details to the list.</remarks>
+            <param name="meetingRows">The list of meeting details.</param>
+            <param name="providerDetails">Provider details component of the database, should include a 'Meetings' property.</param>
         </member>
         <!-- Badly formed XML comment ignored for member "M:TingenTransmorger.MainWindow.GetMeetingRowDetails(System.String,System.Nullable{System.Text.Json.JsonElement})" -->
         <member name="M:TingenTransmorger.MainWindow.UpdateSearchResults">

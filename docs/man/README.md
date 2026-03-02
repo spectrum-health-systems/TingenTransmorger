@@ -15,19 +15,18 @@
 - Installation
 - Initial launch
 - Configuration
-- Admin
-- Standard
+- Create the initial database
 
 # Introduction
 
-This is the Tingen Transmorger Manual.
+This is the Tingen Transmorger Manual!
 
 # Installation
 
 Tingen Transmorger is a stand-along, portable application, so it's not *installed* in the tradtional sense. All you need to do is:
 
 1. Download the latest [release](https://github.com/spectrum-health-systems/TingenTransmorger/releases)
-2. Extract the `TingenTransmorger.exe` file to a location of your choice.
+2. Extract the `TingenTransmorger.exe` file to a location of your choice
 
 That's it!
 
@@ -35,23 +34,23 @@ That's it!
 
 The first time you launch Tingen Transmorger, it does a few setup-type things.
 
-So go ahead and double-click on the `TingenTransmorger.exe` file.
-
-You should get a popup that looks like this:
+When you double-click on the `TingenTransmorger.exe` file, you should get a popup that looks like this:
 
 ![](./Images/LocalDbPathDoesNotExistError.png)
 
-The "LocalDb path" is the path that the local Transmorger database will be located. This can be anywhere you want, and can be different for each end-user.
+The **LocalDb path** is the path that the local Transmorger database will be located. This can be anywhere you want, and can be different for each end-user.
 
-By default, the LocalDb path is `AppData/Database`
+By default, the LocalDb path is `AppData/Database`.
 
-If you take a look in the folder where `TingenTransmorger.exe` is, you'll notice there is a new folder named `AppData`. This is where Transmorger will store various data that it needs to function...including the configuration file.
+Click **Yes**, and Transmorger will exit.
 
-# Configuration
+Now if you take a look in the folder where `TingenTransmorger.exe` is, you'll notice there is a new folder named `AppData`. This is where Transmorger will store various data that it needs to function...including the configuration file.
+
+# Configuring Tingen Transmorger
 
 Not only did Tingen Transmorger create the `AppData` folder...it also created the `AppData/Config` folder *and* the `AppData/Config/transmorger.config` configuration file!
 
-Let's take a look at that file, and (potentially) make some changes.
+Let's take a look at that file, and make some changes.
 
 ## The default configuration file
 
@@ -71,14 +70,18 @@ The default `transmorger.config` file looks like this:
 }
 ```
 
-Let's look at each component, shall we?
+There are three components to the configuration file:
+
+- Mode
+- StandardDirectories
+- AdminDirectories
 
 ### Mode
 
 There are two modes that Transmorger can run in:
 
 - **Standard**  
-This is the mode that end-users should always use
+This is the mode that end-users should always use.
 
 - **Admin**  
 This mode is used for rebuilding the Transmorger database, and is *not* intended for end-users. You can find more information about this mode [here]().
@@ -159,89 +162,50 @@ So this:
 
 This change only needs to be made for both *admin* users.
 
+## Saving the configuration file
 
-
-
-
-
-
-
-
-
-## Configuring Tingen Transmorger
-
-Open the `transmorger.config` file. The contents should look like this:
+Your modified `transmorger.config` file should look something like this:
 
 ```json
 {
   "Mode": "Standard",
   "StandardDirectories": {
-    "LocalDb": "",
-    "MasterDb": ""
+    "LocalDb": "AppData/Database",
+    "MasterDb": "Z:/Transmorger/Database"
   },
   "AdminDirectories": {
-    "Tmp": "",
-    "Import": ""
+    "Tmp": "AppData/Tmp",
+    "Import": "Z:/Transmorger/Database"
   }
 }
 ```
 
-### Configuration settings
+Save the changes.
 
-#### Mode
+Tingen Transmorger is now configured!
 
-* **Standard** (Default)  
-This is the default Tingen Transmorger mode, and the one you should use.
+# Initializing the Tingen Transmorger database
 
-* **Admin** (Default)  
-This is the adminitration Tingen Transmorger mode, used for rebuilding databases and things that normal users should not do.
+That last thing was only *mostly* true: Tingen Transmorger needs one more configuration change, but it's a temporary one.
 
-#### StandardDirectories
+We need to change the **Mode** to "Admin", so we can build the initial Transmorger database.
 
-There are two folders that standard users will need access to:
-
-* **LocalDb**  
-This is where the *local* Tingen Transmorger database is stored. You can put the database anywhere, but for organizational purposes it is recommended that you use a "Database" folder in "AppData", and point to that.
-
-* **MasterDb**  
-This is where the *master* version of Tingen Transmorger database is stored. When Tingen Transmorger starts, it will check this location to see if the *master* database is more current that the *local* database, and replace the local version if it is. It is recommended that the master database be located in a folder that all Tingen Transmorger users have access to.
-
-#### AdminDirectories
-
-There are two folders that admin users will need access to:
-
-* **Tmp**  
-Simply a location for temporary files used when rebuilding the Transmorger database.
-
-* **Import**  
-The files Tingen Transmorger needs to rebuild the database are located here. Eventually I'll put up and Admin Guide, but for now you don't need to worry about this (or the `Tmp` directory).
-
-### Final transmorger.config file
-
-Assuming you are storing the local Transmorger database in `AppData`, your folder structure should look like this:
-
-```text
-\---AppData
-    \---Config
-            transmorger.config
-    \---Database
-```
-
-And your `transmoger.config` file should look like this:
+So open the `transmorger.config` file, and change this line:
 
 ```json
-{
-  "Mode": "Standard",
-  "StandardDirectories": {
-    "LocalDb": "\path\to\AppData\Database\",
-    "MasterDb": "\path\to\master\database\"
-  },
-  "AdminDirectories": {
-    "Tmp": "",
-    "Import": ""
-  }
-}
+    "Mode": "Standard",
 ```
+
+...to this:
+
+```json
+    "Mode": "Admin",
+```
+
+...then save the configuration file.
+
+
+
 
 ## Launch TingenTransmorger (again)
 

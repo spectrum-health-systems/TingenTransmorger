@@ -22,7 +22,10 @@ Tingen Transmorger is a utility that *aggregates* those reports, ***transmorgifi
 
 # How it works
 
-There is detailed information in the Transmorger [Manual](), but essentially:
+> [!NOTE]
+> Please see the Transmorger [Manual]() for detailed information.
+
+The 50,000-foot view of how Transmorger works is:
 
 1. TeleHealth reports are (manually) run from the TeleHealth portal
 2. The completed reports are downloaded

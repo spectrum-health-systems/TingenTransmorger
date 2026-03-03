@@ -15,8 +15,8 @@
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Initial launch](#initial-launch)
-- [Configuration]()
-- [Create the Transmorger database]()
+- [Configuration](#configuration)
+- [Initializing the Mastert Transmorger database](#initializing-the-master-transmorger-database)
 - [Using Transmorger]()
 
 ## Introduction
@@ -113,7 +113,7 @@ The **MasterDb** is the most up-to-date version of the Transmorger database...bu
 
 We'll fix that next, so for now just click "OK", and Transmorger will exit.
 
-# Configuring Tingen Transmorger
+## Configuration
 
 If you take a look in the folder where `TingenTransmorger.exe` is, you'll notice there is a folder named `AppData`, which is where Transmorger will store various data that it needs to function.
 
@@ -123,7 +123,7 @@ We're interested in other folder here: `AppData/Config`, which contains the tran
 
 Let's take a look at that file, and make some changes.
 
-## The default configuration file
+### The default configuration file
 
 The default `transmorger.config` file looks like this:
 
@@ -147,7 +147,7 @@ There are three components to the configuration file:
 - StandardDirectories
 - AdminDirectories
 
-### Mode
+#### Mode
 
 There are two modes that Transmorger can run in:
 
@@ -157,7 +157,7 @@ This is the mode that end-users should always use.
 - **Admin**  
 This mode is used for rebuilding the Transmorger database, and is *not* intended for end-users. You can find more information about this mode [here]().
 
-### Standard directories
+#### Standard directories
 
 Standard mode uses two directories:
 
@@ -167,7 +167,7 @@ This is the location for the end-users local Transmorger database. As you can se
 - **MasterDb**  
 This is the location for the **master database**. The master database is the most up-to-date version of the Transmorger database, and is must be located in a location where all end-users can access it.
 
-### Admin directories
+#### Admin directories
 
 Admin mode uses two **additional** directories:
 
@@ -177,7 +177,7 @@ Any temporary data that Transmorger needs to function is stored here. When Trans
 - **Import**  
 This is the location for the TeleHealth reports that will be ***transmorgified***. This can be anywhere, but for organizational purposes I recommend putting it in the parent folder of the `MasterDb`.
 
-## Modifying the configuration file
+### Modifying the configuration file
 
 Now that we've gone over the contents of the the transmorger.config file, let's make some necessary changes, but not to the existing `LocalDb` and `Tmp` entries - let's leave those at their defaults.
 
@@ -185,7 +185,7 @@ For **standard** users, we are only going to modify the `MasterDb` setting.
 
 For **admin** users, we are going to modify both the `MasterDb` and `Import` settings.
 
-### Modifying the `MasterDb` location
+#### Modifying the `MasterDb` location
 
 Modify this component of the configuration file to point to where your master database will reside.
 
@@ -209,7 +209,7 @@ So this:
 
 This change needs to be made for both *standard* and *admin* users.
 
-### Modifying the `Import` location
+#### Modifying the `Import` location
 
 Modify this component of the configuration file to point to where all TeleHealth reports will downloaded.
 
@@ -233,7 +233,7 @@ So this:
 
 This change only needs to be made for both *admin* users.
 
-## Saving the configuration file
+### Saving the configuration file
 
 Your modified `transmorger.config` file should look something like this:
 
@@ -255,7 +255,7 @@ Save the changes.
 
 Tingen Transmorger is now configured!
 
-# Creating the Transmorger database
+## Initializing the Master Transmorger database
 
 That last thing was only *mostly* true: Tingen Transmorger needs one more configuration change, but it's a temporary one.
 
@@ -277,13 +277,13 @@ So open the `transmorger.config` file, and change this line:
 
 But don't launch Transmorger yet! To build the Transmorger database, we need TeleHealth reports.
 
-## Downloading the TeleHealth reports
+### Downloading the TeleHealth reports
 
 So...the TeleHealth reports that Transmorger needs to build its database need to be downloaded manually.
 
 Yeah, not great. But it is what it is.
 
-### The reports
+#### The reports
 
 There are four reports Transmorger needs to build the database:
 
@@ -294,7 +294,7 @@ There are four reports Transmorger needs to build the database:
 
 Each report needs a date range, and the date range should be the same for all reports.
 
-### Running a report
+#### Running a report
 
 To run a TeleHealth reports:
 
@@ -319,8 +319,7 @@ While the report is being run, you'll see a "Processing" button (that's disabled
 >
 > For example, running two reports from 1/1/2026-1/15/2015 and 1/16/20206-1/31/2026 will give you the same result as running a single report from 1/1/2026-1/31/2-26.
 
-
-### Downloading a report
+#### Downloading a report
 
 Once the "Processing" button becomes the Download" button (which is enabled), download the report to your "Import" directory.
 
@@ -328,7 +327,7 @@ Once the "Processing" button becomes the Download" button (which is enabled), do
 
 Once all reports have been downloaded, we can launch Tingen Transmorger and initialize the database.
 
-## Initializing the Transmorger database
+### Creating the Master Transmorger database
 
 First, confirm that the `transmorger.config` file has the following line:
 
@@ -350,7 +349,7 @@ While the database is being built, you'll see a progress indicator:
 
 When the build process is complete, you'll see a popup letting you know there is a database update available.
 
-![](./Images/TransmorgerManual-RebuildingDbProgress.png)
+![](./Images/TransmorgerManual-NewerDbAvailablePrompt.png)
 
 > [!NOTE]
 > When you rebuild the Transmorger database, you are rebuilding the **master** database.

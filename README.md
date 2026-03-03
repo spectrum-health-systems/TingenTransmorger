@@ -15,7 +15,7 @@ Tingen Transmorger is a utility that *aggregates* those reports, ***transmorgifi
 
 - Patient alert details (deliver successes/failures, etc.)
 - Patient connection details (devices/operating systems used, etc.)
-- Meeting details (start time, participants, etc.)
+- Meeting details (start/end time, when participants joined, participant list, etc.)
 - Meeting quality (bandwidth, audio/video quality, etc.)
 
 And most of the information in Tingen Transmorger can easily be copy/pasted into other documentation, emails, and tickets.
@@ -30,10 +30,10 @@ The heart of Tingen Transmorger is the Transmorger Database, which combines mult
 
 ## Getting Started
 
-Check out the the Tingen Transmorger [Manual](./docs/man/README.md).
+Check out the the Tingen Transmorger [Manual](https://github.com/spectrum-health-systems/TingenTransmorger/blob/main/docs/man/README.md).
 
 ## Development
 
 Tingen Transmorger is being actively developed. The current development branch is [here](https://github.com/spectrum-health-systems/TingenTransmorger/tree/development).
 
-You can also take a look at the [roadmap](ROADMAP.md), [known issues](KNOWN-ISSUES.md), and [changelog](CHANGELOG.md)
+You can also take a look at the [roadmap](https://github.com/spectrum-health-systems/TingenTransmorger/blob/main/ROADMAP.md), [known issues](https://github.com/spectrum-health-systems/TingenTransmorger/blob/main/KNOWN-ISSUES.md), and [changelog](https://github.com/spectrum-health-systems/TingenTransmorger/blob/main/CHANGELOG.md)

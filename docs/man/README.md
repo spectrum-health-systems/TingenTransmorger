@@ -57,7 +57,7 @@ Transmorger uses the **LocalDb** to do all of it's work, and each installation s
 
 The **MasterDb** is only used when Transmorger is running in *Admin mode*, the most up-to-date version of the Transmorger database.
 
-Or, visually:
+Or if you want something visual, that's not too abysmal:
 
 ```mermaid
 flowchart LR

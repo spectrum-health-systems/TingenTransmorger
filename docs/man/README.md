@@ -57,11 +57,7 @@ Transmorger uses the **LocalDb** to do all of it's work, and each installation s
 
 The **MasterDb** is only used when Transmorger is running in *Admin mode*, the most up-to-date version of the Transmorger database.
 
-Or to put it another way:
-
-[1] Transmorger Admin mode allows the MasterDb to be rebuilt with import data  
-[2] When an end-user launches Transmorger, it checks to see if the MasterDb is more current than it's LocalDb  
-[3] If the MasterDb is more current than the LocalDb, the MasterDb is copied to the end-user's machine, overwriting the current LocalDb
+Or, visually:
 
 ```mermaid
 flowchart LR
@@ -72,8 +68,8 @@ flowchart LR
     LocalDb@{ shape: lin-cyl, label: "LocalDb" }
     %% Layout
     TransmorgerAdminMode -- &nbsp;[1] Rebuild request&nbsp; --o MasterDb
-    TransmorgerEndUser -. [2] Check for update .-o MasterDb
-    MasterDb --[3] Send update --o LocalDb
+    TransmorgerEndUser -- [2] Check for update --> MasterDb
+    MasterDb -. [3] Send update .-o LocalDb
     TransmorgerEndUser e1@<--> LocalDb
     LocalDb e2@<-->TransmorgerEndUser
     %% Styles
@@ -81,6 +77,9 @@ flowchart LR
     e2@{ animate: true }
 ```
 
+[1] Transmorger Admin mode can request that the MasterDb be rebuilt  
+[2] When an end-user launches Transmorger, it checks to see if the MasterDb is more current than it's LocalDb  
+[3] If the MasterDb is more current than the LocalDb, the MasterDb is copied to the end-user's machine, overwriting the current LocalDb
 
 
 ## Initial launch

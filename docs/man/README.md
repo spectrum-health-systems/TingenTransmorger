@@ -12,15 +12,16 @@
 ## Contents
 
 - [Introduction](#introduction)
+- [Requirements](#requirements)
 - [Installation](#installation)
-- [Initial launch]()
+- [Initial launch](#initial-launch)
 - [Configuration]()
 - [Create the Transmorger database]()
 - [Using Transmorger]()
 
 ## Introduction
 
-Welcome to the [Tingen Transmorger](https://github.com/spectrum-health-systems/TingenTransmorger) Manual!
+Welcome to the [Tingen Transmorger](https://github.com/spectrum-health-systems/TingenTransmorger) manual!
 
 Tingen Transmorger is a utility that aggregates data from [Netsmart's TeleHealth](https://www.ntst.com/carefabric/careguidance-solutions/telehealth) platform. and makes it easier to troubleshoot TeleHealth issues.
 
@@ -28,18 +29,26 @@ The 50,000-foot view of how Tingen Transmorger works is:
 
 - TeleHealth reports are (manually) run from the TeleHealth portal
 - The completed reports are downloaded
-- Transmorger takes all of the downloaded reports and transmorgifies them into a single, custom database
+- Transmorger takes all of the downloaded reports and ***transmorgifies*** them into a single, custom database
 - That custom database is saved in a location that end-users have access to
-- End-users can use Transmorger to troubleshoot TeleHealth issues.
+- Transmorger automatically downloads/updates the database for end-users
+- End-users can use Transmorger to troubleshoot TeleHealth issues
+
+# Requirements
+
+Tingen Transmorger requires [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), so make sure that the .NET Desktop Runtime (or the SDK, if you aren't into the whole brevity thing) is installed.
+
+In addition, Transmorger is a 64-bit application, and will not run on 32-bit machines.
 
 # Installation
 
-Tingen Transmorger is a stand-along, portable application, so it's not *installed* in the tradtional sense. All you need to do is:
+> [!NOTE]
+> Tingen Transmorger is a stand-alone, portable application.
+
+To install Tingen Transmorger, just:
 
 1. Download the latest [release](https://github.com/spectrum-health-systems/TingenTransmorger/releases)
 2. Extract the `TingenTransmorger.exe` file to a location of your choice
-
-That's it!
 
 # Initial launch
 
@@ -49,7 +58,9 @@ When you double-click on the `TingenTransmorger.exe` file, you should get a popu
 
 ![](./Images/LocalDbPathDoesNotExistError.png)
 
-The **LocalDb path** is the path that the local Transmorger database will be located. This can be anywhere you want, and can be different for each end-user.
+The **LocalDb path** is where the *local copy* of the Transmorger database will stored.
+
+The local copy of  can be anywhere you want, and can be different for each end-user.
 
 By default, the LocalDb path is `AppData/Database`.
 

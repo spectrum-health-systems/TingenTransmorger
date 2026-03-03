@@ -28,9 +28,13 @@ The heart of Tingen Transmorger is the Transmorger Database, which combines mult
 - Can be added to *on-the-fly*, with dates/date ranges *you* choose
 - Is updated for end-users *automatically*, ensuring users have the latest available data
 
+## Requirements
+
+- [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+
 ## Getting Started
 
-Check out the the Tingen Transmorger [Manual](https://github.com/spectrum-health-systems/TingenTransmorger/blob/main/docs/man/README.md).
+Check out the the Tingen Transmorger [manual](https://github.com/spectrum-health-systems/TingenTransmorger/blob/main/docs/man/README.md).
 
 ## Other information
 

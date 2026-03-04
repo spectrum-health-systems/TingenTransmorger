@@ -88,6 +88,11 @@ To install Tingen Transmorger, just:
 1. Download the latest [release](https://github.com/spectrum-health-systems/TingenTransmorger/releases)
 2. Extract the `TingenTransmorger.exe` file to a location of your choice
 
+> [!IMPORTANT]
+> Verify the SHA256 hash (v0.9.29.0)
+> `82d08e5237b5f5816da05c9d9b6424db8262c31c1e58424401ba3d07bf2efd57`
+
+
 ## Initial launch
 
 When you double-click on the `TingenTransmorger.exe` file, and launch it for the first time, it does a few setup-type things.

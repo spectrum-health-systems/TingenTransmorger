@@ -29,8 +29,12 @@
 - [Initializing the Master Transmorger database](#initializing-the-master-transmorger-database)
 - [Using Transmorger]()
 
+***
+
 > [!IMPORTANT]
 > Before continuing, please make sure you have reviewed the [requirements](README.md#requirements), and have read the [additional documentation](README.md#additional-documentation).
+
+***
 
 # Installation
 

@@ -99,8 +99,3 @@ And here's a secret: *it doesn't have to be local*. That's right, you
 Tmp/ cleaning
 -->
 
-***
-
-[Tingen Transmorger manual](README.md)
-
-> <sub>Last updated: 260304</sub>

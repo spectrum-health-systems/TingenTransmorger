@@ -112,9 +112,9 @@ We'll fix that next, so for now just click **OK**, and Transmorger will exit.
 
 > [!TIP]
 > You may want to refresh your knowledge of the following before continuing:  
-> - [Transmorger Configuration Overview](TransmorgerConfigurationOverview.md)  
-> - [MasterDb](TransmorgerDatabaseOverview.md#the-master-database)  
-> - [LocalDb](TransmorgerDatabaseOverview.md#the-local-database)  
+> - The Transmorger [Configuration](TransmorgerConfigurationOverview.md) file  
+> - The [MasterDb](TransmorgerDatabaseOverview.md#the-master-database)  
+> - The [LocalDb](TransmorgerDatabaseOverview.md#the-local-database)  
 
 ## Modifying the configuration file
 

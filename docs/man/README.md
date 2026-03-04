@@ -31,9 +31,8 @@ Tingen Transmorger is a utility that aggregates data from [Netsmart's TeleHealth
 
 # Requirements
 
-Tingen Transmorger requires [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), so make sure that the .NET Desktop Runtime (or the SDK, if you aren't into the whole brevity thing) is installed.
-
-In addition, Transmorger is a 64-bit application, and will not run on 32-bit machines.
+- [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), so make sure that the .NET Desktop Runtime (or the SDK, if you aren't into the whole brevity thing) is installed.
+- 64-bit Operating System
 
 # How it works
 

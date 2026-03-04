@@ -1,4 +1,4 @@
-[ [Tingen Transmorger manual](README.md) ] ❰ TeleHealth Report Overview
+[Tingen Transmorger manual](README.md) ❰ TeleHealth Report Overview
 
 ***
 
@@ -106,6 +106,6 @@ This could be resolved by running reports with a start *and* end date of 5/16/25
 
 ***
 
-[ [Tingen Transmorger manual](README.md) ] ❰ TeleHealth Report Overview
+[Tingen Transmorger manual](README.md) ❰ TeleHealth Report Overview
 
 > <sub>Last updated: 260304</sub>

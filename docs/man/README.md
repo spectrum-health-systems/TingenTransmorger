@@ -1,3 +1,7 @@
+[Tingen Transmorger manual](README.md)
+
+***
+
 <div align="center">
 
   ![Logo](../../.github/Logo/TransmorgerLogo-256x256.png)
@@ -438,3 +442,10 @@ Click "Ok", and you'll see the Transmorger Main Window:
 And here's a secret: *it doesn't have to be local*. That's right, you 
 
 Tmp/ cleaning
+
+
+***
+
+[Tingen Transmorger manual](README.md) ❰ TeleHealth Report Overview
+
+> <sub>Last updated: 260304</sub>

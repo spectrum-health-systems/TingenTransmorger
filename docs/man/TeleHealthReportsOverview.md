@@ -12,16 +12,18 @@
 
 </div>
 
+This is a short overview of the TeleHealth reports that are used with Tingen Transmorger.
+
 ## Required reports
 
-In order for Transmorger to do what it does, and do it accurately, it needs a copy of each of these reports:
+In order for Transmorger to do what it does, and do it accurately, it needs each of these reports:
 
 1. Visit Details
 2. Message Failure
 3. Message Delivery
 4. Visit Stats
 
-## Report naming convention
+## Report names
 
 Downloaded report names look like this:
 
@@ -42,9 +44,9 @@ STQma_Visit_Details_20260501_20260515.xlsx
 
 ## Report date range
 
-Each report requires a ***Start Date** and an ***End Date***.
+Each report requires a ***Start Date*** and an ***End Date***.
 
-You can run a report for a single day by setting the Start Date and End Date to the same day.
+You can run a report for a single day by setting the *Start Date* and *End Date* to the same day.
 
 In order to troubleshoot TeleHealth for the month of May 2026, you would need the following reports:
 

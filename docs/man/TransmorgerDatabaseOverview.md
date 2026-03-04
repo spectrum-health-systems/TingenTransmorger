@@ -16,7 +16,7 @@
 
 </div>
 
-## CONTENTS
+### CONTENTS
 
 - [The Transmorger database(s)](#the-transmorger-databases)
     - [The local database](#the-local-database)

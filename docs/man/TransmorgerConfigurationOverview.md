@@ -16,7 +16,7 @@
 
 </div>
 
-## CONTENTS
+### CONTENTS
 
 - [The Transmorger configuration file](#the-tranmorger-configuration-file)
 - [The default configuration file](#the-default-configuration-file)

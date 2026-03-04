@@ -16,9 +16,12 @@
 
 </div>
 
+## CONTENTS
+
 - [The Transmorger database(s)](#the-transmorger-databases)
     - [The local database](#the-local-database)
     - [The master database](#the-master-database)
+- [How the database(s) work](#how-the-databases-work)
 
 ## The Transmorger database(s)
 
@@ -29,8 +32,8 @@
 The **LocalDb**:
 
 - is named `transmorger.db`
-- is what Transmorger uses to do all of it's work
 - is located in `AppData/Database` (by default)
+- is what Transmorger uses to do all of it's work
 - is stored as a standard JSON file, to keep filesize down
 
 Each Transmorger installation should have it's own LocalDb.
@@ -42,13 +45,13 @@ When Transmorger is launched, it checks to see if there is an updated version of
 The **MasterDb**:
 
 - is also named `transmorger.db`
-- is only accessed when building/rebuilding the database in  *Admin mode*
-- is always the most up-to-date version of the Transmorger database
 - should be located where that all end-users have access to (recommended)
+- is only accessed when building/rebuilding the database in *Admin mode*
+- is always the most up-to-date version of the Transmorger database
 
 End-users will probably never see the MasterDb
 
-## How the databases work
+## How the database(s) work
 
 If you want something visual (that's not too abysmal):
 
@@ -75,15 +78,6 @@ flowchart LR
 >[3] If the MasterDb is more current than the LocalDb, the MasterDb is copied to the end-user's machine, overwriting the current LocalDb
 >
 > The end-user communicates directly with the LocalDb
-
-
-
-
-
-
-
-
-
 
 ***
 

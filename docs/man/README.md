@@ -86,77 +86,17 @@ Click **Yes**.
 
 ### Setup-type thing #2: The MasterDb path
 
-Another message will popup:
+Next, another message should popup:
 
 ![](./Images/TransmorgerManual-MasterDbPathIsUndefined.png)
 
-The **MasterDb** is the most up-to-date version of the Transmorger database...but it doesn't actually exist yet.
+The **MasterDb** is the most up-to-date version of the Transmorger database...but it doesn't actually exist yet. In fact, it doesn't even have a *location* to exist in.
 
-We'll fix that next, so for now just click "OK", and Transmorger will exit.
+We'll fix that next, so for now just click **OK**, and Transmorger will exit.
 
 ## Configuration
 
-If you take a look in the folder where `TingenTransmorger.exe` is, you'll notice there is a folder named `AppData`, which is where Transmorger will store various data that it needs to function.
-
-You'll also see the `AppData/Database` folder that was created for the [LocalDb](#setup-type-thing-1-creating-the-localdb-path).
-
-We're interested in other folder here: `AppData/Config`, which contains the transmorger.config` configuration file.
-
-Let's take a look at that file, and make some changes.
-
-### The default configuration file
-
-The default `transmorger.config` file looks like this:
-
-```json
-{
-  "Mode": "Standard",
-  "StandardDirectories": {
-    "LocalDb": "AppData/Database",
-    "MasterDb": ""
-  },
-  "AdminDirectories": {
-    "Tmp": "AppData/Tmp",
-    "Import": ""
-  }
-}
-```
-
-There are three components to the configuration file:
-
-- Mode
-- StandardDirectories
-- AdminDirectories
-
-#### Mode
-
-There are two modes that Transmorger can run in:
-
-- **Standard**  
-This is the mode that end-users should always use.
-
-- **Admin**  
-This mode is used for rebuilding the Transmorger database, and is *not* intended for end-users. You can find more information about this mode [here]().
-
-#### Standard directories
-
-Standard mode uses two directories:
-
-- **LocalDb**  
-This is the location for the end-users local Transmorger database. As you can see, when Transmorger is executed for the first time, and the configuration file is created, this is set to the default (and recommended) `AppData/Database`.
-
-- **MasterDb**  
-This is the location for the **master database**. The master database is the most up-to-date version of the Transmorger database, and is must be located in a location where all end-users can access it.
-
-#### Admin directories
-
-Admin mode uses two **additional** directories:
-
-- **Tmp**  
-Any temporary data that Transmorger needs to function is stored here. When Transmorger is executed for the first time, this is set to `AppData/Tmp`, which is the recommended location.
-
-- **Import**  
-This is the location for the TeleHealth reports that will be ***transmorgified***. This can be anywhere, but for organizational purposes I recommend putting it in the parent folder of the `MasterDb`.
+Before we start messing with the Transmorger configuration file, please review the [Transmorger Configuration Overview](TransmorgerConfigurationOverview.md)
 
 ### Modifying the configuration file
 
@@ -166,7 +106,7 @@ For **standard** users, we are only going to modify the `MasterDb` setting.
 
 For **admin** users, we are going to modify both the `MasterDb` and `Import` settings.
 
-#### Modifying the `MasterDb` location
+### Modifying the `MasterDb` location
 
 Modify this component of the configuration file to point to where your master database will reside.
 
@@ -190,7 +130,7 @@ So this:
 
 This change needs to be made for both *standard* and *admin* users.
 
-#### Modifying the `Import` location
+### Modifying the `Import` location
 
 Modify this component of the configuration file to point to where all TeleHealth reports will downloaded.
 
@@ -235,6 +175,18 @@ Your modified `transmorger.config` file should look something like this:
 Save the changes.
 
 Tingen Transmorger is now configured!
+
+
+
+
+
+If you take a look in the folder where `TingenTransmorger.exe` is, you'll notice there is a folder named `AppData`, which is where Transmorger will store various data that it needs to function.
+
+You'll also see the `AppData/Database` folder that was created for the [LocalDb](#setup-type-thing-1-creating-the-localdb-path).
+
+We're interested in other folder here: `AppData/Config`, which contains the transmorger.config` configuration file.
+
+Let's take a look at that file, and make some changes.
 
 ## Initializing the Master Transmorger database
 

@@ -18,7 +18,6 @@
 - [Introduction](#introduction)
   - [Requirements](#requirements)
   - [How it works](#how-it-works)
-  - [TeleHealth reports](#telehealth-reports)
   - [The Transmorger database(s)](#the-transmorger-databases)
 - [Installation](#installation)
 - [Initial launch](#initial-launch)
@@ -51,47 +50,12 @@ Here's the 50,000-foot view of how Tingen Transmorger works:
 - Transmorger automatically downloads/updates the database for end-users
 - End-users can use Transmorger to troubleshoot TeleHealth issues
 
-
+Before you continue, I would recommend taking a quick look at the [TeleHealth Reports Overview](TeleHealthReportsOverview.md) and [Transmorger Database Overview]()
 
 
 
 #### 
 
-### The Transmorger database(s)
-
-Before we go any further, I would like to briefly describe the Transmorger databases, and how the work/interact with each other.
-
-Transmorger uses two databases: the ***LocalDb***, and the ***MasterDb***.
-
-Transmorger uses the **LocalDb** to do all of it's work, and each installation should have it's own LocalDb.
-
-The **MasterDb** is only used when Transmorger is running in *Admin mode*, the most up-to-date version of the Transmorger database.
-
-Or if you want something visual, that's not too abysmal:
-
-```mermaid
-flowchart LR
-    %% Components
-    TransmorgerAdminMode@{ shape: rounded, label: "Transmorger\n[Admin Mode]" }
-    MasterDb@{ shape: cyl, label: "MasterDb" } 
-    TransmorgerEndUser@{ shape: rounded, label: "Transmorger\n[End User]" }
-    LocalDb@{ shape: lin-cyl, label: "LocalDb" }
-    %% Layout
-    TransmorgerAdminMode -. &nbsp;[1] Rebuild request&nbsp; .-> MasterDb
-    TransmorgerEndUser -- [2] Check for update --> MasterDb
-    MasterDb -. [3] Download update .-> LocalDb
-    TransmorgerEndUser e1@<--> LocalDb
-    LocalDb e2@<-->TransmorgerEndUser
-    %% Styles
-    e1@{ animate: true }
-    e2@{ animate: true }
-```
-
->[1] Transmorger Admin mode can request that the MasterDb be rebuilt  
->[2] When an end-user launches Transmorger, it checks to see if the MasterDb is more current than it's LocalDb  
->[3] If the MasterDb is more current than the LocalDb, the MasterDb is copied to the end-user's machine, overwriting the current LocalDb
->
-> The end-user communicates directly with the LocalDb
 
 ## Installation
 
@@ -446,6 +410,6 @@ Tmp/ cleaning
 
 ***
 
-[Tingen Transmorger manual](README.md) ❰ TeleHealth Report Overview
+[Tingen Transmorger manual](README.md)
 
 > <sub>Last updated: 260304</sub>

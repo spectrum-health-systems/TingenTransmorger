@@ -80,14 +80,14 @@ The first thing you should see when you first launch Transmorger is this popup:
 
 ![](./Images/TransmorgerManual-LocalDbPathDoesNotExistCreatePrompt.png)
 
-The ***[LocalDb](TransmorgerDatabaseOverview.md#the-local-database) path*** is where the *local copy* of the Transmorger database will stored.
+The ***LocalDb path*** is where the *local copy* of the Transmorger database will stored.
 
 When you click **Yes**, Transmorger will create an empty folder named `./AppData/Database`. This is the default (and recommended) location for the LocalDb, but you can change the LocalDb path to any location via the configuration file.
 
 Click **Yes**.
 
 > [!WARNING]
-> Clicking **No** will exit Transmorger.  
+> Clicking **No** will exit Transmorger.
 > Subsequent launches will ask the same question, until you click **Yes**, so this step is required.
 
 ## Setup-type thing #2: The MasterDb path

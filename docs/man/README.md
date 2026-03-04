@@ -19,6 +19,7 @@ s[Tingen Transmorger manual](README.md)
 - [Requirements](#requirements)
 - [How it works](#how-it-works)
 - [Additional documentation](#additional-documentation)
+- [Installing](#installing)
 - [Initializing the Master Transmorger database](#initializing-the-master-transmorger-database)
 - [Using Transmorger]()
 
@@ -53,7 +54,9 @@ Before you continue, I would recommend taking a quick look at the following docu
 - [Transmorger Configuration Overview](TransmorgerConfigurationOverview.md)
 - [TeleHealth Reports Overview](TeleHealthReportsOverview.md)
 
+# Installing
 
+Please see the [Installing Tingen Transmorger](Transmorger-Installing.md) documentation.
 
 
 

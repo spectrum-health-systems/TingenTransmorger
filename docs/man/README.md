@@ -60,7 +60,7 @@ To install Transmorger, just:
 1. Download the latest [release](https://github.com/spectrum-health-systems/TingenTransmorger/releases)
 2. Extract the `TingenTransmorger.exe` file to a location of your choice
 
-> [!IMPORTANT]
+> [!WARNING]
 > Verify the SHA256 hash (v0.9.29.0)
 > `---`
 
@@ -110,7 +110,7 @@ Notice that we're leaving the existing ***LocalDb*** and ***Tmp*** defaults.
 ## Modifying the MasterDb location
 
 > [!TIP]
-> You may want to refresh your knowledge of the [MasterDb](TransmorgerDatabaseOverview.md#the-master-database).
+> You may want to refresh your knowledge of the [MasterDb](TransmorgerDatabaseOverview.md#the-master-database) before continuing.
 
 The ***MasterDb*** component of the configuration file needs to point to where your master database will reside.
 

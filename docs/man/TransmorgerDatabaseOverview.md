@@ -24,7 +24,7 @@
 
 *Technically*, Transmorger uses two databases: the ***LocalDb***, and the ***MasterDb***.
 
-### The LocalDb
+### The local database
 
 The **LocalDb**:
 
@@ -37,7 +37,7 @@ Each Transmorger installation should have it's own LocalDb.
 
 When Transmorger is launched, it checks to see if there is an updated version of the LocalDb. If there is an updated version, the user is prompted to update.
 
-### The MasterDb
+### The master database
 
 The **MasterDb**:
 

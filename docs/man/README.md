@@ -110,15 +110,11 @@ We'll fix that next, so for now just click **OK**, and Transmorger will exit.
 
 # Configuration
 
-<sub>
-
 > [!TIP]
 > You may want to refresh your knowledge of the following before continuing:  
-> - [Transmorger Configuration Overview](TransmorgerConfigurationOverview.md)
-> - [MasterDb](TransmorgerDatabaseOverview.md#the-master-database) before continuing.
-> - [LocalDb](TransmorgerDatabaseOverview.md#the-local-database) before continuing.
-
-</sub>
+> - [Transmorger Configuration Overview](TransmorgerConfigurationOverview.md)  
+> - [MasterDb](TransmorgerDatabaseOverview.md#the-master-database)  
+> - [LocalDb](TransmorgerDatabaseOverview.md#the-local-database)  
 
 ## Modifying the configuration file
 
@@ -130,9 +126,6 @@ We are going to make the following changes to the `transmorger.config`:
 Notice that we're leaving the existing ***LocalDb*** and ***Tmp*** defaults.
 
 ## Modifying the MasterDb location
-
-> [!TIP]
-> You may want to refresh your knowledge of the [MasterDb](TransmorgerDatabaseOverview.md#the-master-database) before continuing.
 
 The ***MasterDb*** component of the configuration file needs to point to where your master database will reside.
 

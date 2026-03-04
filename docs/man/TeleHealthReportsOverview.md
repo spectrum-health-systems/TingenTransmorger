@@ -1,3 +1,5 @@
+[[Tingen Transmorger manual](README.md)] ❰ TeleHealth Report Overview
+
 <div align="center">
 
   ![Logo](../../.github/Logo/TransmorgerLogo-256x256.png)
@@ -12,7 +14,14 @@
 
 </div>
 
-This is a short overview of the TeleHealth reports that are used with Tingen Transmorger.
+## CONTENTS
+
+- [Required reports](#required-reports)
+- [Report names](#report-names)
+- [Report date range](#report-date-range)
+- [Capturing all data](#capturing-all-data)
+- [Report aggregation](#report-aggregation)
+- [Missing dates](#missing-dates)
 
 ## Required reports
 
@@ -57,7 +66,7 @@ STQma_Message_Delivery_20260501_20260531.xlsx
 STQma_Visit_Stats_20260501_20260531.xlsx
 ```
 
-## Capturing all data in a report
+## Capturing all data
 
 In order to capture all data for a date/date-range. is recommended that you run reports once that date/range has passed.
 
@@ -92,3 +101,7 @@ If a report for a specific date does not exist, that data will not be included i
 For example, if you ran reports for **5/1/26 - 1/15/26** and **5/17/26 - 5/31/26**, but *not* for **5/16/26**, data would exist for all of May 2026 *except* for 5/16/26.
 
 This could be resolved by running reports with a start *and* end date of 5/16/25, and adding that report the the Import/ folder.
+
+***
+
+[[Tingen Transmorger manual](README.md)] ❰ TeleHealth Report Overview

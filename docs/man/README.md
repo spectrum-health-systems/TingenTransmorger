@@ -81,8 +81,8 @@ When you click **Yes**, Transmorger will create an empty folder named `./AppData
 Click **Yes**.
 
 > [!WARNING]
-> Clicking **No** will exit Transmorger. Subsequent launches will ask the same question, until you click **Yes**, so this step is required.
-
+> Clicking **No** will exit Transmorger.  
+> Subsequent launches will ask the same question, until you click **Yes**, so this step is required.
 
 ### Setup-type thing #2: The MasterDb path
 

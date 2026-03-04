@@ -207,13 +207,7 @@ Yeah, not great. But it is what it is.
 Each report needs a date range, and the date range should be the same for all reports.
 
 
-#### Downloading a report
 
-Once the "Processing" button becomes the Download" button (which is enabled), download the report to your "Import" directory.
-
-![](./Images/TransmorgerManual-TeleHealthReportDownload-03.jpg)
-
-Once all reports have been downloaded, we can launch Tingen Transmorger and initialize the database.
 
 ### Creating the Master Transmorger database
 

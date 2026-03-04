@@ -19,8 +19,12 @@
 ### CONTENTS
 
 - [Required reports](#required-reports)
-- [Report names](#report-names)
 - [Report date range](#report-date-range)
+- [Running reports](#running-reports)
+- [Downloading reports](#downloading-reports)
+
+
+- [Report names](#report-names)
 - [Capturing all data](#capturing-all-data)
 - [Report aggregation](#report-aggregation)
 - [Missing dates](#missing-dates)
@@ -40,7 +44,7 @@ Each report requires a ***Start Date*** and an ***End Date***.
 
 You can run a report for a single day by setting the *Start Date* and *End Date* to the same day.
 
-##Running a report
+## Running reports
 
 To run a TeleHealth reports:
 
@@ -64,6 +68,15 @@ While the report is being run, you'll see a "Processing" button (that's disabled
 > All TeleHealth reports in the Import folder are used to create the Transmorger database, so you can download incremental date ranges.
 >
 > For example, running two reports from 1/1/2026-1/15/2015 and 1/16/20206-1/31/2026 will give you the same result as running a single report from 1/1/2026-1/31/2-26.
+
+#### Downloading reports
+
+Once the "Processing" button becomes the Download" button (which is enabled), download the report to your "Import" directory.
+
+![](./Images/TransmorgerManual-TeleHealthReportDownload-03.jpg)
+
+Once all reports have been downloaded, we can launch Tingen Transmorger and initialize the database.
+
 
 
 

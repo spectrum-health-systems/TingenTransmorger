@@ -46,7 +46,7 @@ To install Transmorger, just:
 2. Extract the `TingenTransmorger.exe` file to a location of your choice
 
 > [!WARNING]
-> Verify the SHA256 hash (v0.9.29.0)  
+> Verify the SHA256 hash!  
 > ```text
 > Name: TingenTransmorger-0.9.29.0.7z
 > Size: 41526296 bytes : 39 MiB

@@ -67,7 +67,7 @@ Provider searches will display the provider name and ID.
 
 6. **Patient contact information**  
 The patient phone number and email address will be displayed here, if they exist.  
-If a contact method has any combination of successes/failures, the **Message Detail button** for that method will be available (see [the Message Detail button](#the-message-detail-button)).  
+If a contact method has any combination of successes/failures, the **Message Detail button** for that method will be available (see [the Message Detail button](#the-message-details-button)).  
 This component is not used with provider searches.
 
 7. **Meeting list**  
@@ -92,7 +92,7 @@ This component is not used with patient searches.
 A summary of total messages, successful messages, and failed messages.
 
 2. **Copy buttons**  
-Clicking one of these buttons will copy specific data to the clipboard (see [Copying Transmorger data](#copying-transmorger-data))
+Clicking one of these buttons will copy specific data to the clipboard (see [Copying Transmorger data](#the-copy-data-buttons))
 
 3. **Message detail results**  
 Displays various details about messages.

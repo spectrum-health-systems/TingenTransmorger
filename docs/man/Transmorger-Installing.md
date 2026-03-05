@@ -47,7 +47,11 @@ To install Transmorger, just:
 
 > [!WARNING]
 > Verify the SHA256 hash (v0.9.29.0)  
-> `---`
+> ```text
+> Name: TingenTransmorger-0.9.29.0.7z
+> Size: 41526296 bytes : 39 MiB
+> SHA256: bb397045b775c87c432de98f3dd928da7c8424dcd15da62abb31f543c7dadfed
+> ```
 
 # Initial setup
 

@@ -13,7 +13,7 @@
     TINGEN TRANSMORGER MANUAL<br>
     The Transmorger Configuration
   </h1>
-  THIS DOCUMENTATION IS A WORK-IN-PROGRESS
+
 </div>
 
 ### CONTENTS
@@ -29,7 +29,7 @@
 The Transmorger **configuration file**:
 
 - is named `transmorger.config`
-- is located in `AppData/Configuration` (by default)
+- is located in `AppData/Configuration`
 - is stored as a standard, prettified JSON file
 - contains the settings that Transmorger needs to run
 

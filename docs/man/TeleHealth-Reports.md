@@ -1,4 +1,4 @@
-[Tingen Transmorger manual](README.md) ❰ The TeleHealth Reports
+[Tingen Transmorger manual](README.md) ❰ TeleHealth Reports
 
 ***
 
@@ -11,8 +11,8 @@
 
   <h1>
     TINGEN TRANSMORGER MANUAL<br>
-    The TeleHealth Reports
-  THIS DOCUMENTATION IS A WORK-IN-PROGRESS
+    TeleHealth Reports
+
 </div>
 
 ### CONTENTS
@@ -46,18 +46,18 @@ You can run a report for a single day by setting the *Start Date* and *End Date*
 To run a TeleHealth reports:
 
 1. Login to your TeleHealth portal
-2. Click the "Reports" tab
+2. Click the **Reports** tab
 3. Choose a report to run
 4. Choose the start and end date of the report
-5. Click "Run Report"
+5. Click **Run Report**
 
-Using the "Message Delivery Report" as an example:
+Using the **Message Delivery Report** as an example:
 
 ![](./Images/TransmorgerManual-TeleHealthReportDownload-01.jpg)
 
 Some reports take longer than others, and some reports take pretty long.
 
-While the report is being run, you'll see a "Processing" button (that's disabled).
+While the report is being run, you'll see a **Processing** button (that's disabled).
 
 ![](./Images/TransmorgerManual-TeleHealthReportDownload-02.jpg)
 
@@ -68,7 +68,7 @@ While the report is being run, you'll see a "Processing" button (that's disabled
 
 # Downloading reports
 
-Once the "Processing" button becomes the Download" button (which is enabled), download the report to your "Import" directory.
+Once the **Processing** button becomes the **Download** button (which is enabled), download the report to your **Import/** folder.
 
 ![](./Images/TransmorgerManual-TeleHealthReportDownload-03.jpg)
 
@@ -138,6 +138,6 @@ This could be resolved by running reports with a start *and* end date of 5/16/25
 
 ***
 
-[Tingen Transmorger manual](README.md) ❰ The TeleHealth Reports
+[Tingen Transmorger manual](README.md) ❰ TeleHealth Reports
 
 > <sub>Last updated: 260305</sub>

@@ -23,8 +23,12 @@
   - [The Message Details buttons](#the-message-details-button)
   - [The Copy Data buttons](#the-copy-data-buttons)
 
+***
+
 > [!NOTE]
 > The screenshots in this documentation are directly from the XAML editor in Visual Studio 2026, since using a production version of Transmorger would display patient data.
+
+***
 
 # The Transmorger user interface
 

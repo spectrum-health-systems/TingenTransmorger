@@ -2,9 +2,7 @@
 
 ## 0.9.29.0 - 3/3/2026
 
-> Current version is 0.9.29.0-rc1
-
-- `MODIFIED` application version is now displayed in the title bar
+- `MODIFIED` Application version is now displayed in the title bar
 
 ## 0.9.28.0 - 2/27/25
 

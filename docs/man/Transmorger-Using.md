@@ -20,6 +20,8 @@
 - [The Transmorger user interface](#the-transmorger-windows)
   - [The Main window](#the-main-window)
   - [The Message Details window](#the-message-details-window)
+  - [The Message Details buttons](#the-message-details-button)
+  - [The Copy Data buttons](#the-copy-data-buttons)
 
 > [!NOTE]
 > The screenshots in this documentation are directly from the XAML editor in Visual Studio 2026, since using a production version of Transmorger would display patient data.
@@ -105,7 +107,7 @@ This indicates that a phone number/email address was found, along with a mix of 
 ![](./Images/TransmorgerManual-MessageDetailsButtonRed.png)  
 This indicates that a phone number/email address was found, along with only failure delivery information. Clicking the button will open the Message Details window.
 
-## Copying Transmorger data
+## The Copy Data buttons
 
 You'll find the following **copy** icons on various components:
 

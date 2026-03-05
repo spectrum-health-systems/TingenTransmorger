@@ -50,9 +50,9 @@ Here's the 50,000-foot view of how Tingen Transmorger works:
 
 Before you continue, I would recommend taking a quick look at the following documentation, so you are familiar with various terminology:
 
-- [Transmorger Database Overview](TransmorgerDatabaseOverview.md)
-- [Transmorger Configuration Overview](TransmorgerConfigurationOverview.md)
-- [TeleHealth Reports Overview](TeleHealthReportsOverview.md)
+- [The Transmorger Database](TheTransmorgerDatabase.md)
+- [The Transmorger Configuration](TheTransmorgerConfiguration.md)
+- [The TeleHealth Reports](TheTeleHealthReports.md)
 
 # Installing
 
@@ -66,7 +66,7 @@ Please see the [Using Tingen Transmorger](Transmorger-Using.md) documentation.
 
 [Tingen Transmorger manual](README.md)
 
-> <sub>Last updated: 260304</sub>
+> <sub>Last updated: 260305</sub>
 
 <!--
 

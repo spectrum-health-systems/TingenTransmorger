@@ -11,7 +11,7 @@
 
   <h1>
     TINGEN TRANSMORGER MANUAL<br>
-    Transmorger Database Overview
+    The Transmorger Database(s)
   </h1>
   THIS DOCUMENTATION IS A WORK-IN-PROGRESS
 </div>
@@ -19,16 +19,16 @@
 ### CONTENTS
 
 - [The Transmorger database(s)](#the-transmorger-databases)
-    - [The local database](#the-local-database)
-    - [The master database](#the-master-database)
+    - [The local database](#the-local-database-localdb)
+    - [The master database](#the-master-database-masterdb)
 - [How the database(s) work](#how-the-databases-work)
 - [Rebuilding the master database]()
 
-## The Transmorger database(s)
+## The database(s)
 
 *Technically*, Transmorger uses two databases: the ***LocalDb***, and the ***MasterDb***.
 
-### The local database
+### The local database (LocalDb)
 
 The **LocalDb**:
 
@@ -41,7 +41,7 @@ Each Transmorger installation should have it's own LocalDb.
 
 **Fun fact**: When Transmorger is launched, it checks to see if there is an updated version of the LocalDb. If there is an updated version, the user is prompted to update!
 
-### The master database
+### The master database (MasterDb)
 
 The **MasterDb**:
 

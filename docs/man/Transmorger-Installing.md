@@ -99,6 +99,8 @@ Let's open that file, and make some modifications.
 
 ## Modifying the configuration file
 
+> You may want to review the [Transmorger Configuration documentation](TheTransmorgerConfiguration.md) before continuing.
+
 We are going to make the following changes to the `transmorger.config`:
 
 - For **standard** users, we are only going to modify the ***MasterDb*** setting.

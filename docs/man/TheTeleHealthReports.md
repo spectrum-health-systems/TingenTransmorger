@@ -11,8 +11,7 @@
 
   <h1>
     TINGEN TRANSMORGER MANUAL<br>
-    TeleHealth Reports Overview
-  </h1>
+    The TeleHealth Reports
   THIS DOCUMENTATION IS A WORK-IN-PROGRESS
 </div>
 

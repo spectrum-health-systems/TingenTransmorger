@@ -11,7 +11,7 @@
 
   <h1>
     TINGEN TRANSMORGER MANUAL<br>
-    Transmorger Configuration Overview
+    The Transmorger Configuration
   </h1>
   THIS DOCUMENTATION IS A WORK-IN-PROGRESS
 </div>

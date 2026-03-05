@@ -22,8 +22,12 @@
   - [The Message Details window](#the-message-details-window)
   - [The Message Details buttons](#the-message-details-button)
   - [The Copy Data buttons](#the-copy-data-buttons)
-
-- Performing a patient search
+- [Performing a patient search](#performing-a-patient-search)
+  - [Reviewing patient phone details](#reviewing-patient-phone-details)
+  - [Reviewing patient email details](#reviewing-patient-email--details)
+  - [Reviewing patient meeting message details](#reviewing-patient-meeting--details)
+- [Performing a provider search](#performing-a-provider-search)
+  - [Reviewing patient meeting message details](#reviewing-provider-meeting--details)
 
 ***
 
@@ -148,15 +152,15 @@ To perform a patient search:
 
 Patient name, ID, and meeting list will be displayed. If the patient has an associated phone number or email address, that information will also be displayed.
 
-## Reviewing phone message details
+## Reviewing patient phone details
 
 If the patient has a phone number, it will be displayed. If there are successful/failed deliveries to the phone number, you can click on the **message details button** to display additional information.
 
-## Reviewing email message details
+## Reviewing patient email details
 
 If the patient has an email address, it will be displayed. If there are successful/failed deliveries to the email address, you can click on the **message details button** to display additional information.
 
-## Reviewing meeting details
+## Reviewing patient meeting details
 
 A sortable list of meetings associated with the patient will be displayed. Click on a meeting to display various details.
 
@@ -171,7 +175,7 @@ To perform a provider search:
 
 The provider name, ID, and meeting list will be displayed.
 
-## Reviewing meeting details
+## Reviewing provider meeting details
 
 A sortable list of meetings associated with the provider will be displayed. Click on a meeting to display various details.
 

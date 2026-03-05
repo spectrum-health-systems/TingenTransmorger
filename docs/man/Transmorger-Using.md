@@ -22,17 +22,18 @@
 
 # The Transmorger Windows
 
-The two primary window interfaces you will be working with are:
+The two primary interfaces you will be working with are the **Main Window** and the **Message Details Window**
 
-- The Main window
+## The Main window
 
-![](./Images/TransmorgerManual-UsingMainWindowBlank.png)
+![](./Images/TransmorgerManual-UsingMainWindowBlankNumbered.png)
 
-and
 
-- The Message Details window
 
-![](./Images/TransmorgerManual-UsingMessageDetailsWindowBlank.png)
+
+## The Message Details window
+
+![](./Images/TransmorgerManual-UsingMessageDetailsWindowBlankNumbered.png)
 
 
 

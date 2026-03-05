@@ -26,14 +26,45 @@ The two primary interfaces you will be working with are the **Main Window** and 
 
 ## The Main window
 
-![](./Images/)
+![](./Images/TransmorgerManual-UsingMainWindowBlankNumbered.jpg)
 
+1. **Search toggle button**  
+Clicking this button will toggle between **Patient Search** and **Provider Search**.
 
+2. **Search By options**  
+You can either search by **name** or **ID number**...but not both!
 
+3. **Search box**  
+When you type a letter (when searching by name) or number (when searching by ID), the **search results** will populate.
+
+4. **Search results**  
+Real-time search results.
+
+5. **Patient/Provider details**  
+Patient searches will display the patient name and ID.  
+Provider searches will display the provider name and ID.
+
+6. **Patient contact information**  
+The patient phone number and email address will be displayed here, if they exist.
+This component is not used with provider searches.
+
+7. **Meeting list**  
+When you choose one of the results in the *search results* a summary of completed/in-progress/expired/cancelled/scheduled meetings will be displayed, as well as the list of meetings for the patient/provider.
+
+8. **Meeting details**  
+Displays various *generic* details about the chosen meeting.
+
+9. **Meeting details (patient)**  
+Displays various *patient-specific** details about the chosen meeting.
+This component is not used with provider searches.
+
+10. **Meeting details (provider)**  
+Displays various *patient-specific** details about the chosen meeting.
+This component is not used with patient searches.
 
 ## The Message Details window
 
-![](./Images/TransmorgerManual-UsingMessageDetailsWindowBlankNumbered.png)
+![](./Images/TransmorgerManual-UsingMessageDetailsWindowBlankNumbered.jpg)
 
 
 

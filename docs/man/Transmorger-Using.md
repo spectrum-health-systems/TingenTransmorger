@@ -26,7 +26,7 @@ The two primary interfaces you will be working with are the **Main Window** and 
 
 ## The Main window
 
-![](./Images/TransmorgerManual-UsingMainWindowBlankNumbered.png)
+![](./Images/)
 
 
 

@@ -5,7 +5,7 @@
 // Copyright (c) A Pretty Cool Program. All rights reserved.
 // Licensed under the Apache 2.0 license.
 // -----------------------------------------------------------------------------
-// Version 0.9.29.0
+// Version 0.9.30.0
 // =============================================================================
 
 namespace TingenTransmorger;

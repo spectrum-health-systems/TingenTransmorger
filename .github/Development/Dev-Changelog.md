@@ -1,5 +1,11 @@
 # Tingen Transmorger: Development Changelog (Development)
 
+## 0.9.30.0
+
+- `FIXED` Transmorger no longer exits if a database update is declined
+- `MODIFIED` Admin mode background color is now purple
+- `MODIFIED` Admin mode is displayed in the title bar
+
 ## 0.9.29.0
 
 - The application version is now displayed in the title bar

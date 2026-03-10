@@ -132,7 +132,9 @@ public partial class TransmorgerDatabase
                 }
                 else
                 {
-                    MainWindow.StopApp();
+                    /* TODO: Get this working.
+                     */
+                    //MainWindow.SetOutOfDateDatabaseTheme();
                 }
             }
         }

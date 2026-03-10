@@ -549,9 +549,6 @@
             <summary>Prompts the user to confirm if they want to rebuild the database.</summary>
             <returns>True if the user confirms, otherwise false.</returns>
         </member>
-        <member name="M:TingenTransmorger.MainWindow.SetAdminModeTheme">
-            <summary>Set the UI theme for admin mode.</summary>
-        </member>
         <member name="M:TingenTransmorger.MainWindow.CopyGeneralMeetingDetails">
             <summary>Copy general meeting details to the clipboard.</summary>
         </member>
@@ -718,6 +715,12 @@
         </member>
         <member name="M:TingenTransmorger.MainWindow.ResetProviderMeetingDetailUi">
             <summary>Reset the provider meeting details UI components.</summary>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.SetAdminModeTheme">
+            <summary>Set the UI theme for admin mode.</summary>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.SetOutOfDateDatabaseTheme">
+            <summary>Set the UI theme for out-of-date database.</summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetPatientDetailUi(System.String,System.String)">
             <summary>Setup the user interface for displaying patient details.</summary>
@@ -1013,132 +1016,361 @@
             <param name="tmpDir">Temporary data directory.</param>
             <param name="statusCallback">Optional callback to report status messages.</param>
         </member>
+        <member name="T:TingenTransmorger.TeleHealthReport.ReportUtility">
+            <summary>Provides utility methods for building, normalizing, and writing JSON report output files.</summary>
+            <remarks>
+            This class centralizes shared logic used across TeleHealth report generation, including:
+            <list type="bullet">
+            <item>Writing flat, keyed, summary, and client-grouped JSON files.</item>
+            <item>De-duplicating records before serialization.</item>
+            <item>Normalizing phone number values in record dictionaries.</item>
+            <item>Building and merging row dictionaries sourced from <see cref="T:System.Data.DataTable"/> instances.</item>
+            <item>Parsing object values as <see cref="T:System.Double"/> with culture and quote-trimming fallbacks.</item>
+            </list>
+            All members are <see langword="internal"/> and <see langword="static"/>; this class is not intended for
+            instantiation or external use.
+            </remarks>
+        </member>
         <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteSummaryJson(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Double},System.Nullable{System.ValueTuple{System.String,System.String}})">
-            <summary>Writes summary data as JSON with metric-value pairs.</summary>
-            <param name="tmpDir">Output directory.</param>
-            <param name="fileName">Name of the JSON file to create.</param>
-            <param name="metrics">Dictionary of aggregated metrics.</param>
-            <param name="headers">Optional column header names.</param>
+            <summary>Writes summary details.</summary>
+            <remarks>
+            This is specifically designed for the following workbook/worksheets:
+            <list type="bullet">
+            <item>Visit_Stats/Summary</item>
+            <item>Message_Failure/Summary</item>
+            </list>
+            These worksheets consist of key-value pairs, where keys are metric names and values are their corresponding
+            double values. The headers parameter allows for custom column names in the output JSON, but if not provided, it
+            will default to "Metric" and "Value". The method transforms the dictionary into a list of records suitable for
+            JSON serialization, ensuring that the output is structured as an array of objects with consistent formatting.
+            </remarks>
+            <param name="targetDir">Target output directory.</param>
+            <param name="targetFileName">Target output file name.</param>
+            <param name="metrics">Dictionary of metric names and their corresponding double values.</param>
+            <param name="headers">Tuple containing the column header names for the metric key and value columns.</param>
         </member>
         <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteKeyedJson(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Object}})">
-            <summary>Writes keyed data as JSON array.</summary>
-            <param name="tmpDir">Output directory.</param>
-            <param name="fileName">Name of the JSON file to create.</param>
-            <param name="data">Dictionary of records keyed by unique identifier.</param>
+            <summary>Writes dictionary-keyed data as a flat JSON array.</summary>
+            <remarks>
+            Extracts the values from the provided dictionary and writes them as a JSON array, discarding the outer string
+            keys. This is useful when the dictionary keys are used only for internal lookup and the output should be a flat
+            list of records.
+            </remarks>
+            <param name="targetDir">Target output directory.</param>
+            <param name="targetFileName">Target output file name.</param>
+            <param name="data">Dictionary of keyed records whose values will be written as a JSON array.</param>
         </member>
         <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteClientStatsJson(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}}})">
-            <summary>Writes client statistics as JSON with nested records structure.</summary>
-            <param name="tmpDir">Output directory.</param>
-            <param name="fileName">Name of the JSON file to create.</param>
-            <param name="statsByClient">Dictionary of record lists keyed by client name.</param>
+            <summary>Groups client statistics by client name and writes the result as a nested JSON file.</summary>
+            <remarks>
+            Transforms a flat dictionary of client-keyed record lists into a structured JSON output where each entry
+            contains a <c>Client Name</c> field and a nested <c>Records</c> array. The <c>Client Name</c> field is removed
+            from each individual record to avoid redundancy, since it is already present at the top level. Duplicate records
+            within each client's record list are removed before serialization via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.DeduplicateRecords(System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}})"/>.
+            </remarks>
+            <param name="targetDir">Target output directory.</param>
+            <param name="targetFileName">Target output file name.</param>
+            <param name="statsByClient">Dictionary mapping each client name to a list of records for that client.</param>
         </member>
         <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteFlatJson(System.String,System.String,System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}})">
-            <summary>Writes flat record list as JSON after de-duplication.</summary>
-            <param name="tmpDir">Output directory.</param>
-            <param name="fileName">Name of the JSON file to create.</param>
-            <param name="records">List of records to write.</param>
+            <summary>Writes a de-duplicated list of records as a flat JSON array.</summary>
+            <remarks>
+            Removes exact duplicate records before writing by delegating to <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.DeduplicateRecords(System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}})"/>, then
+            serializes the result as a flat JSON array via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteJson(System.String,System.String,System.Object)"/>. Use this method when the input may
+            contain duplicate entries that should not appear in the output file.
+            </remarks>
+            <param name="targetDir">Target output directory.</param>
+            <param name="targetFileName">Target output file name.</param>
+            <param name="records">List of records to de-duplicate and write as a JSON array.</param>
         </member>
         <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteJson(System.String,System.String,System.Object)">
-            <summary>Writes data to a JSON file with formatted indentation.</summary>
-            <param name="tmpDir">Output directory.</param>
-            <param name="fileName">Name of the JSON file to create.</param>
-            <param name="data">Data object to serialize.</param>
+            <summary>Serializes data to a formatted JSON file at the specified path.</summary>
+            <remarks>
+            Phone number fields within the data are normalized before serialization via
+            <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumbersInData(System.Object)"/>, ensuring consistent formatting in the output file. The JSON output is
+            written with indentation enabled and encoded as UTF-8.
+            </remarks>
+            <param name="targetDir">Target output directory.</param>
+            <param name="targetFileName">Target output file name.</param>
+            <param name="data">Data object to serialize; may be a flat list, dictionary, or nested structure.</param>
         </member>
         <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumbersInData(System.Object)">
             <summary>
-            Recursively normalizes phone number fields in data structures before JSON serialization.
+            Normalizes phone numbers in the provided data object.
             </summary>
-            <param name="data">
-            Data object that may contain phone number fields.
-            </param>
+            <remarks>
+            Handles two data shapes:
+            <list type="bullet">
+            <item>
+            A <see cref="T:System.Collections.Generic.List`1"/> of <see cref="T:System.Collections.Generic.Dictionary`2"/> records — each dictionary is
+            normalized individually via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumbersInDictionary(System.Collections.Generic.Dictionary{System.String,System.Object})"/>.
+            </item>
+            <item>
+            A single <see cref="T:System.Collections.Generic.Dictionary`2"/> — normalized directly via
+            <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumbersInDictionary(System.Collections.Generic.Dictionary{System.String,System.Object})"/>.
+            </item>
+            </list>
+            If the data does not match either of these shapes, it is returned unchanged.
+            </remarks>
+            <param name="data">Data object to normalize; may be a flat list of records or a single record dictionary.</param>
             <returns>
-            The data with phone number fields normalized.
+            The normalized data object with phone number fields formatted consistently. If the input type is not recognized,
+            the original object is returned unmodified.
             </returns>
         </member>
         <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumbersInDictionary(System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>
-            Normalizes phone number fields within a dictionary.
+            Normalizes phone number fields within a single record dictionary.
             </summary>
-            <param name="dict">
-            Dictionary that may contain phone number fields.
-            </param>
+            <remarks>
+            Iterates over each key-value pair in the dictionary and applies normalization according to the following rules:
+            <list type="bullet">
+            <item>
+            If the value is a nested <see cref="T:System.Collections.Generic.List`1"/> of <see cref="T:System.Collections.Generic.Dictionary`2"/> records (e.g., a
+            <c>Records</c> array in SMS Stats), each nested dictionary is recursively normalized via this method.
+            </item>
+            <item>
+            If the key matches <c>Error Message</c> (case-insensitive), the value is preserved as-is to retain full error
+            text, including opt-out messages that may contain phone-number-like strings.
+            </item>
+            <item>
+            If the key is identified as a phone number field by <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.IsPhoneNumberField(System.String)"/>, the value is normalized
+            via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)"/>.
+            </item>
+            <item>
+            If the value is a non-empty string that resembles a phone number as determined by
+            <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.LooksLikePhoneNumber(System.String)"/>, it is also normalized via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)"/>.
+            </item>
+            <item>All other values are copied to the result dictionary unchanged.</item>
+            </list>
+            </remarks>
+            <param name="dict">Record dictionary whose phone number fields will be normalized.</param>
             <returns>
-            A new dictionary with phone number fields normalized.
+            A new dictionary with the same keys as the input, where phone number values have been normalized to a
+            consistent 10-digit format and all other values are preserved as-is.
             </returns>
         </member>
         <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.IsPhoneNumberField(System.String)">
-            <summary>
-            Determines if a field name likely contains phone number data.
-            </summary>
-            <param name="fieldName">
-            Name of the field to check.
-            </param>
+            <summary>Determines whether a field name is likely to contain a phone number.</summary>
+            <remarks>
+            Performs a case-insensitive substring match against common phone number field name patterns, including:
+            <list type="bullet">
+            <item><c>phone</c></item>
+            <item><c>mobile</c></item>
+            <item><c>cell</c></item>
+            <item><c>telephone</c></item>
+            <item><c>tel</c></item>
+            <item><c>number</c></item>
+            <item><c>to </c></item>
+            <item><c>from </c></item>
+            <item><c>recipient</c></item>
+            </list>
+            This method is used in conjunction with <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.LooksLikePhoneNumber(System.String)"/> to identify values that should be
+            normalized via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)"/>.
+            </remarks>
+            <param name="fieldName">Field name to evaluate.</param>
             <returns>
-            True if the field name suggests it contains phone number data.
+            <see langword="true"/> if the field name contains a recognized phone number keyword; otherwise,
+            <see langword="false"/>.
             </returns>
         </member>
         <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.LooksLikePhoneNumber(System.String)">
-            <summary>
-            Determines if a string value looks like a phone number.
-            </summary>
-            <param name="value">
-            String value to check.
-            </param>
+            <summary>Determines whether a string value resembles a formatted phone number.</summary>
+            <remarks>
+            Applies the following heuristics to evaluate the value:
+            <list type="bullet">
+            <item>The value must be at least 10 characters long and non-whitespace.</item>
+            <item>The value must contain between 10 and 11 digit characters.</item>
+            <item>
+            The value must contain at least one common phone number formatting character:
+            <c>-</c>, <c>(</c>, <c>)</c>, <c>+</c>, a space, or <c>.</c>
+            </item>
+            </list>
+            This method is used in conjunction with <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.IsPhoneNumberField(System.String)"/> to identify values that should be
+            normalized via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)"/>. Unlike <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.IsPhoneNumberField(System.String)"/>, which evaluates the
+            field name, this method evaluates the field value itself.
+            </remarks>
+            <param name="value">String value to evaluate.</param>
             <returns>
-            True if the value appears to be a phone number.
+            <see langword="true"/> if the value contains 10–11 digits and at least one recognized phone number formatting
+            character; otherwise, <see langword="false"/>.
             </returns>
         </member>
         <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.UpdateHeaders(System.Data.DataTable,System.Collections.Generic.ICollection{System.String})">
-            <summary>Updates the headers collection with columns from the current table.</summary>
-            <param name="table">DataTable to extract column names from.</param>
-            <param name="headers">Collection to update with column names.</param>
-            <returns>HashSet containing the current table's column names.</returns>
-        </member>
-        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.BuildRow(System.Data.DataTable,System.Collections.Generic.List{System.String})">
-            <summary>Creates an empty dictionary sized for the expected number of columns.</summary>
-            <param name="table">DataTable (currently unused, reserved for future optimization).</param>
-            <param name="headers">List of column headers to determine dictionary capacity.</param>
-            <returns>Empty dictionary with pre-allocated capacity.</returns>
-        </member>
-        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.MergeRows(System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object},System.String)">
-            <summary>Merges a new row into an existing row, aggregating numeric values and preserving non-null data.</summary>
-            <param name="existing">Existing row dictionary to update.</param>
-            <param name="newRow">New row dictionary with values to merge.</param>
-            <param name="keyColumn">Key column name to skip during merge.</param>
-        </member>
-        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.ParseDoubleValue(System.Object)">
-            <summary>Parses an object as a double value, handling various formats including quoted strings.</summary>
-            <param name="value">Value to parse.</param>
-            <returns>Parsed double value, or 0 if parsing fails.</returns>
-        </member>
-        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.TryParseDouble(System.Object,System.Double@)">
-            <summary>Attempts to parse an object as a double value using invariant and current culture.</summary>
-            <param name="val">Value to parse.</param>
-            <param name="result">Parsed double value if successful.</param>
-            <returns>True if parsing succeeded; otherwise, false.</returns>
-        </member>
-        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.DeduplicateRecords(System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}})">
-            <summary>Removes exact duplicate records from a list by comparing JSON serialization.</summary>
-            <param name="records">List of records to de-duplicate.</param>
-            <returns>List containing only unique records.</returns>
-        </member>
-        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)">
-            <summary>
-            Normalizes a phone number to exactly 10 digits by removing non-numeric characters and the leading '1' if present.
-            </summary>
-            <param name="phoneNumber">
-            Raw phone number string that may contain formatting characters like '+', '-', '(', ')', spaces, etc.
+            <summary>Extracts column names from a <see cref="T:System.Data.DataTable"/> and adds them to the header collection.</summary>
+            <remarks>
+            Iterates over each column in the provided <paramref name="table"/> and performs two operations:
+            <list type="bullet">
+            <item>
+            Adds the column name to the returned <see cref="T:System.Collections.Generic.HashSet`1"/>, which uses
+            <see cref="P:System.StringComparer.OrdinalIgnoreCase"/> for case-insensitive membership checks.
+            </item>
+            <item>
+            Adds the column name to the shared <paramref name="headers"/> collection, with behavior that depends on the
+            runtime type of the collection:
+            <list type="bullet">
+            <item>
+            If <paramref name="headers"/> is a <see cref="T:System.Collections.Generic.HashSet`1"/>, the column name is added directly (the set
+            handles deduplication internally).
+            </item>
+            <item>
+            If <paramref name="headers"/> is a <see cref="T:System.Collections.Generic.List`1"/>, the column name is only added if it is not already
+            present, preventing duplicates.
+            </item>
+            </list>
+            </item>
+            </list>
+            A <see langword="null"/> column name is treated as an empty string.
+            </remarks>
+            <param name="table">Source <see cref="T:System.Data.DataTable"/> whose columns will be enumerated.</param>
+            <param name="headers">
+            Shared header collection to populate; supports both <see cref="T:System.Collections.Generic.HashSet`1"/> and <see cref="T:System.Collections.Generic.List`1"/>
+            implementations of <see cref="T:System.Collections.Generic.ICollection`1"/>.
             </param>
             <returns>
-            A 10-digit phone number string (area code + local number) if the input can be normalized; 
-            otherwise, returns the original value if it cannot be normalized to exactly 10 digits.
+            A case-insensitive <see cref="T:System.Collections.Generic.HashSet`1"/> containing all column names found in <paramref name="table"/>.
             </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.BuildRow(System.Data.DataTable,System.Collections.Generic.List{System.String})">
+            <summary>Builds an empty row dictionary pre-allocated to the number of headers.</summary>
             <remarks>
-            This method ensures phone numbers are stored in JSON files with consistent formatting:
-            - All non-numeric characters ('+', '-', '(', ')', spaces, etc.) are removed
-            - Leading '1' is removed if the number is 11 digits (common in North American phone numbers)
-            - Only returns the normalized value if it results in exactly 10 digits
+            Creates a new <see cref="T:System.Collections.Generic.Dictionary`2"/> with an initial capacity equal to the number of entries in
+            <paramref name="headers"/>, avoiding internal resizing when fields are subsequently populated. The returned
+            dictionary contains no entries and is intended to be filled by the caller.
             </remarks>
+            <param name="table">Source <see cref="T:System.Data.DataTable"/> associated with the row being built.</param>
+            <param name="headers">List of column header names used to determine the initial capacity of the dictionary.</param>
+            <returns>
+            An empty <see cref="T:System.Collections.Generic.Dictionary`2"/> with a capacity equal to <c>headers.Count</c>, ready to be
+            populated with field values.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.MergeRows(System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object},System.String)">
+            <summary>Merges fields from a new row into an existing row, accumulating numeric values.</summary>
+            <remarks>
+            Iterates over each field in <paramref name="newRow"/> and merges it into <paramref name="existing"/> according
+            to the following rules:
+            <list type="bullet">
+            <item>
+            The field identified by <paramref name="keyColumn"/> is skipped, as it serves as the merge key and should not
+            be overwritten or accumulated.
+            </item>
+            <item>
+            If both the existing value and the new value can be parsed as doubles via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.TryParseDouble(System.Object,System.Double@)"/>, their
+            values are summed and stored back into <paramref name="existing"/>.
+            </item>
+            <item>
+            If the new value is non-<see langword="null"/> and no existing value is present for the field, the new value is
+            copied into <paramref name="existing"/> as-is.
+            </item>
+            <item>All other field combinations are left unchanged in <paramref name="existing"/>.</item>
+            </list>
+            This method modifies <paramref name="existing"/> in place and does not return a value.
+            </remarks>
+            <param name="existing">The target row dictionary to merge values into; modified in place.</param>
+            <param name="newRow">The source row dictionary whose fields will be merged into <paramref name="existing"/>.</param>
+            <param name="keyColumn">
+            The name of the key column to skip during merging; comparison is case-insensitive.
+            </param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.ParseDoubleValue(System.Object)">
+            <summary>Parses an object value as a double, with fallback quote-trimming on failure.</summary>
+            <remarks>
+            Attempts to convert the provided value to a double using the following strategy:
+            <list type="bullet">
+            <item>
+            If <paramref name="value"/> is <see langword="null"/>, returns <c>0</c> immediately.
+            </item>
+            <item>
+            Converts the value to its string representation and attempts to parse it using
+            <see cref="F:System.Globalization.NumberStyles.Any"/> and <see cref="P:System.Globalization.CultureInfo.InvariantCulture"/>.
+            </item>
+            <item>
+            If the initial parse fails, surrounding quotation marks are trimmed from the string and parsing
+            is attempted a second time under the same culture settings. This handles values that may have been
+            serialized with enclosing quotes (e.g., <c>"3.14"</c>).
+            </item>
+            <item>If both attempts fail, returns <c>0</c>.</item>
+            </list>
+            To also determine whether parsing succeeded, use <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.TryParseDouble(System.Object,System.Double@)"/> instead.
+            </remarks>
+            <param name="value">Value to parse; may be a string, boxed numeric type, or <see langword="null"/>.</param>
+            <returns>
+            The parsed <see cref="T:System.Double"/> value if successful; otherwise, <c>0</c>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.TryParseDouble(System.Object,System.Double@)">
+            <summary>Attempts to parse an object value as a double, trying invariant culture before reverting to current culture.</summary>
+            <remarks>
+            Attempts to convert the provided value to a double using the following strategy:
+            <list type="bullet">
+            <item>
+            If <paramref name="val"/> is <see langword="null"/>, sets <paramref name="result"/> to <c>0</c> and returns
+            <see langword="false"/> immediately.
+            </item>
+            <item>
+            Converts the value to its string representation; if the result is <see langword="null"/> or empty, returns
+            <see langword="false"/>.
+            </item>
+            <item>
+            Attempts to parse the string using <see cref="F:System.Globalization.NumberStyles.Any"/> and
+            <see cref="P:System.Globalization.CultureInfo.InvariantCulture"/>. If that fails, a second attempt is made using
+            <see cref="P:System.Globalization.CultureInfo.CurrentCulture"/> to accommodate locale-specific numeric formats.
+            </item>
+            </list>
+            Unlike <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.ParseDoubleValue(System.Object)"/>, this method uses a standard <c>TryParse</c> pattern — it returns a
+            boolean indicating success or failure rather than silently returning <c>0</c> on failure.
+            </remarks>
+            <param name="val">Value to parse; may be a string, boxed numeric type, or <see langword="null"/>.</param>
+            <param name="result">
+            When this method returns <see langword="true"/>, contains the parsed <see cref="T:System.Double"/> value; otherwise,
+            contains <c>0</c>.
+            </param>
+            <returns>
+            <see langword="true"/> if <paramref name="val"/> was successfully parsed as a <see cref="T:System.Double"/>;
+            otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.DeduplicateRecords(System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}})">
+            <summary>Removes exact duplicate records from a list by comparing their serialized JSON representations.</summary>
+            <remarks>
+            Iterates over each record in <paramref name="records"/> and serializes it to a JSON string via
+            <see cref="M:System.Text.Json.JsonSerializer.Serialize``1(``0,System.Text.Json.JsonSerializerOptions)"/>. A <see cref="T:System.Collections.Generic.HashSet`1"/> of
+            these serialized strings is used to detect duplicates — only the first occurrence of each unique JSON
+            representation is retained. Records are considered duplicates if their full key-value content is identical;
+            field ordering within each dictionary may affect comparison results.
+            </remarks>
+            <param name="records">List of records to evaluate for duplicates; the original list is not modified.</param>
+            <returns>
+            A new <see cref="T:System.Collections.Generic.List`1"/> containing only the first occurrence of each unique record, preserving the original
+            order of non-duplicate entries.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)">
+            <summary>Normalizes a phone number string to a consistent 10-digit format.</summary>
+            <remarks>
+            Applies the following normalization rules in order:
+            <list type="bullet">
+            <item>
+            If <paramref name="phoneNumber"/> is <see langword="null"/> or whitespace, it is returned as-is, substituting
+            an empty string for <see langword="null"/>.
+            </item>
+            <item>All non-digit characters are stripped from the input string.</item>
+            <item>
+            If the resulting digit string is 11 characters long and begins with <c>1</c>, the leading digit is removed to
+            strip the US country code.
+            </item>
+            <item>
+            If the resulting digit string is exactly 10 characters, it is returned as the normalized value; otherwise, the
+            original input is returned unchanged to avoid corrupting unrecognized formats.
+            </item>
+            </list>
+            </remarks>
+            <param name="phoneNumber">Phone number string to normalize; may be <see langword="null"/>.</param>
+            <returns>
+            A 10-digit string if normalization succeeds; the original <paramref name="phoneNumber"/> if the digit count
+            does not equal 10 after stripping; or an empty string if the input is <see langword="null"/>.
+            </returns>
         </member>
     </members>
 </doc>

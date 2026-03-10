@@ -53,9 +53,5 @@ public partial class MainWindow : Window
         return rebuildResponse == MessageBoxResult.Yes;
     }
 
-    /// <summary>Set the UI theme for admin mode.</summary>
-    private void SetAdminModeTheme()
-    {
-        brdrMainWindow.Background = System.Windows.Media.Brushes.Red;
-    }
+
 }

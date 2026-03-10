@@ -76,6 +76,22 @@ public partial class MainWindow : Window
         brdrProviderMeetingDetail.Visibility    = Visibility.Collapsed;
     }
 
+    /// <summary>Set the UI theme for admin mode.</summary>
+    private void SetAdminModeTheme()
+    {
+        brdrMainWindow.Background = System.Windows.Media.Brushes.Purple;
+        var currentTitle = Title;
+        Title = $"{currentTitle} - ADMIN MODE";
+    }
+
+    /// <summary>Set the UI theme for out-of-date database.</summary>
+    public void SetOutOfDateDatabaseTheme()
+    {
+        brdrMainWindow.Background = System.Windows.Media.Brushes.Red;
+        var currentTitle = Title;
+        Title = $"{currentTitle} - DATABASE IS OUT OF DATE";
+    }
+
     /// <summary>Setup the user interface for displaying patient details.</summary>
     /// <param name="patientName">The name of the patient.</param>
     /// <param name="patientId">The ID of the patient.</param>

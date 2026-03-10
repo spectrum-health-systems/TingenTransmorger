@@ -1,5 +1,9 @@
 # Tingen Transmorger: Changelog
 
+## 0.9.30.0 - TBD
+
+TBD
+
 ## 0.9.29.0 - 3/3/2026
 
 - `MODIFIED` Application version is now displayed in the title bar

@@ -1,5 +1,5 @@
 ﻿// 260227_code
-// 260227_documentation
+// 260311_documentation
 
 using System.Windows;
 
@@ -12,21 +12,8 @@ namespace TingenTransmorger;
  */
 public partial class MainWindow : Window
 {
-    /// <summary>Display details for the selected user.</summary>
-    /// <remarks>
-    /// A "user" in this context refers to either a patient or a provider.<br/>
-    /// <br/>
-    /// When a user is selected from the search results, this method will:
-    /// <list type="number">
-    /// <item>Change the UserTypeKey contents to "PATIENTS" or "PROVIDERS" based on the search type</item>
-    /// <item>Display the user name</item>
-    /// <item>Display the user ID</item>
-    /// <item>Display the patient phone number(s), and set the detail button</item>
-    /// <item>Display the patient email addresses(s), and set the detail button</item>
-    /// <item>Display the user's meting breakdown</item>
-    /// <item>Display the user's meting list</item>
-    /// </list>
-    /// </remarks>
+    /// <summary>Loads and displays details for the currently selected patient or provider search result.</summary>
+    /// <remarks>Returns early if the results list is empty, otherwise routes to patient or provider display.</remarks>
     private void Display()
     {
         var selectedItem = lstbxSearchResults.SelectedItem as string;
@@ -50,9 +37,10 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Extract the user name and ID.</summary>
-    /// <param name="selectedItem">The string containing the name and ID.</param>
-    /// <returns>A string array where [0] = name and [1] = ID.</returns>
+    /// <summary>Parses a formatted search result string into a name and ID pair.</summary>
+    /// <remarks>Expects the format <c>Name (ID)</c>; splits on the last opening parenthesis.</remarks>
+    /// <param name="selectedItem">The formatted search result string to parse.</param>
+    /// <returns>A two-element array where index <c>0</c> is the name and index <c>1</c> is the ID.</returns>
     private static string[] ExtractNameId(string selectedItem)
     {
         int lastParenthesisIndex = selectedItem.LastIndexOf('(');

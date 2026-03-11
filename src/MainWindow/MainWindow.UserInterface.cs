@@ -1,5 +1,5 @@
 ﻿// 260227_code
-// 260227_documentation
+// 260311_documentation
 
 using System.Windows;
 using System.Windows.Controls;
@@ -10,7 +10,8 @@ namespace TingenTransmorger;
  */
 public partial class MainWindow : Window
 {
-    /// <summary>Setup the initial user interface.</summary>
+    /// <summary>Initializes the UI to its default state with patient search active.</summary>
+    /// <remarks>Sets the search toggle to 'Patient Search' and checks the search-by-name radio button.</remarks>
     private void SetInitialUi()
     {
         ClearUi();
@@ -19,7 +20,8 @@ public partial class MainWindow : Window
         rbtnSearchByName.IsChecked = true;
     }
 
-    /// <summary>Reset all of the UI components.</summary>
+    /// <summary>Resets all UI component groups to their default visibility states.</summary>
+    /// <remarks>Delegates to individual Reset methods and collapses the meeting detail and detail panels.</remarks>
     private void ResetAllComponents()
     {
         ResetUserDetailUi();
@@ -32,7 +34,8 @@ public partial class MainWindow : Window
         spnlDetail.Visibility        = Visibility.Collapsed;
     }
 
-    /// <summary>Reset the user detail UI components.</summary>
+    /// <summary>Resets the user detail panel visibility to its default state.</summary>
+    /// <remarks>Shows the name/ID and contacts panels; collapses the user detail panel.</remarks>
     private void ResetUserDetailUi()
     {
         spnlUserNameAndId.Visibility = Visibility.Visible;
@@ -40,7 +43,8 @@ public partial class MainWindow : Window
         spnlUserDetail.Visibility    = Visibility.Collapsed;
     }
 
-    /// <summary>Reset the meeting result UI components.</summary>
+    /// <summary>Resets the meeting result panel visibility to its default state.</summary>
+    /// <remarks>Shows the meeting breakdown and data grid; collapses the meeting result panel.</remarks>
     private void ResetMeetingResultUi()
     {
         spnlMeetingBreakdown.Visibility = Visibility.Visible;
@@ -48,7 +52,8 @@ public partial class MainWindow : Window
         spnlMeetingResult.Visibility    = Visibility.Collapsed;
     }
 
-    /// <summary>Reset the general meeting detail UI components.</summary>
+    /// <summary>Resets the general meeting detail panel visibility to its default state.</summary>
+    /// <remarks>Shows the top, left, center, and right column panels; collapses the detail border.</remarks>
     private void ResetGeneralMeetingDetailUi()
     {
         spnlGeneralMeetingDetailTop.Visibility          = Visibility.Visible;
@@ -58,7 +63,8 @@ public partial class MainWindow : Window
         brdrGeneralMeetingDetail.Visibility             = Visibility.Collapsed;
     }
 
-    /// <summary>Reset the patient meeting detail UI components.</summary>
+    /// <summary>Resets the patient meeting detail panel visibility to its default state.</summary>
+    /// <remarks>Shows the top, left, center, and right column panels; collapses the detail border.</remarks>
     private void ResetPatientMeetingDetailUi()
     {
         spnlPatientMeetingDetailTop.Visibility          = Visibility.Visible;
@@ -68,7 +74,8 @@ public partial class MainWindow : Window
         brdrPatientMeetingDetail.Visibility             = Visibility.Collapsed;
     }
 
-    /// <summary>Reset the provider meeting details UI components.</summary>
+    /// <summary>Resets the provider meeting detail panel visibility to its default state.</summary>
+    /// <remarks>Shows the top and participant names panels; collapses the detail border.</remarks>
     private void ResetProviderMeetingDetailUi()
     {
         spnlProviderMeetingDetailTop.Visibility = Visibility.Visible;
@@ -76,7 +83,8 @@ public partial class MainWindow : Window
         brdrProviderMeetingDetail.Visibility    = Visibility.Collapsed;
     }
 
-    /// <summary>Set the UI theme for admin mode.</summary>
+    /// <summary>Applies the admin mode visual theme to the main window.</summary>
+    /// <remarks>Sets the window border to purple and appends '- ADMIN MODE' to the window title.</remarks>
     private void SetAdminModeTheme()
     {
         brdrMainWindow.Background = System.Windows.Media.Brushes.Purple;
@@ -84,7 +92,8 @@ public partial class MainWindow : Window
         Title = $"{currentTitle} - ADMIN MODE";
     }
 
-    /// <summary>Set the UI theme for out-of-date database.</summary>
+    /// <summary>Applies the out-of-date database visual theme to the main window.</summary>
+    /// <remarks>Sets the window border to red and appends '- DATABASE IS OUT OF DATE' to the window title.</remarks>
     public void SetOutOfDateDatabaseTheme()
     {
         brdrMainWindow.Background = System.Windows.Media.Brushes.Red;
@@ -92,9 +101,10 @@ public partial class MainWindow : Window
         Title = $"{currentTitle} - DATABASE IS OUT OF DATE";
     }
 
-    /// <summary>Setup the user interface for displaying patient details.</summary>
-    /// <param name="patientName">The name of the patient.</param>
-    /// <param name="patientId">The ID of the patient.</param>
+    /// <summary>Configures the UI layout for displaying patient details.</summary>
+    /// <remarks>Calls <see cref="ResetAllComponents"/> before making patient-specific panels visible.</remarks>
+    /// <param name="patientName">The full name of the patient to display.</param>
+    /// <param name="patientId">The unique identifier of the patient to display.</param>
     private void SetPatientDetailUi(string patientName, string patientId)
     {
         ResetAllComponents();
@@ -110,9 +120,10 @@ public partial class MainWindow : Window
         spnlDetail.Visibility                = Visibility.Visible;
     }
 
-    /// <summary>Setup the user interface for displaying patient details.</summary>
-    /// <param name="providerName">The name of the provider.</param>
-    /// <param name="providerId">The ID of the provider.</param>
+    /// <summary>Configures the UI layout for displaying provider details.</summary>
+    /// <remarks>Hides the contacts and patient meeting detail panels, which are not used for provider display.</remarks>
+    /// <param name="providerName">The full name of the provider to display.</param>
+    /// <param name="providerId">The unique identifier of the provider to display.</param>
     private void SetProviderDetailUi(string providerName, string providerId)
     {
         SetUserDetail("PROVIDER", providerName, providerId);
@@ -131,10 +142,11 @@ public partial class MainWindow : Window
         spnlDetail.Visibility               = Visibility.Visible;
     }
 
-    /// <summary>Update user detail UI</summary>
-    /// <param name="searchType">The context or category of the search operation, used to indicate the type of user information being displayed.</param>
-    /// <param name="userName">The name of the user to be shown in the user interface.</param>
-    /// <param name="userId">The unique identifier of the user to be presented in the user interface.</param>
+    /// <summary>Populates the user type, name, and ID labels in the detail panel.</summary>
+    /// <remarks>Used by both <see cref="SetPatientDetailUi"/> and <see cref="SetProviderDetailUi"/>.</remarks>
+    /// <param name="searchType">The user type label to display (e.g., 'PATIENT' or 'PROVIDER').</param>
+    /// <param name="userName">The name of the user to display.</param>
+    /// <param name="userId">The unique identifier of the user to display.</param>
     private void SetUserDetail(string searchType, string userName, string userId)
     {
         lblUserTypeKey.Content   = searchType;
@@ -142,7 +154,8 @@ public partial class MainWindow : Window
         lblUserIdValue.Content   = userId;
     }
 
-    /// <summary>Toggle the search type button text.</summary>
+    /// <summary>Toggles the search type button between patient and provider search, then clears the UI.</summary>
+    /// <remarks>Calls <see cref="ClearUi"/> after toggling to reset the search state.</remarks>
     private void SetSearchToggleUi()
     {
         btnSearchToggle.Content = btnSearchToggle.Content.ToString() == "Patient Search"
@@ -152,7 +165,8 @@ public partial class MainWindow : Window
         ClearUi();
     }
 
-    /// <summary>Clear user interface components.</summary>
+    /// <summary>Clears the search box and results list, then resets all UI components.</summary>
+    /// <remarks>Calls <see cref="ResetAllComponents"/> as part of the clear operation.</remarks>
     private void ClearUi()
     {
         txbxSearchBox.Text = string.Empty;
@@ -161,7 +175,18 @@ public partial class MainWindow : Window
         ResetAllComponents();
     }
 
-    /// <summary>Update the btnPhoneDetails/btnEmailDetails appearance.</summary>
+    /// <summary>Sets the color and enabled state of a message detail button based on failure and delivery data.</summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item><b>Yellow</b> — both failures and deliveries exist.</item>
+    /// <item><b>Green</b> — deliveries exist with no failures.</item>
+    /// <item><b>Red</b> — failures exist with no deliveries.</item>
+    /// <item><b>Gray</b> — no records exist; the button is also disabled.</item>
+    /// </list>
+    /// </remarks>
+    /// <param name="hasFailures">Whether the patient has message failure records for this contact.</param>
+    /// <param name="hasDeliveries">Whether the patient has message delivery records for this contact.</param>
+    /// <param name="theButton">The button whose color and enabled state will be updated.</param>
     private static void UpdateDetailsButtonColor(bool hasFailures, bool hasDeliveries, Button theButton)
     {
         theButton.IsEnabled = true;

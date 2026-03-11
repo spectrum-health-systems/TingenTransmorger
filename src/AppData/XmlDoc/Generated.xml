@@ -672,110 +672,149 @@
             <param name="messageType">The message channel to display; either 'phone' or 'email'.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.GetStringProperty(System.Text.Json.JsonElement,System.String)">
-            <summary>Returns the string value of a named property on a <see cref="T:System.Text.Json.JsonElement"/>, or <see cref="F:System.String.Empty"/> if the property is absent or null.</summary>
+            <summary>Extracts a named string property value from a <see cref="T:System.Text.Json.JsonElement"/>.</summary>
+            <remarks>Returns <see cref="F:System.String.Empty"/> if the property is absent or its value is null.</remarks>
+            <param name="element">The JSON element to extract the property from.</param>
+            <param name="propertyName">The name of the property to extract.</param>
+            <returns>The property's string value, or <see cref="F:System.String.Empty"/> if absent or null.</returns>
         </member>
         <member name="M:TingenTransmorger.MainWindow.DisplayProviderDetails(System.String,System.String)">
-            <summary>Displays provider details in the UI.</summary>
-            <param name="providerName">The provider name</param>
-            <param name="providerId">The provider ID.</param>
+            <summary>Loads and displays all provider detail sections in the UI for the specified provider.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.StopApp(System.String)"/> if no provider record is found in the database.</remarks>
+            <param name="providerName">The full name of the provider to display.</param>
+            <param name="providerId">The unique identifier of the provider to display.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.DisplayProviderMeetingResults(System.String)">
-            <summary>Display meeting statistics and details for the specified provider. </summary>
-            <param name="providerName">The name of the provider.</param>
-        </member>
-        <member name="M:TingenTransmorger.MainWindow.BuildMeetingList(System.Collections.Generic.List{TingenTransmorger.Models.MeetingRow},System.Nullable{System.Text.Json.JsonElement})">
-            <summary>Build a list of meeting details.</summary>
-            <remarks>This will go through all of the meeting IDs for the provider, and add valid details to the list.</remarks>
-            <param name="meetingRows">The list of meeting details.</param>
-            <param name="providerDetails">Provider details component of the database, should include a 'Meetings' property.</param>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:TingenTransmorger.MainWindow.GetMeetingRowDetails(System.String,System.Nullable{System.Text.Json.JsonElement})" -->
-        <member name="M:TingenTransmorger.MainWindow.UpdateSearchResults">
-            <summary>Modifies the search results based on the current search type and search text.</summary>
-        </member>
-        <member name="M:TingenTransmorger.MainWindow.GetSearchResults(System.String,System.String)">
-            <summary>Get a list of patient/provider search results.</summary>
-            <param name="searchType">The type of search.</param>
-            <param name="searchText">Contents of the search box.</param>
-            <returns>The search results.</returns>
-        </member>
-        <member name="M:TingenTransmorger.MainWindow.DisplaySearchResults(System.Collections.Generic.List{System.String})">
-            <summary>Display search results.</summary>
-            <param name="searchResults">The list of search results to display.</param>
-        </member>
-        <member name="M:TingenTransmorger.MainWindow.Display">
-            <summary>Display details for the selected user.</summary>
+            <summary>Builds and displays the meeting list and status summary for the specified provider.</summary>
             <remarks>
-            A "user" in this context refers to either a patient or a provider.<br/>
-            <br/>
-            When a user is selected from the search results, this method will:
-            <list type="number">
-            <item>Change the UserTypeKey contents to "PATIENTS" or "PROVIDERS" based on the search type</item>
-            <item>Display the user name</item>
-            <item>Display the user ID</item>
-            <item>Display the patient phone number(s), and set the detail button</item>
-            <item>Display the patient email addresses(s), and set the detail button</item>
-            <item>Display the user's meting breakdown</item>
-            <item>Display the user's meting list</item>
+            <list type="bullet">
+            <item>Sorts meetings by scheduled start date descending before binding to the data grid.</item>
+            <item>Computes completed, cancelled, in-progress, expired, and scheduled meeting counts.</item>
             </list>
             </remarks>
+            <param name="providerName">The full name of the provider whose meetings will be displayed.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.BuildMeetingList(System.Collections.Generic.List{TingenTransmorger.Models.MeetingRow},System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Populates a meeting row list from the provider's meeting ID array in the JSON record.</summary>
+            <remarks>Skips null or whitespace meeting IDs and any IDs with no corresponding detail record.</remarks>
+            <param name="meetingRows">The list to populate with resolved meeting row data.</param>
+            <param name="providerDetails">The JSON element containing the provider's meeting ID array.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetMeetingRowDetails(System.String,System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Builds a <see cref="T:TingenTransmorger.Models.MeetingRow"/> from a meeting ID and its JSON detail record.</summary>
+            <remarks>Returns <see langword="null"/> if <paramref name="meetingDetail"/> is null.</remarks>
+            <param name="meetingId">The meeting ID to assign to the row.</param>
+            <param name="meetingDetail">The JSON element containing the meeting's detail fields.</param>
+            <returns>A populated <see cref="T:TingenTransmorger.Models.MeetingRow"/>, or <see langword="null"/> if the detail record is absent.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.UpdateSearchResults">
+            <summary>Refreshes the search results list using the current search type and search box text.</summary>
+            <remarks>Reads the current search type and search box text before invoking the update pipeline.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetSearchResults(System.String,System.String)">
+            <summary>Returns a filtered list of search results based on the active search type and text.</summary>
+            <remarks>
+            <list type="bullet">
+            <item>Returns an empty list and clears the UI if the search box is blank.</item>
+            <item>Treats a lone asterisk as a wildcard, returning all results for the active search type.</item>
+            <item>Routes to patient or provider search methods based on <paramref name="searchType"/>.</item>
+            </list>
+            </remarks>
+            <param name="searchType">The active search type; expected to contain 'patient' or 'provider'.</param>
+            <param name="searchText">The trimmed text from the search box.</param>
+            <returns>A list of matching patient or provider strings, or an empty list if the search text is blank.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplaySearchResults(System.Collections.Generic.List{System.String})">
+            <summary>Clears and repopulates the search results list box with the given results.</summary>
+            <remarks>Does not add any items if <paramref name="searchResults"/> is empty.</remarks>
+            <param name="searchResults">The list of result strings to display.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.Display">
+            <summary>Loads and displays details for the currently selected patient or provider search result.</summary>
+            <remarks>Returns early if the results list is empty, otherwise routes to patient or provider display.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ExtractNameId(System.String)">
-            <summary>Extract the user name and ID.</summary>
-            <param name="selectedItem">The string containing the name and ID.</param>
-            <returns>A string array where [0] = name and [1] = ID.</returns>
+            <summary>Parses a formatted search result string into a name and ID pair.</summary>
+            <remarks>Expects the format <c>Name (ID)</c>; splits on the last opening parenthesis.</remarks>
+            <param name="selectedItem">The formatted search result string to parse.</param>
+            <returns>A two-element array where index <c>0</c> is the name and index <c>1</c> is the ID.</returns>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetInitialUi">
-            <summary>Setup the initial user interface.</summary>
+            <summary>Initializes the UI to its default state with patient search active.</summary>
+            <remarks>Sets the search toggle to 'Patient Search' and checks the search-by-name radio button.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ResetAllComponents">
-            <summary>Reset all of the UI components.</summary>
+            <summary>Resets all UI component groups to their default visibility states.</summary>
+            <remarks>Delegates to individual Reset methods and collapses the meeting detail and detail panels.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ResetUserDetailUi">
-            <summary>Reset the user detail UI components.</summary>
+            <summary>Resets the user detail panel visibility to its default state.</summary>
+            <remarks>Shows the name/ID and contacts panels; collapses the user detail panel.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ResetMeetingResultUi">
-            <summary>Reset the meeting result UI components.</summary>
+            <summary>Resets the meeting result panel visibility to its default state.</summary>
+            <remarks>Shows the meeting breakdown and data grid; collapses the meeting result panel.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ResetGeneralMeetingDetailUi">
-            <summary>Reset the general meeting detail UI components.</summary>
+            <summary>Resets the general meeting detail panel visibility to its default state.</summary>
+            <remarks>Shows the top, left, center, and right column panels; collapses the detail border.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ResetPatientMeetingDetailUi">
-            <summary>Reset the patient meeting detail UI components.</summary>
+            <summary>Resets the patient meeting detail panel visibility to its default state.</summary>
+            <remarks>Shows the top, left, center, and right column panels; collapses the detail border.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ResetProviderMeetingDetailUi">
-            <summary>Reset the provider meeting details UI components.</summary>
+            <summary>Resets the provider meeting detail panel visibility to its default state.</summary>
+            <remarks>Shows the top and participant names panels; collapses the detail border.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetAdminModeTheme">
-            <summary>Set the UI theme for admin mode.</summary>
+            <summary>Applies the admin mode visual theme to the main window.</summary>
+            <remarks>Sets the window border to purple and appends '- ADMIN MODE' to the window title.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetOutOfDateDatabaseTheme">
-            <summary>Set the UI theme for out-of-date database.</summary>
+            <summary>Applies the out-of-date database visual theme to the main window.</summary>
+            <remarks>Sets the window border to red and appends '- DATABASE IS OUT OF DATE' to the window title.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetPatientDetailUi(System.String,System.String)">
-            <summary>Setup the user interface for displaying patient details.</summary>
-            <param name="patientName">The name of the patient.</param>
-            <param name="patientId">The ID of the patient.</param>
+            <summary>Configures the UI layout for displaying patient details.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.ResetAllComponents"/> before making patient-specific panels visible.</remarks>
+            <param name="patientName">The full name of the patient to display.</param>
+            <param name="patientId">The unique identifier of the patient to display.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetProviderDetailUi(System.String,System.String)">
-            <summary>Setup the user interface for displaying patient details.</summary>
-            <param name="providerName">The name of the provider.</param>
-            <param name="providerId">The ID of the provider.</param>
+            <summary>Configures the UI layout for displaying provider details.</summary>
+            <remarks>Hides the contacts and patient meeting detail panels, which are not used for provider display.</remarks>
+            <param name="providerName">The full name of the provider to display.</param>
+            <param name="providerId">The unique identifier of the provider to display.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetUserDetail(System.String,System.String,System.String)">
-            <summary>Update user detail UI</summary>
-            <param name="searchType">The context or category of the search operation, used to indicate the type of user information being displayed.</param>
-            <param name="userName">The name of the user to be shown in the user interface.</param>
-            <param name="userId">The unique identifier of the user to be presented in the user interface.</param>
+            <summary>Populates the user type, name, and ID labels in the detail panel.</summary>
+            <remarks>Used by both <see cref="M:TingenTransmorger.MainWindow.SetPatientDetailUi(System.String,System.String)"/> and <see cref="M:TingenTransmorger.MainWindow.SetProviderDetailUi(System.String,System.String)"/>.</remarks>
+            <param name="searchType">The user type label to display (e.g., 'PATIENT' or 'PROVIDER').</param>
+            <param name="userName">The name of the user to display.</param>
+            <param name="userId">The unique identifier of the user to display.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.SetSearchToggleUi">
-            <summary>Toggle the search type button text.</summary>
+            <summary>Toggles the search type button between patient and provider search, then clears the UI.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.ClearUi"/> after toggling to reset the search state.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ClearUi">
-            <summary>Clear user interface components.</summary>
+            <summary>Clears the search box and results list, then resets all UI components.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.ResetAllComponents"/> as part of the clear operation.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.UpdateDetailsButtonColor(System.Boolean,System.Boolean,System.Windows.Controls.Button)">
-            <summary>Update the btnPhoneDetails/btnEmailDetails appearance.</summary>
+            <summary>Sets the color and enabled state of a message detail button based on failure and delivery data.</summary>
+            <remarks>
+            <list type="bullet">
+            <item><b>Yellow</b> — both failures and deliveries exist.</item>
+            <item><b>Green</b> — deliveries exist with no failures.</item>
+            <item><b>Red</b> — failures exist with no deliveries.</item>
+            <item><b>Gray</b> — no records exist; the button is also disabled.</item>
+            </list>
+            </remarks>
+            <param name="hasFailures">Whether the patient has message failure records for this contact.</param>
+            <param name="hasDeliveries">Whether the patient has message delivery records for this contact.</param>
+            <param name="theButton">The button whose color and enabled state will be updated.</param>
         </member>
         <member name="F:TingenTransmorger.MainWindow._tmDb">
             <summary>The Transmorger database.</summary>

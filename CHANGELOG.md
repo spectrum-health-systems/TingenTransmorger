@@ -1,8 +1,15 @@
 # Tingen Transmorger: Changelog
 
-## 0.9.30.0 - TBD
+## 0.9.30.0 - 3/11/26
 
-TBD
+> The main focus for this release was updating the XML documentation.
+
+- `UPDATED` XML documentation for all classes
+- `FIXED` Transmorger no longer exits if a database update is declined
+- `MODIFIED` Admin mode background color is now purple
+- `MODIFIED` Admin mode is displayed in the title bar
+- `REMOVED` Core.Blueprint.cs (not used)
+- `REMOVED` Help.HelpWindow.cs (not used)
 
 ## 0.9.29.0 - 3/3/2026
 

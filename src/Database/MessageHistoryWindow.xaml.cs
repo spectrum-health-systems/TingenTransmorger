@@ -1,3 +1,9 @@
+﻿// 260212_code
+// 260311_documentation
+
+/* Development note: This class needs to be refactored.
+ */
+
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,18 +12,12 @@ using System.Windows.Media;
 
 namespace TingenTransmorger.Database;
 
-/// <summary>
-/// Message type for the MessageHistoryWindow
-/// </summary>
 public enum MessageHistoryType
 {
     SMS,
     Email
 }
 
-/// <summary>
-/// Interaction logic for MessageHistoryWindow.xaml
-/// </summary>
 public partial class MessageHistoryWindow : Window
 {
     private List<(string PhoneNumber, string ErrorMessage, string ScheduledStartTime)> _smsFailures;
@@ -51,7 +51,6 @@ public partial class MessageHistoryWindow : Window
     {
         try
         {
-            // Take current items (respecting sorting/filtering) and filter successes
             var items = dgMessages.Items.Cast<object>().Where(i => i != null).ToList();
             var successes = new List<MessageHistoryRow>();
 
@@ -62,13 +61,11 @@ public partial class MessageHistoryWindow : Window
                     if (!string.Equals(mr.Type, "Failure", StringComparison.OrdinalIgnoreCase) &&
                         !string.Equals(mr.Status, "Failed", StringComparison.OrdinalIgnoreCase))
                     {
-                        // treat as success unless explicitly marked failure
                         successes.Add(mr);
                     }
                 }
                 else
                 {
-                    // try reflection fallback: look for Status or Type property
                     var t = item.GetType();
                     var statusProp = t.GetProperty("Status");
                     var typeProp = t.GetProperty("Type");
@@ -97,7 +94,6 @@ public partial class MessageHistoryWindow : Window
                 return;
             }
 
-            // Format successes similar to other copy methods
             var contactHeader = _messageType == MessageHistoryType.SMS ? "Phone Number" : "Email Address";
             var headerNames = new[] { "Sent / Start Time", "Status", "Message Type", "Error/Details", contactHeader, "Type" };
             var rowList = successes.Select(r => new[] {
@@ -164,7 +160,6 @@ public partial class MessageHistoryWindow : Window
     {
         try
         {
-            // Take current items (respecting sorting/filtering) and filter failures
             var items = dgMessages.Items.Cast<object>().Where(i => i != null).ToList();
             var failures = new List<MessageHistoryRow>();
 
@@ -206,7 +201,6 @@ public partial class MessageHistoryWindow : Window
                 return;
             }
 
-            // Format failures similar to other copy methods
             var contactHeader = _messageType == MessageHistoryType.SMS ? "Phone Number" : "Email Address";
             var headerNames = new[] { "Sent / Start Time", "Status", "Message Type", "Error/Details", contactHeader, "Type" };
             var rowList = failures.Select(r => new[] {
@@ -273,7 +267,6 @@ public partial class MessageHistoryWindow : Window
     {
         try
         {
-            // Use the DataGrid's current item ordering (dgMessages.Items) so we respect user sorting/filtering
             var items = dgMessages.Items.Cast<object>().Where(i => i != null).Take(10).ToList();
 
             var contactHeader = _messageType == MessageHistoryType.SMS ? "Phone Number" : "Email Address";
@@ -295,7 +288,6 @@ public partial class MessageHistoryWindow : Window
                 }
                 else
                 {
-                    // Fallback to reflecting bound properties for this item
                     var values = new List<string>();
                     foreach (var col in dgMessages.Columns)
                     {
@@ -321,7 +313,6 @@ public partial class MessageHistoryWindow : Window
                 return;
             }
 
-            // Column caps to avoid extremely wide output
             var colCaps = new[] { 30, 20, 30, 120, 20, 15 };
             var widths = new int[headerNames.Length];
             for (int c = 0; c < headerNames.Length; c++)
@@ -375,13 +366,10 @@ public partial class MessageHistoryWindow : Window
 
     private void ConfigureForMessageType()
     {
-        // Update window title
         Title = _messageType == MessageHistoryType.SMS ? "SMS Message History" : "Email Message History";
 
-        // Update label content
         lblMessageHistoryTitle.Content = _messageType == MessageHistoryType.SMS ? "Message History - Phone" : "Message History - Email";
 
-        // Update the contact column header and binding
         var contactColumn = dgMessages.Columns[4] as DataGridTextColumn; // Phone Number / Email Address column
         if (contactColumn != null)
         {
@@ -397,15 +385,12 @@ public partial class MessageHistoryWindow : Window
         _smsFailures = smsFailures;
         _messageDeliveries = messageDeliveries;
 
-        // Combine both lists into a unified message history
         var combinedMessages = new List<MessageHistoryRow>();
 
-        // Add SMS Failures
         foreach (var failure in smsFailures)
         {
             var formattedStartTime = FormatStartTime(failure.ScheduledStartTime);
 
-            // Detect opt-out error - check for "is opted out" or general "opt out" phrases
             var isOptedOut = !string.IsNullOrWhiteSpace(failure.ErrorMessage)
                 && (failure.ErrorMessage.Contains("is opted out", StringComparison.OrdinalIgnoreCase)
                     || failure.ErrorMessage.Contains("opted out", StringComparison.OrdinalIgnoreCase)
@@ -414,9 +399,7 @@ public partial class MessageHistoryWindow : Window
             combinedMessages.Add(new MessageHistoryRow
             {
                 IsFailure = true,
-                // For failures Sent is always ---
                 Sent = "---",
-                // Format ScheduleStartTime using MM/DD/YY HH:MM AM/PM
                 ScheduleStartTime = FormatStartTime(formattedStartTime),
                 Status = "Failed",
                 MessageType = "SMS",
@@ -428,12 +411,9 @@ public partial class MessageHistoryWindow : Window
             });
         }
 
-        // Add Message Deliveries
         foreach (var delivery in messageDeliveries)
         {
-            // Combine date and time for successful deliveries
             var sent = CombineDateAndTime(delivery.DateSent, delivery.TimeSent);
-            // Format Sent using MM/DD/YY HH:MM AM/PM (FormatStartTime handles empty/invalid values)
             var formattedSent = FormatStartTime(sent);
 
             combinedMessages.Add(new MessageHistoryRow
@@ -451,7 +431,6 @@ public partial class MessageHistoryWindow : Window
             });
         }
 
-        // Sort by most recent first
         var sortedMessages = combinedMessages
             .OrderByDescending(m => m.SortTimestamp)
             .ToList();
@@ -467,10 +446,8 @@ public partial class MessageHistoryWindow : Window
         _smsFailures = null;
         _messageDeliveries = null;
 
-        // Combine both lists into a unified message history
         var combinedMessages = new List<MessageHistoryRow>();
 
-        // Add Email Failures
         foreach (var failure in emailFailures)
         {
             var formattedStartTime = FormatStartTime(failure.ScheduledStartTime);
@@ -490,7 +467,6 @@ public partial class MessageHistoryWindow : Window
             });
         }
 
-        // Add Email Deliveries
         foreach (var delivery in emailDeliveries)
         {
             var sent = CombineDateAndTime(delivery.DateSent, delivery.TimeSent);
@@ -521,14 +497,12 @@ public partial class MessageHistoryWindow : Window
 
     private void UpdateSummary(List<MessageHistoryRow> messages)
     {
-        // Update summary textblock: "# Total messages / # Successful / # Failures"
         try
         {
             var total = messages.Count;
             var failures = messages.Count(m => m.IsFailure);
             var successes = total - failures;
 
-            // Build colored runs: total (black), successes (green), failures (red)
             txbkMessageSummary.Inlines.Clear();
             txbkMessageSummary.Inlines.Add(new Run(total.ToString()) { Foreground = Brushes.Black, FontWeight = FontWeights.SemiBold });
             txbkMessageSummary.Inlines.Add(new Run(" Total messages / ") { Foreground = Brushes.Black });
@@ -564,41 +538,30 @@ public partial class MessageHistoryWindow : Window
         if (string.IsNullOrWhiteSpace(timestamp))
             return DateTime.MinValue;
 
-        // Try to parse the timestamp, return MinValue if parsing fails
         if (DateTime.TryParse(timestamp, out var result))
             return result;
 
         return DateTime.MinValue;
     }
 
-    /// <summary>
-    /// Formats the start time to MM/DD/YY HH:MM AM/PM format, or returns "---" if empty.
-    /// </summary>
     private string FormatStartTime(string? startTime)
     {
         if (string.IsNullOrWhiteSpace(startTime))
             return "---";
 
-        // Try to parse the datetime
         if (DateTime.TryParse(startTime, out var dt))
         {
-            // Format as MM/DD/YY HH:MM AM/PM
             return dt.ToString("MM/dd/yy hh:mm tt");
         }
 
-        // If parsing fails, return the original value or ---
         return string.IsNullOrWhiteSpace(startTime) ? "---" : startTime;
     }
 
-    /// <summary>
-    /// Formats error details, showing "---" if empty or if content is "{}".
-    /// </summary>
     private string FormatErrorDetails(string? errorDetails)
     {
         if (string.IsNullOrWhiteSpace(errorDetails))
             return "---";
 
-        // Check if content is just "{}"
         if (errorDetails.Trim() == "{}")
             return "---";
 
@@ -609,13 +572,11 @@ public partial class MessageHistoryWindow : Window
     {
         try
         {
-            // Preferred: ItemsSource is the List<MessageHistoryRow> we set in SetMessageData
             if (dgMessages.ItemsSource is IEnumerable<MessageHistoryRow> rows)
             {
                 var contactHeader = _messageType == MessageHistoryType.SMS ? "Phone Number" : "Email Address";
                 var headerNames = new[] { "Sent / Start Time", "Status", "Message Type", "Error/Details", contactHeader, "Type" };
 
-                // Prepare rows
                 var rowList = rows.Select(r => new[] {
                     r.SentOrStartTime ?? string.Empty,
                     r.Status ?? string.Empty,
@@ -625,10 +586,8 @@ public partial class MessageHistoryWindow : Window
                     r.Type ?? string.Empty
                 }).ToList();
 
-                // Column caps to avoid extremely wide output
                 var colCaps = new[] { 30, 20, 30, 120, 20, 15 };
 
-                // Compute widths based on header and content, respecting caps
                 var widths = new int[headerNames.Length];
                 for (int c = 0; c < headerNames.Length; c++)
                 {
@@ -660,7 +619,6 @@ public partial class MessageHistoryWindow : Window
                 }
                 sb.AppendLine();
 
-                // Rows
                 foreach (var r in rowList)
                 {
                     for (int c = 0; c < r.Length; c++)
@@ -678,7 +636,6 @@ public partial class MessageHistoryWindow : Window
                 return;
             }
 
-            // Fallback: iterate visible columns and items generically and produce padded text
             var headerCols = dgMessages.Columns.Select(c => c.Header?.ToString() ?? string.Empty).ToArray();
             var valuesMatrix = new List<string[]>();
             foreach (var item in dgMessages.Items)
@@ -753,7 +710,6 @@ public partial class MessageHistoryWindow : Window
         }
         catch (Exception ex)
         {
-            // In case clipboard fails or reflection fails, notify user without throwing.
             MessageBox.Show(this, $"Failed to copy message history: {ex.Message}", "Copy Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
@@ -767,9 +723,6 @@ public partial class MessageHistoryWindow : Window
     }
 }
 
-/// <summary>
-/// Represents a row in the combined message history grid.
-/// </summary>
 public class MessageHistoryRow
 {
     public bool IsFailure { get; set; }
@@ -783,7 +736,6 @@ public class MessageHistoryRow
     public string Type { get; set; } = string.Empty;
     public DateTime SortTimestamp { get; set; }
 
-    // Combined property used by the DataGrid column: prefer Sent when present, otherwise show Start Time
     public string SentOrStartTime =>
         !string.IsNullOrWhiteSpace(Sent) && Sent != "---"
             ? Sent

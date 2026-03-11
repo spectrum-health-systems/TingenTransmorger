@@ -1,16 +1,12 @@
-// 260206_code
+﻿// 260206_code
 // 260206_documentation
 
 using System.Text.Json;
 
 namespace TingenTransmorger.Database;
 
-/// <summary>Partial class for TransmorgerDatabase to add SMS tracking methods.</summary>
 public partial class TransmorgerDatabase
 {
-    /// <summary>Gets SMS failure records for a specific phone number by searching all patients.</summary>
-    /// <param name="phoneNumber">The normalized 10-digit phone number to search for.</param>
-    /// <returns>A list of SMS failure records with Phone Number, Error Message and Scheduled Start Time.</returns>
     public List<(string PhoneNumber, string ErrorMessage, string ScheduledStartTime)> GetSmsFailureStats(string phoneNumber)
     {
         var results = new List<(string, string, string)>();
@@ -92,9 +88,6 @@ public partial class TransmorgerDatabase
         return results;
     }
 
-    /// <summary>Gets message delivery records for a specific phone number by searching all patients.</summary>
-    /// <param name="phoneNumber">The normalized 10-digit phone number to search for.</param>
-    /// <returns>A list of message delivery records with Phone Number, Delivery Status, Message Type, Error Message, Date Sent, and Time Sent.</returns>
     public List<(string PhoneNumber, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> GetMessageDeliveryStats(string phoneNumber)
     {
         var results = new List<(string, string, string, string, string, string)>();
@@ -181,7 +174,6 @@ public partial class TransmorgerDatabase
                         ? $"{normalizedPhoneFromJson.Substring(0, 3)}-{normalizedPhoneFromJson.Substring(3, 3)}-{normalizedPhoneFromJson.Substring(6, 4)}"
                         : phoneNumberFromJson;
 
-
                     results.Add((formattedPhone, deliveryStatus, messageType, errorMessage, dateSent, timeSent));
                 }
             }
@@ -190,9 +182,6 @@ public partial class TransmorgerDatabase
         return results;
     }
 
-    /// <summary>Gets email failure records for a specific email address by searching all patients.</summary>
-    /// <param name="emailAddress">The email address to search for.</param>
-    /// <returns>A list of email failure records with Email Address, Error Message and Scheduled Start Time.</returns>
     public List<(string EmailAddress, string ErrorMessage, string ScheduledStartTime)> GetEmailFailureStats(string emailAddress)
     {
         var results = new List<(string, string, string)>();
@@ -262,9 +251,6 @@ public partial class TransmorgerDatabase
         return results;
     }
 
-    /// <summary>Gets email delivery records for a specific email address by searching all patients.</summary>
-    /// <param name="emailAddress">The email address to search for.</param>
-    /// <returns>A list of email delivery records with Email Address, Delivery Status, Message Type, Error Message, Date Sent, and Time Sent.</returns>
     public List<(string EmailAddress, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> GetEmailDeliveryStats(string emailAddress)
     {
         var results = new List<(string, string, string, string, string, string)>();
@@ -282,7 +268,6 @@ public partial class TransmorgerDatabase
         {
             return results;
         }
-
 
         // Iterate through all patients
         foreach (var patient in patients.EnumerateArray())

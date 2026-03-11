@@ -1,4 +1,4 @@
-// 260206_code
+﻿// 260206_code
 // 260206_documentation
 
 using System.Text;
@@ -6,10 +6,8 @@ using System.Text.Json;
 
 namespace TingenTransmorger.Database;
 
-/// <summary>Partial class for TransmorgerDatabase diagnostic methods.</summary>
 public partial class TransmorgerDatabase
 {
-    /// <summary>Diagnostic method to check database root properties.</summary>
     public string GetDatabaseStructureDiagnostic()
     {
         if (!_hasData)
@@ -78,7 +76,6 @@ public partial class TransmorgerDatabase
         return sb.ToString();
     }
     
-    /// <summary>Diagnostic method to show first SMS failure record if any exist.</summary>
     public string GetFirstSmsFailureDiagnostic()
     {
         if (!_hasData)
@@ -173,7 +170,6 @@ public partial class TransmorgerDatabase
         return sb.ToString();
     }
     
-    /// <summary>Searches the database for SMS failure records with phone numbers.</summary>
     public string SearchForSmsFailureRecords()
     {
         if (!_hasData)
@@ -265,7 +261,6 @@ public partial class TransmorgerDatabase
         return sb.ToString();
     }
     
-    /// <summary>Lists all root-level properties in the database to help identify SMS Stats location.</summary>
     public string ListAllRootProperties()
     {
         if (!_hasData)
@@ -317,7 +312,6 @@ public partial class TransmorgerDatabase
         return sb.ToString();
     }
     
-    /// <summary>Analyzes database for potential data duplication to identify size issues.</summary>
     public string AnalyzeDatabaseSizeIssues()
     {
         if (!_hasData)

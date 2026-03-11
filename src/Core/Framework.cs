@@ -24,10 +24,10 @@ class Framework
 
     /// <summary>Verifies that each directory in a collection exists, prompting or stopping the application as needed.</summary>
     /// <remarks>
-    ///   <list type="bullet">
-    ///     <item>Null or empty path values display an error message and stop the application.</item>
-    ///     <item>Non-existent paths prompt the user to create the directory or exit.</item>
-    ///   </list>
+    /// <list type="bullet">
+    /// <item>Null or empty path values display an error message and stop the application.</item>
+    /// <item>Non-existent paths prompt the user to create the directory or exit.</item>
+    /// </list>
     /// </remarks>
     /// <param name="directories">Dictionary of configuration key/path pairs to verify.</param>
     internal static void VerifyDirectories(Dictionary<string, string> directories)

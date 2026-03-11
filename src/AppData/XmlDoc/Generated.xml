@@ -116,10 +116,10 @@
         <member name="M:TingenTransmorger.Core.Framework.VerifyDirectories(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>Verifies that each directory in a collection exists, prompting or stopping the application as needed.</summary>
             <remarks>
-              <list type="bullet">
-                <item>Null or empty path values display an error message and stop the application.</item>
-                <item>Non-existent paths prompt the user to create the directory or exit.</item>
-              </list>
+            <list type="bullet">
+            <item>Null or empty path values display an error message and stop the application.</item>
+            <item>Non-existent paths prompt the user to create the directory or exit.</item>
+            </list>
             </remarks>
             <param name="directories">Dictionary of configuration key/path pairs to verify.</param>
         </member>
@@ -508,118 +508,168 @@
             </summary>
         </member>
         <member name="M:TingenTransmorger.MainWindow.EnterAdminMode(System.String,System.String,System.String)">
-            <summary>Handle admin mode operations.</summary>
-            <remarks>
-            Currently admin mode is focused on rebuilding the Transmorger database, but I'm leaving this the way it is for
-            now in case we want to add more admin-related operations in the future.
-            </remarks>
-            <param name="importDir">The directory for importing data.</param>
-            <param name="tmpDir">The temporary directory for various operations.</param>
-            <param name="masterDbDir">The directory of the master database.</param>
-            <returns>Asynchronous task.</returns>
+            <summary>Prompts for a database rebuild confirmation and stops the application if the user declines.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.StopApp(System.String)"/> before returning if the user declines the rebuild prompt.</remarks>
+            <param name="importDir">Directory containing source Excel files to import.</param>
+            <param name="tmpDir">Temporary data directory.</param>
+            <param name="masterDbDir">Master database output directory.</param>
+            <returns><see langword="true"/> if the database was rebuilt successfully; otherwise, <see langword="false"/>.</returns>
         </member>
         <member name="M:TingenTransmorger.MainWindow.RebuildDatabase(System.String,System.String,System.String)">
-            <summary> Rebuild the Transmorger database.</summary>
-            <param name="importDir">The directory for importing data.</param>
-            <param name="tmpDir">The temporary directory for various operations.</param>
-            <param name="masterDbDir">The directory of the master database.</param>
-            <returns>The Transmorger database.</returns>
+            <summary>Applies the admin mode theme, hides the main window, and rebuilds the database.</summary>
+            <remarks>The main window remains hidden for the duration of the rebuild operation.</remarks>
+            <param name="importDir">Directory containing source Excel files to import.</param>
+            <param name="tmpDir">Temporary data directory.</param>
+            <param name="masterDbDir">Master database output directory.</param>
+            <returns><see langword="true"/> if the rebuild completed successfully; otherwise, <see langword="false"/>.</returns>
         </member>
         <member name="M:TingenTransmorger.MainWindow.RebuildDatabasePrompt">
-            <summary>Prompts the user to confirm if they want to rebuild the database.</summary>
-            <returns>True if the user confirms, otherwise false.</returns>
+            <summary>Displays a confirmation message box asking whether to rebuild the database.</summary>
+            <remarks>Uses message box content from <see cref="M:TingenTransmorger.Core.Catalog.msgbox_DatabaseRebuildCheck"/>.</remarks>
+            <returns><see langword="true"/> if the user selects Yes; otherwise, <see langword="false"/>.</returns>
         </member>
         <member name="M:TingenTransmorger.MainWindow.CopyGeneralMeetingDetails">
-            <summary>Copy general meeting details to the clipboard.</summary>
+            <summary>Copies general meeting details from the UI to the clipboard as formatted text.</summary>
+            <remarks>Displays a confirmation on success or an error message if the clipboard operation fails.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.CopyPatientMeetingDetails">
-            <summary>Copy patient meeting details to the clipboard.</summary>
+            <summary>Copies patient participant details from the UI to the clipboard as formatted text.</summary>
+            <remarks>Displays a confirmation on success or an error message if the clipboard operation fails.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.CopyProviderMeetingDetails">
-            <summary>Copy provider meeting details to the clipboard.</summary>
+            <summary>Copies provider participant details from the UI to the clipboard as formatted text.</summary>
+            <remarks>Displays a confirmation on success or an error message if the clipboard operation fails.</remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.MeetingSelected">
-            <summary>Handles the selection changed event for the meetings DataGrid.</summary>
+            <summary>Handles meeting selection, loading and displaying the appropriate detail view.</summary>
+            <remarks>
+            Collapses the detail panel and returns early if no meeting is selected or no detail record is found.<br/>
+            <br/>
+            Routes to provider or patient detail display based on the current user type label.
+            </remarks>
         </member>
         <member name="M:TingenTransmorger.MainWindow.DisplayGeneralDetails(TingenTransmorger.Models.MeetingRow,System.Nullable{System.Text.Json.JsonElement},System.String)">
-            <summary>Displays the general meeting details.</summary>
-            <remarks>
-                This is pretty dense, but it does cut down on the amount of repetitive code, and the underlying logic is
-                fairly simple: the<c> whatever.Text</c> value is set to the result of the <c>propertyName</c> if it exists,
-                and converted to "---" if it does not.
-            </remarks>
-            <param name="selectedMeeting">The selected meeting row.</param>
-            <param name="meetingDetail">The meeting detail JSON element.</param>
-            <param name="meetingId">The meeting ID.</param>
+            <summary>Populates general meeting detail UI fields from the selected meeting and its JSON record.</summary>
+            <remarks>Also calls <see cref="M:TingenTransmorger.MainWindow.DisplayMeetingError(TingenTransmorger.Models.MeetingRow)"/> to populate the error field.</remarks>
+            <param name="selectedMeeting">The selected meeting row from the meeting list grid.</param>
+            <param name="meetingDetail">The JSON element containing detailed meeting data.</param>
+            <param name="meetingId">The meeting ID used to populate the ID field directly.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.DisplayPatientMeetingResults(System.Nullable{System.Text.Json.JsonElement})">
-            <summary>Displays the results of patient meeting.</summary>
-            <param name="patientDetails">The patient details.</param>
+            <summary>Populates the meeting grid and status summary fields from the patient's JSON data.</summary>
+            <remarks>
+            <list type="bullet">
+            <item>Deserializes and enriches each meeting entry with data from the meeting detail database.</item>
+            <item>Computes completed, cancelled, in-progress, expired, and scheduled meeting counts.</item>
+            <item>Sorts meetings by scheduled start date descending before binding to the grid.</item>
+            </list>
+            </remarks>
+            <param name="patientDetails">The JSON element containing the patient's meeting records.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayProviderMeetingDetails(TingenTransmorger.Models.MeetingRow)">
+            <summary>Populates provider participant names in the UI for the selected meeting.</summary>
+            <remarks>Splits names on semicolons or commas and displays '---' if no participants are found.</remarks>
+            <param name="selectedMeeting">The selected meeting row whose participant names will be displayed.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayPatientMeetingDetails(TingenTransmorger.Models.MeetingRow)">
+            <summary>Populates patient-specific meeting detail fields in the UI for the selected meeting.</summary>
+            <remarks>Searches patient meeting records in the database to find a match for the selected meeting.</remarks>
+            <param name="selectedMeeting">The selected meeting row whose patient details will be displayed.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayMeetingError(TingenTransmorger.Models.MeetingRow)">
+            <summary>Populates the meeting error field in the UI with the error kind and reason, if one exists.</summary>
+            <remarks>Displays '---' if no error record exists or both Kind and Reason are empty strings.</remarks>
+            <param name="selectedMeeting">The selected meeting row whose error data will be displayed.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetStringProperty(System.String,System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Extracts a named string property value from a <see cref="T:System.Text.Json.JsonElement"/>.</summary>
+            <remarks>Returns <see cref="F:System.String.Empty"/> if the property is absent or its value is null.</remarks>
+            <param name="propertyName">The name of the property to extract.</param>
+            <param name="meetingDetail">The JSON element to extract the property from.</param>
+            <returns>The property's string value, or <see cref="F:System.String.Empty"/> if absent or null.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ReplaceNullValues(System.String)">
+            <summary>Sanitizes a string value, replacing null literals and empty values with '---'.</summary>
+            <remarks>Uses a case-insensitive regex to detect and replace literal null tokens within the string.</remarks>
+            <param name="value">The string value to sanitize.</param>
+            <returns>The sanitized string value, or '---' if null, whitespace, or only null tokens.</returns>
         </member>
         <member name="F:TingenTransmorger.MainWindow._currentPatientName">
-            <summary> Currently selected patient name.</summary>
+            <summary>The name of the currently selected patient.</summary>
+            <value>Set when a patient is selected; defaults to <see cref="F:System.String.Empty"/>.</value>
         </member>
         <member name="F:TingenTransmorger.MainWindow._currentPatientId">
-            <summary>Currently selected patient ID.</summary>
+            <summary>The ID of the currently selected patient.</summary>
+            <value>Set when a patient is selected; defaults to <see cref="F:System.String.Empty"/>.</value>
         </member>
         <member name="F:TingenTransmorger.MainWindow._smsDeliveries">
-            <summary>Message delivery records for the current patient's phone numbers.</summary>
+            <summary>SMS delivery records for the current patient's phone numbers.</summary>
+            <value>Populated by <see cref="M:TingenTransmorger.MainWindow.GetSmsStats(System.Collections.Generic.List{System.String})"/>; cleared before each reload.</value>
         </member>
         <member name="F:TingenTransmorger.MainWindow._emailDeliveries">
             <summary>Email delivery records for the current patient's email addresses.</summary>
+            <value>Populated by <see cref="M:TingenTransmorger.MainWindow.GetEmailStats(System.Collections.Generic.List{System.String})"/>; cleared before each reload.</value>
         </member>
         <member name="F:TingenTransmorger.MainWindow._smsFailures">
             <summary>SMS failure records for the current patient's phone numbers.</summary>
+            <value>Populated by <see cref="M:TingenTransmorger.MainWindow.GetSmsStats(System.Collections.Generic.List{System.String})"/>; cleared before each reload.</value>
         </member>
         <member name="F:TingenTransmorger.MainWindow._emailFailures">
             <summary>Email failure records for the current patient's email addresses.</summary>
+            <value>Populated by <see cref="M:TingenTransmorger.MainWindow.GetEmailStats(System.Collections.Generic.List{System.String})"/>; cleared before each reload.</value>
         </member>
         <member name="M:TingenTransmorger.MainWindow.DisplayPatientDetails(System.String,System.String)">
-            <summary>Displays patient details in the UI.</summary>
+            <summary>Loads and displays all patient detail sections in the UI for the specified patient.</summary>
+            <remarks>Caches the patient name and ID in instance fields before delegating to the display methods.</remarks>
+            <param name="patientName">The full name of the patient to display.</param>
+            <param name="patientId">The unique identifier of the patient to display.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.DisplayPatientPhoneNumber(System.Nullable{System.Text.Json.JsonElement})">
-            <summary>Displays the patient's phone numbers in the UI.</summary>
+            <summary>Retrieves phone numbers from patient data, displays them, and updates the phone detail button color.</summary>
+            <remarks>Updates SMS delivery and failure statistics as a side effect via <see cref="M:TingenTransmorger.MainWindow.GetSmsStats(System.Collections.Generic.List{System.String})"/>.</remarks>
             <param name="patientDetails">The JSON element containing the patient's details.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.GetPatientPhoneNumbers(System.Nullable{System.Text.Json.JsonElement})">
-            <summary>Get a list of formatted phone numbers for a patient.</summary>
-            <param name="patientDetails">The JSON representation of the patient's details.</param>
-            <returns>A list of strings representing the formatted phone numbers of the patient.</returns>
+            <summary>Extracts and formats phone numbers from the patient's JSON data.</summary>
+            <remarks>Formats ten-digit numbers as ###-###-####; other lengths are included without formatting.</remarks>
+            <param name="patientDetails">The JSON element containing the patient's details.</param>
+            <returns>A list of phone number strings extracted and formatted from the patient's JSON data.</returns>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ShowPatientPhoneNumber(System.Collections.Generic.List{System.String})">
-            <summary>Show the patient phone number.</summary>
+            <summary>Displays the patient's phone numbers in the UI label, or a placeholder if none exist.</summary>
+            <remarks>Displays 'No phone numbers on file' if <paramref name="phoneNumbers"/> is empty.</remarks>
             <param name="phoneNumbers">A list of formatted phone numbers for the patient.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.GetSmsStats(System.Collections.Generic.List{System.String})">
-            <summary>Gets the SMS statistics for the provided phone numbers.</summary>
+            <summary>Clears and repopulates the SMS failure and delivery record lists for the given phone numbers.</summary>
+            <remarks>Only processes numbers with exactly ten digits after normalizing to digits only.</remarks>
             <param name="phoneNumbers">A list of formatted phone numbers for the patient.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.DisplayPatientEmailAddress(System.Nullable{System.Text.Json.JsonElement})">
-            <summary>Gets the patient's email addresses from the patient details and displays them in the UI.</summary>
+            <summary>Loads email addresses for the current patient and updates the email UI and detail button.</summary>
+            <remarks>Populates email statistics as a side effect via <see cref="M:TingenTransmorger.MainWindow.GetEmailStats(System.Collections.Generic.List{System.String})"/> and updates the button color.</remarks>
             <param name="patientDetails">The JSON element containing the patient's details.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.GetPatientEmailAddresses(System.Nullable{System.Text.Json.JsonElement})">
-            <summary>
-            Retrieves a list of email addresses associated with the specified patient details.
-            </summary>
-            <remarks>This method extracts email addresses from the provided JSON object. It only includes
-            non-empty addresses in the returned list.</remarks>
-            <param name="patientDetails">A JSON element representing the patient's details. This element is expected to contain an 'EmailAddresses'
-            property with an array of email address objects. This parameter cannot be null.</param>
-            <returns>A list of strings containing the email addresses of the patient. The list will be empty if no email addresses
-            are found.</returns>
+            <summary>Extracts email addresses from the patient's JSON data.</summary>
+            <remarks>Only non-empty, non-whitespace addresses are included in the returned list.</remarks>
+            <param name="patientDetails">The JSON element containing the patient's details.</param>
+            <returns>A list of email address strings extracted from the patient's JSON data.</returns>
         </member>
         <member name="M:TingenTransmorger.MainWindow.GetEmailStats(System.Collections.Generic.List{System.String})">
-            <summary>Gets the email statistics for the provided email addresses.</summary>
+            <summary>Clears and repopulates the email failure and delivery record lists for the given addresses.</summary>
+            <remarks>Skips the placeholder value 'No email addresses on file' when processing.</remarks>
             <param name="emailAddresses">A list of email addresses for the patient.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ShowPatientEmailAddress(System.Collections.Generic.List{System.String})">
-            <summary>Shows the patient's email addresses in the UI.</summary>
+            <summary>Displays the patient's email addresses in the UI label, or a placeholder if none exist.</summary>
+            <remarks>Mutates <paramref name="emailAddresses"/> by appending a placeholder when the list is empty.</remarks>
             <param name="emailAddresses">A list of email addresses for the patient.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.ShowMessageDetails(System.String)">
-            <summary>Displays the message history for the specified message type, either phone or email.</summary>
-            <param name="messageType">The type of message.</param>
+            <summary>Opens the message history window for either phone or email message records.</summary>
+            <remarks>No dialog is shown if <paramref name="messageType"/> does not match 'phone' or 'email'.</remarks>
+            <param name="messageType">The message channel to display; either 'phone' or 'email'.</param>
         </member>
         <member name="M:TingenTransmorger.MainWindow.GetStringProperty(System.Text.Json.JsonElement,System.String)">
             <summary>Returns the string value of a named property on a <see cref="T:System.Text.Json.JsonElement"/>, or <see cref="F:System.String.Empty"/> if the property is absent or null.</summary>

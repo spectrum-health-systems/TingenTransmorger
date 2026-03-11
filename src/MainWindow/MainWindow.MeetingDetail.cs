@@ -1,5 +1,8 @@
 ﻿// 260227_code
-// 260227_documentation
+// 260311_documentation
+
+/* Development note: This class needs to be refactored.
+ */
 
 using System.Text.Json;
 using System.Windows;
@@ -11,13 +14,14 @@ namespace TingenTransmorger;
  */
 public partial class MainWindow : Window
 {
-    /// <summary>Handles the selection changed event for the meetings DataGrid.</summary>
+    /// <summary>Handles meeting selection, loading and displaying the appropriate detail view.</summary>
+    /// <remarks>
+    /// Collapses the detail panel and returns early if no meeting is selected or no detail record is found.<br/>
+    /// <br/>
+    /// Routes to provider or patient detail display based on the current user type label.
+    /// </remarks>
     private void MeetingSelected()
     {
-        /* If no valid meeting is selected, or the selected item does not have a MeetingId, collapse the meeting
-         * details panel and continue.
-         * TODO: Move / Test
-         */
         if (dgrdMeetingList.SelectedItem is not MeetingRow selectedMeeting || string.IsNullOrWhiteSpace(selectedMeeting.MeetingId))
         {
             spnlMeetingDetail.Visibility = Visibility.Collapsed;
@@ -27,10 +31,6 @@ public partial class MainWindow : Window
 
         JsonElement? meetingDetail = _tmDb.GetMeetingDetail(selectedMeeting.MeetingId);
 
-        /* If the meeting detail could not be retrieved from the database, collapse the meeting details panel and
-         * continue.
-         * TODO: Move / Test
-         */
         if (meetingDetail == null)
         {
             spnlMeetingDetail.Visibility = Visibility.Collapsed;
@@ -54,15 +54,11 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Displays the general meeting details.</summary>
-    /// <remarks>
-    ///     This is pretty dense, but it does cut down on the amount of repetitive code, and the underlying logic is
-    ///     fairly simple: the<c> whatever.Text</c> value is set to the result of the <c>propertyName</c> if it exists,
-    ///     and converted to "---" if it does not.
-    /// </remarks>
-    /// <param name="selectedMeeting">The selected meeting row.</param>
-    /// <param name="meetingDetail">The meeting detail JSON element.</param>
-    /// <param name="meetingId">The meeting ID.</param>
+    /// <summary>Populates general meeting detail UI fields from the selected meeting and its JSON record.</summary>
+    /// <remarks>Also calls <see cref="DisplayMeetingError"/> to populate the error field.</remarks>
+    /// <param name="selectedMeeting">The selected meeting row from the meeting list grid.</param>
+    /// <param name="meetingDetail">The JSON element containing detailed meeting data.</param>
+    /// <param name="meetingId">The meeting ID used to populate the ID field directly.</param>
     private void DisplayGeneralDetails(MeetingRow selectedMeeting, JsonElement? meetingDetail, string meetingId)
     {
         txbkMeetingIdValue.Text                   = ReplaceNullValues(meetingId);
@@ -81,16 +77,20 @@ public partial class MainWindow : Window
         txbkMeetingProgram.Text                   = ReplaceNullValues(GetStringProperty("Program", meetingDetail));
         txbkMeetingCheckedInByFrontDeskValue.Text = ReplaceNullValues(GetStringProperty("CheckedInByFrontDesk", meetingDetail));
 
-        /* Display the meeting error, if it exists.
-         */
         DisplayMeetingError(selectedMeeting);
     }
 
-    /// <summary>Displays the results of patient meeting.</summary>
-    /// <param name="patientDetails">The patient details.</param>
+    /// <summary>Populates the meeting grid and status summary fields from the patient's JSON data.</summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item>Deserializes and enriches each meeting entry with data from the meeting detail database.</item>
+    /// <item>Computes completed, cancelled, in-progress, expired, and scheduled meeting counts.</item>
+    /// <item>Sorts meetings by scheduled start date descending before binding to the grid.</item>
+    /// </list>
+    /// </remarks>
+    /// <param name="patientDetails">The JSON element containing the patient's meeting records.</param>
     private void DisplayPatientMeetingResults(JsonElement? patientDetails)
     {
-        // Display meetings
         var meetingRows = new List<MeetingRow>();
 
         if (patientDetails.Value.TryGetProperty("Meetings", out var meetingsArray))
@@ -99,7 +99,6 @@ public partial class MainWindow : Window
             {
                 foreach (var meeting in meetingsArray.EnumerateArray())
                 {
-                    // Get MeetingId from Patients.Meetings
                     var meetingId = meeting.TryGetProperty("MeetingId", out var meetingIdElem)
                         ? meetingIdElem.GetString()
                         : null;
@@ -109,7 +108,6 @@ public partial class MainWindow : Window
                         continue;
                     }
 
-                    // Get Arrived, Dropped, Duration from Patients.Meetings
                     var arrived = meeting.TryGetProperty("Arrived", out var arrivedElem)
                         ? arrivedElem.GetString()
                         : string.Empty;
@@ -122,7 +120,6 @@ public partial class MainWindow : Window
                         ? (durationElem.GetString() ?? string.Empty)
                         : string.Empty;
 
-                    // Get ScheduledStart, ActualStart, ScheduledEnd, ActualEnd, and Status from MeetingDetail
                     var meetingDetail  = _tmDb.GetMeetingDetail(meetingId);
                     var scheduledStart = string.Empty;
                     var actualStart    = string.Empty;
@@ -153,7 +150,6 @@ public partial class MainWindow : Window
                             : string.Empty;
                     }
 
-                    // Replace any occurrence of "null" (case-insensitive) with a single "---"
                     string ReplaceNull(string value)
                     {
                         if (string.IsNullOrWhiteSpace(value))
@@ -161,30 +157,24 @@ public partial class MainWindow : Window
                             return "";
                         }
 
-                        // Replace all occurrences of "null" (case-insensitive) with a placeholder
                         var result = System.Text.RegularExpressions.Regex.Replace(value, @"\bnull\b", "<<NULL>>", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
-                        // Check if we had any replacements
                         if (result.Contains("<<NULL>>"))
                         {
-                            // If the entire string is just null markers (with possible whitespace/separators), return single "---"
                             var cleanedResult = result.Replace("<<NULL>>", "").Trim().Trim(',').Trim(';').Trim();
                             if (string.IsNullOrWhiteSpace(cleanedResult))
                             {
                                 return "---";
                             }
 
-                            // Otherwise replace all null markers with "---"
                             result = result.Replace("<<NULL>>", "---");
                         }
 
                         return string.IsNullOrWhiteSpace(result) ? "---" : result;
                     }
 
-                    // Check if meeting has an error
                     var hasError = _tmDb.HasMeetingError(meetingId);
 
-                    // Check status flags (case-insensitive)
                     var statusLower = status?.ToLower() ?? string.Empty;
                     var isCancelled = statusLower.Contains("cancel");
                     var isCompleted = statusLower.Contains("complete");
@@ -206,15 +196,12 @@ public partial class MainWindow : Window
             }
         }
 
-        // Sort meetings by ScheduledStart descending (most recent first)
         meetingRows = meetingRows.OrderByDescending(m => m.ScheduledStart).ToList();
 
-        // Count meetings by status
         var totalCount     = meetingRows.Count;
         var completedCount = meetingRows.Count(m => m.IsCompleted);
         var cancelledCount = meetingRows.Count(m => m.IsCancelled);
 
-        // Count In-Progress, Expired, and Scheduled
         var inProgressCount = 0;
         var expiredCount    = 0;
         var scheduledCount  = 0;
@@ -223,7 +210,6 @@ public partial class MainWindow : Window
         {
             var statusLower = meeting.Status?.ToLower() ?? string.Empty;
 
-            // Skip already counted statuses
             if (meeting.IsCompleted || meeting.IsCancelled)
             {
                 continue;
@@ -243,7 +229,6 @@ public partial class MainWindow : Window
             }
         }
 
-        // Update the header with the detailed count using individual TextBlocks
         txbkTotalMeetingsValue.Text      = $"{totalCount} MEETINGS";
         txbkCompletedMeetingsValue.Text  = $"{completedCount} Completed";
         txbkMeetingsInProgressValue.Text = $"{inProgressCount} In-Progress";
@@ -251,22 +236,20 @@ public partial class MainWindow : Window
         txbkMeetingsCancelledValue.Text  = $"{cancelledCount} Cancelled";
         txbkMeetingsScheduledValue.Text  = $"{scheduledCount} Scheduled";
 
-        // Bind to DataGrid
         dgrdMeetingList.ItemsSource = meetingRows;
 
-        // Show meetings section if there are meetings
         spnlMeetingDetail.Visibility = meetingRows.Count > 0
             ? Visibility.Visible
             : Visibility.Collapsed;
 
-        // Hide meeting details until a meeting is selected
         spnlMeetingDetail.Visibility = Visibility.Collapsed;
     }
 
-    /*
-     * me
-     */
+    /* Already refactored */
 
+    /// <summary>Populates provider participant names in the UI for the selected meeting.</summary>
+    /// <remarks>Splits names on semicolons or commas and displays '---' if no participants are found.</remarks>
+    /// <param name="selectedMeeting">The selected meeting row whose participant names will be displayed.</param>
     private void DisplayProviderMeetingDetails(MeetingRow selectedMeeting)
     {
         var meetingDetail = _tmDb.GetMeetingDetail(selectedMeeting.MeetingId);
@@ -289,9 +272,11 @@ public partial class MainWindow : Window
         txbkProviderParticipantNames.Text = string.Join(", ", parsedNames);
     }
 
+    /// <summary>Populates patient-specific meeting detail fields in the UI for the selected meeting.</summary>
+    /// <remarks>Searches patient meeting records in the database to find a match for the selected meeting.</remarks>
+    /// <param name="selectedMeeting">The selected meeting row whose patient details will be displayed.</param>
     private void DisplayPatientMeetingDetails(MeetingRow selectedMeeting)
     {
-        // Get and display participant meeting quality data from Patients.Meetings
         var qualityData     = string.Empty;
         var arrived         = string.Empty;
         var dropped         = string.Empty;
@@ -306,7 +291,6 @@ public partial class MainWindow : Window
         var os              = string.Empty;
         var browser = string.Empty;
 
-        // Retrieve the patient details to access the meetings array
         var patientDetails = _tmDb.GetPatientDetails(_currentPatientName, _currentPatientId);
 
         if (patientDetails != null && patientDetails.Value.TryGetProperty("Meetings", out var meetingsArray))
@@ -321,7 +305,6 @@ public partial class MainWindow : Window
 
                     if (mtgId == selectedMeeting.MeetingId)
                     {
-                        // Get all the patient meeting data
                         qualityData = meeting.TryGetProperty("QualityData", out var qualityDataElem)
                             ? (qualityDataElem.GetString() ?? string.Empty)
                             : string.Empty;
@@ -380,7 +363,6 @@ public partial class MainWindow : Window
             }
         }
 
-        // Populate patient meeting detail fields
         txbkPatientArrivedValue.Text     = ReplaceNullValues(arrived);
         txbkPatientDroppedValue.Text     = ReplaceNullValues(dropped);
         txbkPatientDurationValue.Text    = ReplaceNullValues(patientDuration);
@@ -397,9 +379,11 @@ public partial class MainWindow : Window
     }
 
 
+    /// <summary>Populates the meeting error field in the UI with the error kind and reason, if one exists.</summary>
+    /// <remarks>Displays '---' if no error record exists or both Kind and Reason are empty strings.</remarks>
+    /// <param name="selectedMeeting">The selected meeting row whose error data will be displayed.</param>
     private void DisplayMeetingError(MeetingRow selectedMeeting)
     {
-        // Get and display meeting error if it exists
         var meetingError = _tmDb.GetMeetingError(selectedMeeting.MeetingId);
 
         if (meetingError != null)
@@ -422,7 +406,12 @@ public partial class MainWindow : Window
         }
     }
 
-    // TODO: Move this somewhere more common
+
+    /// <summary>Extracts a named string property value from a <see cref="JsonElement"/>.</summary>
+    /// <remarks>Returns <see cref="string.Empty"/> if the property is absent or its value is null.</remarks>
+    /// <param name="propertyName">The name of the property to extract.</param>
+    /// <param name="meetingDetail">The JSON element to extract the property from.</param>
+    /// <returns>The property's string value, or <see cref="string.Empty"/> if absent or null.</returns>
     private static string GetStringProperty(string propertyName, JsonElement? meetingDetail)
     {
         return meetingDetail.Value.TryGetProperty(propertyName, out var elem)
@@ -430,6 +419,10 @@ public partial class MainWindow : Window
             : string.Empty;
     }
 
+    /// <summary>Sanitizes a string value, replacing null literals and empty values with '---'.</summary>
+    /// <remarks>Uses a case-insensitive regex to detect and replace literal null tokens within the string.</remarks>
+    /// <param name="value">The string value to sanitize.</param>
+    /// <returns>The sanitized string value, or '---' if null, whitespace, or only null tokens.</returns>
     private static string ReplaceNullValues(string value)
     {
         if (string.IsNullOrWhiteSpace(value))

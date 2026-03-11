@@ -14,7 +14,7 @@
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <RuntimeFrameworkVersion>10.0.2</RuntimeFrameworkVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>AppData\Doc\XmlDoc\Generated.xml</DocumentationFile>
+    <DocumentationFile>AppData\XmlDoc\Generated.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

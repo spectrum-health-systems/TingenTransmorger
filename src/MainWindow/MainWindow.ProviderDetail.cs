@@ -1,5 +1,5 @@
 ﻿// 260227_code
-// 260227_documentation
+// 260311_documentation
 
 using System.Text.Json;
 using System.Windows;
@@ -12,7 +12,11 @@ namespace TingenTransmorger;
 public partial class MainWindow : Window
 {
     //TODO: This should be moved to a common area.
-    /// <summary>Returns the string value of a named property on a <see cref="JsonElement"/>, or <see cref="string.Empty"/> if the property is absent or null.</summary>
+    /// <summary>Extracts a named string property value from a <see cref="JsonElement"/>.</summary>
+    /// <remarks>Returns <see cref="string.Empty"/> if the property is absent or its value is null.</remarks>
+    /// <param name="element">The JSON element to extract the property from.</param>
+    /// <param name="propertyName">The name of the property to extract.</param>
+    /// <returns>The property's string value, or <see cref="string.Empty"/> if absent or null.</returns>
     private static string GetStringProperty(JsonElement element, string propertyName)
     {
         return element.TryGetProperty(propertyName, out var prop)
@@ -20,9 +24,10 @@ public partial class MainWindow : Window
             : string.Empty;
     }
 
-    /// <summary>Displays provider details in the UI.</summary>
-    /// <param name="providerName">The provider name</param>
-    /// <param name="providerId">The provider ID.</param>
+    /// <summary>Loads and displays all provider detail sections in the UI for the specified provider.</summary>
+    /// <remarks>Calls <see cref="StopApp"/> if no provider record is found in the database.</remarks>
+    /// <param name="providerName">The full name of the provider to display.</param>
+    /// <param name="providerId">The unique identifier of the provider to display.</param>
     private void DisplayProviderDetails(string providerName, string providerId)
     {
         // Get provider details from database
@@ -37,8 +42,14 @@ public partial class MainWindow : Window
         DisplayProviderMeetingResults(providerName);
     }
 
-    /// <summary>Display meeting statistics and details for the specified provider. </summary>
-    /// <param name="providerName">The name of the provider.</param>
+    /// <summary>Builds and displays the meeting list and status summary for the specified provider.</summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item>Sorts meetings by scheduled start date descending before binding to the data grid.</item>
+    /// <item>Computes completed, cancelled, in-progress, expired, and scheduled meeting counts.</item>
+    /// </list>
+    /// </remarks>
+    /// <param name="providerName">The full name of the provider whose meetings will be displayed.</param>
     private void DisplayProviderMeetingResults(string providerName)
     {
         var meetingList     = new List<MeetingRow>();
@@ -94,10 +105,10 @@ public partial class MainWindow : Window
         spnlMeetingDetail.Visibility = Visibility.Collapsed;
     }
 
-    /// <summary>Build a list of meeting details.</summary>
-    /// <remarks>This will go through all of the meeting IDs for the provider, and add valid details to the list.</remarks>
-    /// <param name="meetingRows">The list of meeting details.</param>
-    /// <param name="providerDetails">Provider details component of the database, should include a 'Meetings' property.</param>
+    /// <summary>Populates a meeting row list from the provider's meeting ID array in the JSON record.</summary>
+    /// <remarks>Skips null or whitespace meeting IDs and any IDs with no corresponding detail record.</remarks>
+    /// <param name="meetingRows">The list to populate with resolved meeting row data.</param>
+    /// <param name="providerDetails">The JSON element containing the provider's meeting ID array.</param>
     private void BuildMeetingList(List<MeetingRow> meetingRows, JsonElement? providerDetails)
     {
         if (providerDetails != null && providerDetails.Value.TryGetProperty("Meetings", out var meetingsArray))
@@ -131,9 +142,11 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Create a MeetingRow object containing details of a meeting</summary>
-    /// <param name="meetingId">The meeting ID.</param>
-    /// <param name="meetingDetail">The meeting details</returns>
+    /// <summary>Builds a <see cref="MeetingRow"/> from a meeting ID and its JSON detail record.</summary>
+    /// <remarks>Returns <see langword="null"/> if <paramref name="meetingDetail"/> is null.</remarks>
+    /// <param name="meetingId">The meeting ID to assign to the row.</param>
+    /// <param name="meetingDetail">The JSON element containing the meeting's detail fields.</param>
+    /// <returns>A populated <see cref="MeetingRow"/>, or <see langword="null"/> if the detail record is absent.</returns>
     private MeetingRow? GetMeetingRowDetails(string meetingId, JsonElement? meetingDetail)
     {
         if (meetingDetail == null)

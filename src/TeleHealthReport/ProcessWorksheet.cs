@@ -1,23 +1,30 @@
-﻿// 260206_code
-// 260206_documentation
+﻿// 260311_code
+// 260311_documentation
 
 using System.Data;
 
 namespace TingenTransmorger.TeleHealthReport;
 
+/// <summary>Provides methods for processing individual worksheets from TeleHealth report workbooks.</summary>
 internal static class ProcessWorksheet
 {
-    /// <summary>
-    /// Processes summary sheets with key-value pairs, aggregating numeric values across files.
-    /// </summary>
-    /// <param name="table">
-    /// DataTable containing the summary sheet data.
-    /// </param>
-    /// <param name="metrics">
-    /// Dictionary to store aggregated metrics.
-    /// </param>
+    /// <summary>Processes a summary-style worksheet, accumulating key-value metric pairs into a dictionary.</summary>
+    /// <remarks>
+    /// <para>
+    /// Expects a two-column <see cref="DataTable"/> where the first column contains metric names and the second
+    /// contains numeric values. Rows with a <c>null</c> or empty metric key are skipped.
+    /// </para>
+    /// <para>
+    /// If <paramref name="headers"/> is <c>null</c>, it is initialized from the table's column names, falling back to
+    /// <b>Metric</b> and <b>Value</b> if names are unavailable.
+    /// </para>
+    /// <para>Duplicate metric keys are summed rather than overwritten.</para>
+    /// </remarks>
+    /// <param name="table">Source <see cref="DataTable"/> containing at least two columns.</param>
+    /// <param name="metrics">Dictionary accumulating metric name/value pairs across one or more worksheets.</param>
     /// <param name="headers">
-    /// Optional tuple to capture column header names.
+    /// Column header tuple <c>(metricColumn, valueColumn)</c>; initialized from <paramref name="table"/> on the first
+    /// call if <c>null</c>.
     /// </param>
     internal static void Summary(DataTable table, Dictionary<string, double> metrics, ref (string, string)? headers)
     {
@@ -39,29 +46,27 @@ internal static class ProcessWorksheet
 
             var metricValue = ReportUtility.ParseDoubleValue(dataRow[1]);
 
-            metrics[metricKey] =metrics.TryGetValue(metricKey, out var existingValue)
+            metrics[metricKey] = metrics.TryGetValue(metricKey, out var existingValue)
                 ? existingValue + metricValue
                 : metricValue;
         }
     }
 
-    /// <summary>
-    /// Processes sheets with a unique key column, optionally aggregating numeric values for duplicate keys.
-    /// </summary>
-    /// <param name="table">
-    /// DataTable containing the sheet data.
-    /// </param>
-    /// <param name="dataById">
-    /// Dictionary to store records keyed by the specified column.
-    /// </param>
-    /// <param name="headers">
-    /// List to track all column headers encountered.
-    /// </param>
-    /// <param name="keyColumn">
-    /// Name of the column to use as the unique key.
-    /// </param>
+    /// <summary>Processes a keyed worksheet, building a dictionary of row data indexed by a specified key column.</summary>
+    /// <remarks>
+    /// <para>
+    /// If <paramref name="aggregateNumeric"/> is <c>true</c>, numeric values in duplicate-key rows are summed into the
+    /// existing entry via <see cref="ReportUtility.MergeRows"/>; otherwise, only the first occurrence of each key is
+    /// retained.
+    /// </para>
+    /// <para>Rows with a <c>null</c> or empty key value are skipped.</para>
+    /// </remarks>
+    /// <param name="table">Source <see cref="DataTable"/> containing the report data.</param>
+    /// <param name="dataById">Dictionary to populate with row data keyed by <paramref name="keyColumn"/> values.</param>
+    /// <param name="headers">Ordered list of column headers to include; updated with any new columns from <paramref name="table"/>.</param>
+    /// <param name="keyColumn">Name of the column whose value is used as the row key.</param>
     /// <param name="aggregateNumeric">
-    /// If true, numeric values are summed for duplicate keys.
+    /// When <c>true</c>, numeric values for duplicate keys are summed; when <c>false</c>, duplicate keys are ignored.
     /// </param>
     internal static void Keyed(DataTable table, Dictionary<string, Dictionary<string, object?>> dataById, List<string> headers, string keyColumn, bool aggregateNumeric = false)
     {
@@ -72,9 +77,9 @@ internal static class ProcessWorksheet
 
         ReportUtility.UpdateHeaders(table, headers);
 
-        foreach (DataRow dr in table.Rows)
+        foreach (DataRow dataRow in table.Rows)
         {
-            var key = dr[keyColumn]?.ToString()?.Trim();
+            var key = dataRow[keyColumn]?.ToString()?.Trim();
 
             if (string.IsNullOrEmpty(key))
             {
@@ -85,7 +90,7 @@ internal static class ProcessWorksheet
 
             foreach (var header in headers)
             {
-                row[header] = table.Columns.Contains(header) ? dr[header] : null;
+                row[header] = table.Columns.Contains(header) ? dataRow[header] : null;
             }
 
             if (dataById.TryGetValue(key, out var existingRow) && aggregateNumeric)
@@ -99,21 +104,18 @@ internal static class ProcessWorksheet
         }
     }
 
-    /// <summary>
-    /// Processes sheets with a unique key column, keeping only the first occurrence of each key.
-    /// </summary>
-    /// <param name="table">
-    /// DataTable containing the sheet data.
-    /// </param>
-    /// <param name="dataById">
-    /// Dictionary to store records keyed by the specified column.
-    /// </param>
-    /// <param name="headers">
-    /// HashSet to track all column headers encountered.
-    /// </param>
-    /// <param name="keyColumn">
-    /// Name of the column to use as the unique key.
-    /// </param>
+    /// <summary>Processes a keyed worksheet, retaining only the first row encountered for each unique key value.</summary>
+    /// <remarks>
+    /// <para>
+    /// Unlike <see cref="Keyed"/>, this method uses a <see cref="HashSet{T}"/> for header tracking and does not
+    /// aggregate numeric values — duplicate keys are silently ignored.
+    /// </para>
+    /// <para>Rows with a <c>null</c> or empty key value are skipped.</para>
+    /// </remarks>
+    /// <param name="table">Source <see cref="DataTable"/> containing the report data.</param>
+    /// <param name="dataById">Dictionary to populate with row data keyed by <paramref name="keyColumn"/> values.</param>
+    /// <param name="headers">Set of column headers; updated with any new columns from <paramref name="table"/>.</param>
+    /// <param name="keyColumn">Name of the column whose value is used as the row key.</param>
     internal static void SimpleKeyed(DataTable table, Dictionary<string, Dictionary<string, object?>> dataById, HashSet<string> headers, string keyColumn)
     {
         if (!table.Columns.Contains(keyColumn))
@@ -124,9 +126,9 @@ internal static class ProcessWorksheet
         var tableColumns   = ReportUtility.UpdateHeaders(table, headers);
         var orderedHeaders = headers.ToList();
 
-        foreach (DataRow dr in table.Rows)
+        foreach (DataRow dataRow in table.Rows)
         {
-            var key = dr[keyColumn]?.ToString()?.Trim();
+            var key = dataRow[keyColumn]?.ToString()?.Trim();
 
             if (string.IsNullOrEmpty(key))
             {
@@ -139,7 +141,7 @@ internal static class ProcessWorksheet
 
                 foreach (var header in orderedHeaders)
                 {
-                    row[header] = tableColumns.Contains(header) ? dr[header] : null;
+                    row[header] = tableColumns.Contains(header) ? dataRow[header] : null;
                 }
 
                 dataById[key] = row;
@@ -147,18 +149,20 @@ internal static class ProcessWorksheet
         }
     }
 
-    /// <summary>
-    /// Processes sheets with client statistics, allowing multiple records per client.
-    /// </summary>
-    /// <param name="table">
-    /// DataTable containing the sheet data.
-    /// </param>
-    /// <param name="statsByClient">
-    /// Dictionary to store lists of records per client.
-    /// </param>
-    /// <param name="headers">
-    /// HashSet to track all column headers encountered.
-    /// </param>
+    /// <summary>Processes a worksheet containing per-client statistics, grouping rows by client name.</summary>
+    /// <remarks>
+    /// <para>
+    /// Requires a column named <b>Client Name</b>; the method returns without processing if that column is absent from
+    /// <paramref name="table"/>.
+    /// </para>
+    /// <para>
+    /// Each row is appended to the list associated with its client name in <paramref name="statsByClient"/>. A new list
+    /// is created automatically for first-seen client names.
+    /// </para>
+    /// </remarks>
+    /// <param name="table">Source <see cref="DataTable"/> that must contain a <b>Client Name</b> column.</param>
+    /// <param name="statsByClient">Dictionary mapping client names to their accumulated list of row records.</param>
+    /// <param name="headers">Set of column headers; updated with any new columns from <paramref name="table"/>.</param>
     internal static void ClientStats(DataTable table, Dictionary<string, List<Dictionary<string, object?>>> statsByClient, HashSet<string> headers)
     {
         if (!table.Columns.Contains("Client Name"))
@@ -169,9 +173,9 @@ internal static class ProcessWorksheet
         var tableColumns = ReportUtility.UpdateHeaders(table, headers);
         var orderedHeaders = headers.ToList();
 
-        foreach (DataRow dr in table.Rows)
+        foreach (DataRow dataRow in table.Rows)
         {
-            var clientName = dr["Client Name"]?.ToString()?.Trim();
+            var clientName = dataRow["Client Name"]?.ToString()?.Trim();
 
             if (string.IsNullOrEmpty(clientName))
             {
@@ -182,7 +186,7 @@ internal static class ProcessWorksheet
 
             foreach (var header in orderedHeaders)
             {
-                row[header] = tableColumns.Contains(header) ? dr[header] : null;
+                row[header] = tableColumns.Contains(header) ? dataRow[header] : null;
             }
 
             if (!statsByClient.TryGetValue(clientName, out var records))
@@ -195,41 +199,43 @@ internal static class ProcessWorksheet
         }
     }
 
-    /// <summary>
-    /// Processes sheets as flat record lists, capturing all rows without keying or aggregation.
-    /// </summary>
-    /// <param name="table">
-    /// DataTable containing the sheet data.
-    /// </param>
-    /// <param name="allRecords">
-    /// List to store all records.
-    /// </param>
-    /// <param name="headers">
-    /// HashSet to track all column headers encountered.
-    /// </param>
+    /// <summary>Processes a worksheet into a flat list of row dictionaries, null-filling any missing headers.</summary>
+    /// <remarks>
+    /// <para>
+    /// All column names from <paramref name="table"/> are added to <paramref name="headers"/>, enabling a consistent
+    /// column set to be maintained across multiple worksheets.
+    /// </para>
+    /// <para>
+    /// For each row, columns present in the table are populated with their values; any headers in
+    /// <paramref name="headers"/> not found in the current table are set to <c>null</c>.
+    /// </para>
+    /// </remarks>
+    /// <param name="table">Source <see cref="DataTable"/> containing the report data.</param>
+    /// <param name="allRecords">List to which all processed row dictionaries are appended.</param>
+    /// <param name="headers">Set of all column headers encountered across worksheets; updated with columns from <paramref name="table"/>.</param>
     internal static void Flat(DataTable table, List<Dictionary<string, object?>> allRecords, HashSet<string> headers)
     {
         var tableColumns = new List<string>();
 
-        foreach (DataColumn col in table.Columns)
+        foreach (DataColumn column in table.Columns)
         {
-            var colName = col.ColumnName ?? string.Empty;
-            tableColumns.Add(colName);
-            headers.Add(colName);
+            var columnName = column.ColumnName ?? string.Empty;
+            tableColumns.Add(columnName);
+            headers.Add(columnName);
         }
 
         var orderedHeaders = headers.ToList();
 
-        foreach (DataRow dr in table.Rows)
+        foreach (DataRow dataRow in table.Rows)
         {
             var row = new Dictionary<string, object?>(orderedHeaders.Count);
 
-            for (int i = 0; i < tableColumns.Count; i++)
+            for (int columnIndex = 0; columnIndex < tableColumns.Count; columnIndex++)
             {
-                row[tableColumns[i]] = dr[i];
+                row[tableColumns[columnIndex]] = dataRow[columnIndex];
             }
 
-            foreach (var header in orderedHeaders.Where(h => !row.ContainsKey(h)))
+            foreach (var header in orderedHeaders.Where(header => !row.ContainsKey(header)))
             {
                 row[header] = null;
             }

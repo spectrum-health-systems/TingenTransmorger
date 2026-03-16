@@ -1,5 +1,5 @@
 ﻿// 260227_code
-// 260227_documentation
+// 260311_documentation
 
 using System.Windows;
 
@@ -9,7 +9,8 @@ namespace TingenTransmorger;
  */
 public partial class MainWindow : Window
 {
-    /// <summary>Modifies the search results based on the current search type and search text.</summary>
+    /// <summary>Refreshes the search results list using the current search type and search box text.</summary>
+    /// <remarks>Reads the current search type and search box text before invoking the update pipeline.</remarks>
     private void UpdateSearchResults()
     {
         var searchResults = GetSearchResults(btnSearchToggle.Content.ToString(), txbxSearchBox.Text?.Trim());
@@ -17,10 +18,17 @@ public partial class MainWindow : Window
         DisplaySearchResults(searchResults);
     }
 
-    /// <summary>Get a list of patient/provider search results.</summary>
-    /// <param name="searchType">The type of search.</param>
-    /// <param name="searchText">Contents of the search box.</param>
-    /// <returns>The search results.</returns>
+    /// <summary>Returns a filtered list of search results based on the active search type and text.</summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item>Returns an empty list and clears the UI if the search box is blank.</item>
+    /// <item>Treats a lone asterisk as a wildcard, returning all results for the active search type.</item>
+    /// <item>Routes to patient or provider search methods based on <paramref name="searchType"/>.</item>
+    /// </list>
+    /// </remarks>
+    /// <param name="searchType">The active search type; expected to contain 'patient' or 'provider'.</param>
+    /// <param name="searchText">The trimmed text from the search box.</param>
+    /// <returns>A list of matching patient or provider strings, or an empty list if the search text is blank.</returns>
     private List<string> GetSearchResults(string searchType, string searchText)
     {
         /* Don't try and get search results when there isn't anything to search against.
@@ -50,8 +58,9 @@ public partial class MainWindow : Window
                 : [];
     }
 
-    /// <summary>Display search results.</summary>
-    /// <param name="searchResults">The list of search results to display.</param>
+    /// <summary>Clears and repopulates the search results list box with the given results.</summary>
+    /// <remarks>Does not add any items if <paramref name="searchResults"/> is empty.</remarks>
+    /// <param name="searchResults">The list of result strings to display.</param>
     private void DisplaySearchResults(List<string> searchResults)
     {
         lstbxSearchResults.Items.Clear();

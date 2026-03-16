@@ -1,38 +1,23 @@
 ﻿// 260212_code
-// 260212_documentation
+// 2260311_documentation
 
 namespace TingenTransmorger.Core;
 
-/// <summary>Pre-defined text blocks and message strings.</summary>
+/// <summary>Provides static string array catalogs for application message box content.</summary>
 /// <remarks>
 /// <para>
-/// Centralized to keep the code clean, maintainable, and to facilitate modification of messages.
-/// </para>
-/// <para>
-/// The following types of blueprints are defined here:
-/// <list type="bullet">
-///     <item><b><c>   lst_</c></b> - A list of something</item>
-///     <item><b><c>msgbox_</c></b> - Message box string[] definitions</item>
-///     <item><b><c>msgtxt_</c></b> - Text string definitions</item>
-/// </list>
+/// Each method returns a two-element <see cref="string"/> array where index <c>0</c> contains the message
+/// box title and index <c>1</c> contains the message body.
 /// </para>
 /// </remarks>
 class Catalog
 {
-    /* =========================================================================
-     * msgbox_
-     *
-     * There are two types of text blocks defined here:
-     *
-     * 1. string
-     *
-     * 2. string[]
-     *    These strings are returned as string arrays, where:
-     *      [0] = Message box title
-     *      [1] = Message box content
-     * =========================================================================
-     */
-
+    /// <summary>Returns message box content for an invalid or undefined configuration setting.</summary>
+    /// <param name="setting">The name of the configuration setting that is undefined.</param>
+    /// <returns>
+    /// A two-element array containing the message box title at index <c>0</c> and an error description with remediation
+    /// instructions at index <c>1</c>.
+    /// </returns>
     internal static string[] msgbox_InvalidConfigurationSetting(string setting) =>
     [
         $"Tingen Transmorger - File system error",
@@ -41,6 +26,13 @@ class Catalog
         $"Please set a valid {setting} value in the configuration file."
     ];
 
+    /// <summary>Returns message box content for a directory path that does not exist, prompting the user to create it.</summary>
+    /// <param name="dirKey">The configuration key name identifying the missing directory.</param>
+    /// <param name="dirValue">The full directory path that does not exist.</param>
+    /// <returns>
+    /// A two-element array containing the message box title at index <c>0</c> and an error description with a
+    /// create-or-close prompt at index <c>1</c>.
+    /// </returns>
     internal static string[] msgbox_PathDoesNotExistWithCreatePrompt(string dirKey, string dirValue) =>
     [
         $"Tingen Transmorger - File system error",
@@ -53,12 +45,20 @@ class Catalog
         $"Please note: If you select 'No', the application will close."
     ];
 
+    /// <summary>Returns message box content prompting the user to confirm a database rebuild.</summary>
+    /// <returns>
+    /// A two-element array containing the message box title at index <c>0</c> and a confirmation prompt at index <c>1</c>.
+    /// </returns>
     internal static string[] msgbox_DatabaseRebuildCheck() =>
     [
         $"Tingen Transmorger - Database rebuild",
         $"Would you like to rebuild the database?"
     ];
 
+    /// <summary>Returns message box content notifying the user that a newer database version is available.</summary>
+    /// <returns>
+    /// A two-element array containing the message box title at index <c>0</c> and an upgrade prompt at index <c>1</c>.
+    /// </returns>
     internal static string[] msgbox_DatabaseUpdateAvailable() =>
     [
         $"Tingen Transmorger - Database update",
@@ -67,6 +67,10 @@ class Catalog
         $"Would you like to upgrade?"
     ];
 
+    /// <summary>Returns message box content confirming that the database upgrade completed successfully.</summary>
+    /// <returns>
+    /// A two-element array containing the message box title at index <c>0</c> and a success message at index <c>1</c>.
+    /// </returns>
     internal static string[] msgbox_DatabaseUpdateSuccess() =>
     [
         $"Tingen Transmorger - Database update",

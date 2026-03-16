@@ -1,9 +1,5 @@
-﻿// 260206_code
-// 260206_documentation
-
-/* I used Claude Sonnet 4.5 to help with working through Excel files, so some of this stuff is a little outside my
- * wheelhouse (e.g., ExcelDataReader, DataSet, DataTable, etc.). I've researched and commented things as best I can.
- */
+﻿// 260311_code
+// 260311_documentation
 
 using System.Data;
 using System.IO;
@@ -11,28 +7,19 @@ using ExcelDataReader;
 
 namespace TingenTransmorger.TeleHealthReport;
 
-internal class ProcessWorkbook
+/// <summary>Provides methods for processing TeleHealth report Excel workbooks into JSON output files.</summary>
+internal static class ProcessWorkbook
 {
-    /// <summary>
-    /// Excel data set configuration for reading Excel files.
-    /// </summary>
+    /// <summary>Excel dataset configuration that treats the first row of each sheet as a header row.</summary>
     private static readonly ExcelDataSetConfiguration ExcelConfig = new()
     {
         ConfigureDataTable = _ => new ExcelDataTableConfiguration { UseHeaderRow = true }
     };
 
-    /// <summary>
-    /// Processes Message Delivery Excel reports.
-    /// </summary>
-    /// <param name="importDir">
-    /// Directory containing source Excel files.
-    /// </param>
-    /// <param name="tmpDir">
-    /// Temporary data directory.
-    /// </param>
-    /// <param name="statusCallback">
-    /// Optional callback to report status messages.
-    /// </param>
+    /// <summary>Processes Message Delivery Excel workbooks, writing a flat JSON report of delivery statistics.</summary>
+    /// <param name="importDir">Directory containing source Excel files.</param>
+    /// <param name="tmpDir">Temporary data directory for JSON output.</param>
+    /// <param name="statusCallback">Optional callback to report progress messages.</param>
     internal static void MessageDelivery(string importDir, string tmpDir, Action<string>? statusCallback = null)
     {
         var allRecords = new List<Dictionary<string, object?>>();
@@ -49,18 +36,10 @@ internal class ProcessWorkbook
         ReportUtility.WriteFlatJson(tmpDir, "Message_Delivery-Message_Delivery_Stats.json", allRecords);
     }
 
-    /// <summary>
-    /// Processes Message Failure Excel reports.
-    /// </summary>
-    /// <param name="importDir">
-    /// Directory containing source Excel files.
-    /// </param>
-    /// <param name="tmpDir">
-    /// Temporary data directory.
-    /// </param>
-    /// <param name="statusCallback">
-    /// Optional callback to report status messages.
-    /// </param>
+    /// <summary>Processes Message Failure Excel workbooks, writing summary, SMS statistics, and email statistics JSON reports.</summary>
+    /// <param name="importDir">Directory containing source Excel files.</param>
+    /// <param name="tmpDir">Temporary data directory for JSON output.</param>
+    /// <param name="statusCallback">Optional callback to report progress messages.</param>
     internal static void MessageFailure(string importDir, string tmpDir, Action<string>? statusCallback = null)
     {
         var summaryMetrics = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
@@ -93,18 +72,10 @@ internal class ProcessWorkbook
         ReportUtility.WriteClientStatsJson(tmpDir, "Message_Failure-Email_Stats.json", emailStatsByClient);
     }
 
-    /// <summary>
-    /// Processes Visit Detail Excel reports.
-    /// </summary>
-    /// <param name="importDir">
-    /// Directory containing source Excel files.
-    /// </param>
-    /// <param name="tmpDir">
-    /// Temporary data directory.
-    /// </param>
-    /// <param name="statusCallback">
-    /// Optional callback to report status messages.
-    /// </param>
+    /// <summary>Processes Visit Details Excel workbooks, writing meeting details and participant details JSON reports.</summary>
+    /// <param name="importDir">Directory containing source Excel files.</param>
+    /// <param name="tmpDir">Temporary data directory for JSON output.</param>
+    /// <param name="statusCallback">Optional callback to report progress messages.</param>
     internal static void VisitDetails(string importDir, string tmpDir, Action<string>? statusCallback = null)
     {
         var meetingDetailsById    = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
@@ -129,22 +100,13 @@ internal class ProcessWorkbook
         ReportUtility.WriteFlatJson(tmpDir, "Visit_Details-Participant_Details.json", participantDetails);
     }
 
-    /// <summary>
-    /// Processes Visit Stats Excel reports.
-    /// </summary>
-    /// <param name="importDir">
-    /// Directory containing source Excel files.
-    /// </param>
-    /// <param name="tmpDir">
-    /// Temporary data directory.
-    /// </param>
-    /// <param name="statusCallback">
-    /// Optional callback to report status messages.
-    /// </param>
+    /// <summary>Processes Visit Statistics Excel workbooks, writing summary and meeting errors JSON reports.</summary>
+    /// <param name="importDir">Directory containing source Excel files.</param>
+    /// <param name="tmpDir">Temporary data directory for JSON output.</param>
+    /// <param name="statusCallback">Optional callback to report progress messages.</param>
     internal static void VisitStats(string importDir, string tmpDir, Action<string>? statusCallback = null)
     {
-        var summaryMetrics = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
-
+        var summaryMetrics        = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
         (string, string)? summaryHeaders = null;
 
         var meetingErrorsById   = new Dictionary<string, Dictionary<string, object?>>(StringComparer.OrdinalIgnoreCase);
@@ -166,16 +128,17 @@ internal class ProcessWorkbook
         ReportUtility.WriteKeyedJson(tmpDir, "Visit_Stats-Meeting_Errors.json", meetingErrorsById);
     }
 
-    /// <summary>Processes Excel files matching a pattern and invokes a callback for each worksheet.</summary>
+    /// <summary>Processes all Excel files in a directory that match a given pattern, invoking a handler for each worksheet.</summary>
+    /// <remarks>Temporary Excel lock files (those whose names begin with <c>~$</c>) are automatically skipped. </remarks>
     /// <param name="importDir">Directory to search for Excel files.</param>
-    /// <param name="pattern">File search pattern (e.g., "*Visit_Stats*.xlsx").</param>
-    /// <param name="processSheet">Callback action that receives each DataTable and sheet name.</param>
-    /// <param name="statusCallback">Optional callback to report status messages.</param>
-    private static void Process(string importDir, string pattern, Action<DataTable, string> processSheet, Action<string>? statusCallback = null)
+    /// <param name="pattern">Glob pattern used to filter files (e.g., <c>*Visit_Stats*.xlsx</c>).</param>
+    /// <param name="worksheetHandler">Callback invoked for each worksheet <see cref="DataTable"/> and its sheet name.</param>
+    /// <param name="statusCallback">Optional callback to report per-file progress messages.</param>
+    private static void Process(string importDir, string pattern, Action<DataTable, string> worksheetHandler, Action<string>? statusCallback = null)
     {
         string[] matchingFiles = Directory.GetFiles(importDir, pattern, SearchOption.TopDirectoryOnly);
-        int processedCount = 0;
-        int totalFiles = matchingFiles.Length;
+        int processedCount     = 0;
+        int totalFiles         = matchingFiles.Length;
 
         foreach (string filePath in matchingFiles)
         {
@@ -197,7 +160,7 @@ internal class ProcessWorkbook
             {
                 if (worksheet.Columns.Count > 0)
                 {
-                    processSheet(worksheet, worksheet.TableName);
+                    worksheetHandler(worksheet, worksheet.TableName);
                 }
             }
 

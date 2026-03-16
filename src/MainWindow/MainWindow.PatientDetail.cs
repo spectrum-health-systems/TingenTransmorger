@@ -1,5 +1,5 @@
 ﻿// 260227_code
-// 260227_documentation
+// 260311_documentation
 
 using System.Text.Json;
 using System.Windows;
@@ -11,25 +11,34 @@ namespace TingenTransmorger;
  */
 public partial class MainWindow : Window
 {
-    /// <summary> Currently selected patient name.</summary>
+    /// <summary>The name of the currently selected patient.</summary>
+    /// <value>Set when a patient is selected; defaults to <see cref="string.Empty"/>.</value>
     private string _currentPatientName = string.Empty;
 
-    /// <summary>Currently selected patient ID.</summary>
+    /// <summary>The ID of the currently selected patient.</summary>
+    /// <value>Set when a patient is selected; defaults to <see cref="string.Empty"/>.</value>
     private string _currentPatientId = string.Empty;
 
-    /// <summary>Message delivery records for the current patient's phone numbers.</summary>
+    /// <summary>SMS delivery records for the current patient's phone numbers.</summary>
+    /// <value>Populated by <see cref="GetSmsStats"/>; cleared before each reload.</value>
     private List<(string PhoneNumber, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> _smsDeliveries = [];
 
     /// <summary>Email delivery records for the current patient's email addresses.</summary>
+    /// <value>Populated by <see cref="GetEmailStats"/>; cleared before each reload.</value>
     private List<(string EmailAddress, string DeliveryStatus, string MessageType, string ErrorMessage, string DateSent, string TimeSent)> _emailDeliveries = [];
 
     /// <summary>SMS failure records for the current patient's phone numbers.</summary>
+    /// <value>Populated by <see cref="GetSmsStats"/>; cleared before each reload.</value>
     private List<(string PhoneNumber, string ErrorMessage, string ScheduledStartTime)> _smsFailures =[];
 
     /// <summary>Email failure records for the current patient's email addresses.</summary>
+    /// <value>Populated by <see cref="GetEmailStats"/>; cleared before each reload.</value>
     private List<(string EmailAddress, string ErrorMessage, string ScheduledStartTime)> _emailFailures = [];
 
-    /// <summary>Displays patient details in the UI.</summary>
+    /// <summary>Loads and displays all patient detail sections in the UI for the specified patient.</summary>
+    /// <remarks>Caches the patient name and ID in instance fields before delegating to the display methods.</remarks>
+    /// <param name="patientName">The full name of the patient to display.</param>
+    /// <param name="patientId">The unique identifier of the patient to display.</param>
     private void DisplayPatientDetails(string patientName, string patientId)
     {
         // TODO: Depreciate these and just pass the actual values.
@@ -46,10 +55,11 @@ public partial class MainWindow : Window
         SetPatientDetailUi(patientName, patientId);
         DisplayPatientPhoneNumber(patientDetails);
         DisplayPatientEmailAddress(patientDetails);
-        DisplayPatientMeetingResults(patientDetails); // The meeting results box
+        DisplayPatientMeetingResults(patientDetails);
     }
 
-    /// <summary>Displays the patient's phone numbers in the UI.</summary>
+    /// <summary>Retrieves phone numbers from patient data, displays them, and updates the phone detail button color.</summary>
+    /// <remarks>Updates SMS delivery and failure statistics as a side effect via <see cref="GetSmsStats"/>.</remarks>
     /// <param name="patientDetails">The JSON element containing the patient's details.</param>
     private void DisplayPatientPhoneNumber(JsonElement? patientDetails)
     {
@@ -60,9 +70,10 @@ public partial class MainWindow : Window
         UpdateDetailsButtonColor(_smsFailures.Count > 0, _smsDeliveries.Count > 0, btnUserPhoneDetail);
     }
 
-    /// <summary>Get a list of formatted phone numbers for a patient.</summary>
-    /// <param name="patientDetails">The JSON representation of the patient's details.</param>
-    /// <returns>A list of strings representing the formatted phone numbers of the patient.</returns>
+    /// <summary>Extracts and formats phone numbers from the patient's JSON data.</summary>
+    /// <remarks>Formats ten-digit numbers as ###-###-####; other lengths are included without formatting.</remarks>
+    /// <param name="patientDetails">The JSON element containing the patient's details.</param>
+    /// <returns>A list of phone number strings extracted and formatted from the patient's JSON data.</returns>
     private static List<string> GetPatientPhoneNumbers(JsonElement? patientDetails)
     {
         var phoneNumbers = new List<string>();
@@ -93,7 +104,8 @@ public partial class MainWindow : Window
         return phoneNumbers;
     }
 
-    /// <summary>Show the patient phone number.</summary>
+    /// <summary>Displays the patient's phone numbers in the UI label, or a placeholder if none exist.</summary>
+    /// <remarks>Displays 'No phone numbers on file' if <paramref name="phoneNumbers"/> is empty.</remarks>
     /// <param name="phoneNumbers">A list of formatted phone numbers for the patient.</param>
     private void ShowPatientPhoneNumber(List<string> phoneNumbers)
     {
@@ -102,7 +114,8 @@ public partial class MainWindow : Window
             : "No phone numbers on file";
     }
 
-    /// <summary>Gets the SMS statistics for the provided phone numbers.</summary>
+    /// <summary>Clears and repopulates the SMS failure and delivery record lists for the given phone numbers.</summary>
+    /// <remarks>Only processes numbers with exactly ten digits after normalizing to digits only.</remarks>
     /// <param name="phoneNumbers">A list of formatted phone numbers for the patient.</param>
     private void GetSmsStats(List<string> phoneNumbers)
     {
@@ -124,7 +137,8 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Gets the patient's email addresses from the patient details and displays them in the UI.</summary>
+    /// <summary>Loads email addresses for the current patient and updates the email UI and detail button.</summary>
+    /// <remarks>Populates email statistics as a side effect via <see cref="GetEmailStats"/> and updates the button color.</remarks>
     /// <param name="patientDetails">The JSON element containing the patient's details.</param>
     private void DisplayPatientEmailAddress(JsonElement? patientDetails)
     {
@@ -135,15 +149,10 @@ public partial class MainWindow : Window
         UpdateDetailsButtonColor(_emailFailures.Count > 0, _emailDeliveries.Count > 0, btnUserEmailDetail);
     }
 
-    /// <summary>
-    /// Retrieves a list of email addresses associated with the specified patient details.
-    /// </summary>
-    /// <remarks>This method extracts email addresses from the provided JSON object. It only includes
-    /// non-empty addresses in the returned list.</remarks>
-    /// <param name="patientDetails">A JSON element representing the patient's details. This element is expected to contain an 'EmailAddresses'
-    /// property with an array of email address objects. This parameter cannot be null.</param>
-    /// <returns>A list of strings containing the email addresses of the patient. The list will be empty if no email addresses
-    /// are found.</returns>
+    /// <summary>Extracts email addresses from the patient's JSON data.</summary>
+    /// <remarks>Only non-empty, non-whitespace addresses are included in the returned list.</remarks>
+    /// <param name="patientDetails">The JSON element containing the patient's details.</param>
+    /// <returns>A list of email address strings extracted from the patient's JSON data.</returns>
     private static List<string> GetPatientEmailAddresses(JsonElement? patientDetails)
     {
         var emailAddresses = new List<string>();
@@ -170,7 +179,8 @@ public partial class MainWindow : Window
         return emailAddresses;
     }
 
-    /// <summary>Gets the email statistics for the provided email addresses.</summary>
+    /// <summary>Clears and repopulates the email failure and delivery record lists for the given addresses.</summary>
+    /// <remarks>Skips the placeholder value 'No email addresses on file' when processing.</remarks>
     /// <param name="emailAddresses">A list of email addresses for the patient.</param>
     private void GetEmailStats(List<string> emailAddresses)
     {
@@ -192,7 +202,8 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Shows the patient's email addresses in the UI.</summary>
+    /// <summary>Displays the patient's email addresses in the UI label, or a placeholder if none exist.</summary>
+    /// <remarks>Mutates <paramref name="emailAddresses"/> by appending a placeholder when the list is empty.</remarks>
     /// <param name="emailAddresses">A list of email addresses for the patient.</param>
     private void ShowPatientEmailAddress(List<string> emailAddresses)
     {
@@ -204,8 +215,9 @@ public partial class MainWindow : Window
         lblUserEmailValue.Content = string.Join(", ", emailAddresses);
     }
 
-    /// <summary>Displays the message history for the specified message type, either phone or email.</summary>
-    /// <param name="messageType">The type of message.</param>
+    /// <summary>Opens the message history window for either phone or email message records.</summary>
+    /// <remarks>No dialog is shown if <paramref name="messageType"/> does not match 'phone' or 'email'.</remarks>
+    /// <param name="messageType">The message channel to display; either 'phone' or 'email'.</param>
     private void ShowMessageDetails(string messageType)
     {
         MessageHistoryWindow messageHistoryWindow;

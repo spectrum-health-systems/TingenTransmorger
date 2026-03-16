@@ -1,5 +1,7 @@
-// 260212_code
+﻿// 260316_code
 // 260212_documentation
+
+/* The database namespace needs to be refactored */
 
 using System.IO;
 using System.Text;
@@ -11,7 +13,6 @@ using TingenTransmorger.Core;
 
 namespace TingenTransmorger.Database;
 
-/// <summary>Builds the Transmorger database from processed report JSON files.</summary>
 public partial class TransmorgerDatabase
 {
 
@@ -25,8 +26,6 @@ public partial class TransmorgerDatabase
 
     private static readonly Regex EmailRegex = new(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
 
-
-
     /* OLD STRUCTURE - END  ========================================================================================= */
 
     /*
@@ -36,21 +35,9 @@ public partial class TransmorgerDatabase
     /* Not quite sure how these two private fields work, but it's integral to the way that Claude Sonnet 4.5 parses the
      * database.
      */
-    /// <summary>Represents the root JSON element of the parsed database structure.</summary>
-    /// <remarks>
-    ///     This field provides access to the main JSON object from which all database data can be traversed. It is
-    ///     essential for operations that require reading or navigating the database contents.
-    /// </remarks>
     private JsonElement _jsonRoot;
 
-    /// <summary>Represents whether the database has been successfully loaded with data.</summary>
-    /// <remarks>
-    ///     This flag is used to indicate if the _jsonRoot contains valid data that can be accessed. If false, it
-    ///     suggests that the database is either not loaded or contains no data, and attempts to access _jsonRoot should
-    ///     be handled accordingly to avoid errors.
-    /// </remarks>
     private bool _hasData;
-
 
     internal static async Task<bool> Rebuild(string importDir, string tmpDir, string masterDbDir, Window parentWindow)
     {
@@ -90,10 +77,6 @@ public partial class TransmorgerDatabase
         return true;
     }
 
-
-    /// <summary>Check to see if the master database is newer than the local database and offer to upgrade.</summary>
-    /// <param name="localDbPath">The local database path.</param>
-    /// <param name="masterDbPath">The master database path.</param>
     internal static void Update(string localDbPath, string masterDbPath)
     {
         if (File.Exists(masterDbPath))
@@ -132,7 +115,9 @@ public partial class TransmorgerDatabase
                 }
                 else
                 {
-                    MainWindow.StopApp();
+                    /* TODO: Get this working.
+                     */
+                    //MainWindow.SetOutOfDateDatabaseTheme();
                 }
             }
         }
@@ -142,13 +127,6 @@ public partial class TransmorgerDatabase
         }
     }
 
-    /// <summary> Loads a TransmorgerDatabase instance from the specified local database file path. </summary>
-    /// <remarks>
-    ///     If the specified file does not exist, the application will stop and notify the user. Ensure that the file
-    ///     path is correct and accessible.
-    /// </remarks>
-    /// <param name="localDbPath">The path to the local database file.</param>
-    /// <returns>A TransmorgerDatabase instance populated with data from the specified file.</returns>
     internal static TransmorgerDatabase Load(string localDbPath)
     {
         if (File.Exists(localDbPath))
@@ -171,49 +149,12 @@ public partial class TransmorgerDatabase
         return new TransmorgerDatabase(); // Required to satisfy the compiler's requirement for a return statement.
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /*
      * NEW STRUCTURE - END =============================================================================================
      */
 
-
-
-
     /* OLD STRUCTURE - START ======================================================================================== */
 
-
-    /// <summary>Returns the VisitStats section from the loaded database as pretty JSON.</summary>
     public string GetSummaryVisitStatsJson()
     {
         if (!_hasData)
@@ -225,7 +166,6 @@ public partial class TransmorgerDatabase
         return JsonSerializer.Serialize(visit, JsonOptions);
     }
 
-    /// <summary>Returns the MessageFailure section from the loaded database as pretty JSON.</summary>
     public string GetSummaryMessageFailureJson()
     {
         if (!_hasData)
@@ -237,8 +177,6 @@ public partial class TransmorgerDatabase
         return JsonSerializer.Serialize(mf, JsonOptions);
     }
 
-    /// <summary>Gets all patients from the database.</summary>
-    /// <returns>List of patient records with PatientName and PatientId.</returns>
     public List<(string PatientName, string PatientId)> GetPatients()
     {
         var patients = new List<(string PatientName, string PatientId)>();
@@ -266,8 +204,6 @@ public partial class TransmorgerDatabase
         return patients;
     }
 
-    /// <summary>Gets all providers from the database.</summary>
-    /// <returns>List of provider records with ProviderName and ProviderId.</returns>
     public List<(string ProviderName, string ProviderId)> GetProviders()
     {
         var providers = new List<(string ProviderName, string ProviderId)>();
@@ -295,10 +231,6 @@ public partial class TransmorgerDatabase
         return providers;
     }
 
-    /// <summary>Gets detailed information for a specific patient.</summary>
-    /// <param name="patientName">The name of the patient.</param>
-    /// <param name="patientId">The ID of the patient.</param>
-    /// <returns>JsonElement containing the full patient record, or null if not found.</returns>
     public JsonElement? GetPatientDetails(string patientName, string patientId)
     {
         if (!_hasData)
@@ -324,9 +256,6 @@ public partial class TransmorgerDatabase
         return null;
     }
 
-    /// <summary>Gets detailed information for a specific provider.</summary>
-    /// <param name="providerName">The name of the provider.</param>
-    /// <returns>JsonElement containing the full provider record, or null if not found.</returns>
     public JsonElement? GetProviderDetails(string providerName)
     {
         if (!_hasData)
@@ -351,9 +280,6 @@ public partial class TransmorgerDatabase
         return null;
     }
 
-    /// <summary>Gets meeting detail information by MeetingId.</summary>
-    /// <param name="meetingId">The ID of the meeting.</param>
-    /// <returns>JsonElement containing the meeting detail record, or null if not found.</returns>
     public JsonElement? GetMeetingDetail(string meetingId)
     {
         if (!_hasData)
@@ -373,9 +299,6 @@ public partial class TransmorgerDatabase
         return null;
     }
 
-    /// <summary>Checks if a meeting has an error in the MeetingError collection.</summary>
-    /// <param name="meetingId">The ID of the meeting to check.</param>
-    /// <returns>True if the meeting has an error, false otherwise.</returns>
     public bool HasMeetingError(string meetingId)
     {
         if (!_hasData || string.IsNullOrWhiteSpace(meetingId))
@@ -390,9 +313,6 @@ public partial class TransmorgerDatabase
         return meetingErrorObj.TryGetProperty(meetingId, out _);
     }
 
-    /// <summary>Gets meeting error information by MeetingId.</summary>
-    /// <param name="meetingId">The ID of the meeting.</param>
-    /// <returns>JsonElement containing the meeting error record with Kind and Reason, or null if not found.</returns>
     public JsonElement? GetMeetingError(string meetingId)
     {
         if (!_hasData || string.IsNullOrWhiteSpace(meetingId))
@@ -412,8 +332,49 @@ public partial class TransmorgerDatabase
         return null;
     }
 
-    /// <summary>Builds the complete transmorger.json file from processed JSON reports.</summary>
-    /// <param name="tmpDir">Directory containing processed JSON files.</param>
+    /// <summary>Determines the date range of the database by finding the earliest and latest scheduled meeting start dates.</summary>
+    /// <remarks>Returns null if the database has no data, the MeetingDetail section is missing, or no parseable dates exist.</remarks>
+    /// <returns>A tuple containing the earliest start date and the latest start date, or null if no dates are found.</returns>
+    public (DateTime Start, DateTime End)? GetDatabaseDateRange()
+    {
+        if (!_hasData)
+        {
+            return null;
+        }
+
+        if (!_jsonRoot.TryGetProperty("MeetingDetail", out var meetingDetailObj))
+        {
+            return null;
+        }
+
+        if (meetingDetailObj.ValueKind != JsonValueKind.Object)
+        {
+            return null;
+        }
+
+        var dates = new List<DateTime>();
+
+        foreach (var meeting in meetingDetailObj.EnumerateObject())
+        {
+            if (meeting.Value.TryGetProperty("ScheduledStart", out var scheduledStart))
+            {
+                var dateString = scheduledStart.GetString();
+
+                if (!string.IsNullOrWhiteSpace(dateString) && DateTime.TryParse(dateString, out var date))
+                {
+                    dates.Add(date);
+                }
+            }
+        }
+
+        if (dates.Count == 0)
+        {
+            return null;
+        }
+
+        return (dates.Min(), dates.Max());
+    }
+
     internal static void Build(string tmpDir, string masterDbDir)
     {
         // Cache all file reads at the top level to avoid redundant I/O operations
@@ -435,9 +396,6 @@ public partial class TransmorgerDatabase
         WriteDatabaseFile(tmpDir, masterDbDir, database);
     }
 
-    /// <summary>Builds the Summary component containing Visit Stats and Message Failure summaries.</summary>
-    /// <param name="tmpDir">Directory containing source JSON files.</param>
-    /// <returns>Dictionary containing both summary sections.</returns>
     private static Dictionary<string, object?> BuildSummaryComponent(string tmpDir)
     {
         var visitStatsSummary = ReadJsonFile(tmpDir, "Visit_Stats-Summary.json");
@@ -453,11 +411,6 @@ public partial class TransmorgerDatabase
         };
     }
 
-    /// <summary>Builds the Patients component from Visit Details participant data.</summary>
-    /// <param name="tmpDir">Directory containing source JSON files.</param>
-    /// <param name="participantDetails">Cached participant details data.</param>
-    /// <param name="messageDeliveryStats">Cached message delivery stats data.</param>
-    /// <returns>List of unique patient records.</returns>
     private static List<Dictionary<string, object?>> BuildPatientsComponent(string tmpDir, List<Dictionary<string, object?>>? participantDetails, List<Dictionary<string, object?>>? messageDeliveryStats)
     {
         if (participantDetails == null)
@@ -550,11 +503,6 @@ public partial class TransmorgerDatabase
         return result;
     }
 
-    /// <summary>Builds the Providers component from Visit Details participant and meeting data.</summary>
-    /// <param name="tmpDir">Directory for error file output.</param>
-    /// <param name="participantDetails">Cached participant details data.</param>
-    /// <param name="meetingDetails">Cached meeting details data.</param>
-    /// <returns>List of unique provider records.</returns>
     private static List<Dictionary<string, object?>> BuildProvidersComponent(string tmpDir, List<Dictionary<string, object?>>? participantDetails, List<Dictionary<string, object?>>? meetingDetails)
     {
         var estimatedSize = (participantDetails?.Count ?? 0) + (meetingDetails?.Count ?? 0);
@@ -584,12 +532,6 @@ public partial class TransmorgerDatabase
         return result;
     }
 
-    /// <summary>Builds the MeetingDetail component from Visit Details Meeting Details.</summary>
-    /// <param name="tmpDir">Directory for error file output.</param>
-    /// <param name="meetingDetails">Cached meeting details data.</param>
-    /// <param name="patients">List of patient records for validation.</param>
-    /// <param name="providers">List of provider records for validation.</param>
-    /// <returns>Dictionary of meeting details indexed by MeetingId.</returns>
     private static Dictionary<string, object?> BuildMeetingDetailComponent(string tmpDir, List<Dictionary<string, object?>>? meetingDetails, List<Dictionary<string, object?>> patients, List<Dictionary<string, object?>> providers)
     {
         if (meetingDetails == null)
@@ -717,11 +659,6 @@ public partial class TransmorgerDatabase
         return meetingDetailDict;
     }
 
-    /// <summary>Builds the MeetingError component from Visit Stats Meeting Errors.</summary>
-    /// <param name="tmpDir">Directory containing source JSON files.</param>
-    /// <param name="patients">List of patient records for validation.</param>
-    /// <param name="providers">List of provider records for validation.</param>
-    /// <returns>Dictionary of meeting errors indexed by MeetingId.</returns>
     private static Dictionary<string, object?> BuildMeetingErrorComponent(string tmpDir, List<Dictionary<string, object?>> patients, List<Dictionary<string, object?>> providers)
     {
         var meetingErrors = ReadJsonFile(tmpDir, "Visit_Stats-Meeting_Errors.json") as List<Dictionary<string, object?>>;
@@ -852,9 +789,6 @@ public partial class TransmorgerDatabase
         return meetingErrorDict;
     }
 
-    /// <summary>Adds provider names from Visit Details Participant Details.</summary>
-    /// <param name="providersByName">Dictionary of providers keyed by name.</param>
-    /// <param name="participantDetails">Cached participant details data.</param>
     private static void AddProvidersFromParticipantDetails(Dictionary<string, Dictionary<string, object?>> providersByName, List<Dictionary<string, object?>>? participantDetails)
     {
         if (participantDetails == null)
@@ -900,10 +834,6 @@ public partial class TransmorgerDatabase
         }
     }
 
-    /// <summary>Consolidates provider IDs and meeting IDs from Visit Details Meeting Details in a single pass.</summary>
-    /// <param name="tmpDir">Directory for error file output.</param>
-    /// <param name="providersByName">Dictionary of providers keyed by name.</param>
-    /// <param name="meetingDetails">Cached meeting details data.</param>
     private static void AddProviderDataFromMeetingDetails(string tmpDir, Dictionary<string, Dictionary<string, object?>> providersByName, List<Dictionary<string, object?>>? meetingDetails)
     {
         if (meetingDetails == null)
@@ -1006,9 +936,6 @@ public partial class TransmorgerDatabase
         }
     }
 
-    /// <summary>Normalizes provider name from "Last, First" to "First Last" format.</summary>
-    /// <param name="name">Provider name that may be in "Last, First" format.</param>
-    /// <returns>Normalized name in "First Last" format.</returns>
     private static string NormalizeProviderName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -1031,9 +958,6 @@ public partial class TransmorgerDatabase
         return name;
     }
 
-    /// <summary>Reverses space-separated name parts to handle "LAST FIRST" to "FIRST LAST" conversion.</summary>
-    /// <param name="name">Provider name in "LAST FIRST" format.</param>
-    /// <returns>Reversed name in "FIRST LAST" format.</returns>
     private static string ReverseNameParts(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -1052,11 +976,6 @@ public partial class TransmorgerDatabase
         return name;
     }
 
-    /// <summary>Tries to match a provider name in various formats against a HashSet.</summary>
-    /// <param name="providerName">Provider name to match.</param>
-    /// <param name="providerNames">HashSet of known provider names.</param>
-    /// <param name="matchedName">The matched name if found.</param>
-    /// <returns>True if a match was found.</returns>
     private static bool TryMatchProviderName(string providerName, HashSet<string> providerNames, out string? matchedName)
     {
         matchedName = null;
@@ -1087,12 +1006,6 @@ public partial class TransmorgerDatabase
         return false;
     }
 
-    /// <summary>Tries to match a provider name in various formats against a Dictionary.</summary>
-    /// <param name="providerName">Provider name to match.</param>
-    /// <param name="providersByName">Dictionary of providers keyed by name.</param>
-    /// <param name="provider">The matched provider dictionary if found.</param>
-    /// <param name="matchedName">The matched name if found.</param>
-    /// <returns>True if a match was found.</returns>
     private static bool TryMatchProviderInDictionary(string providerName, Dictionary<string, Dictionary<string, object?>> providersByName, out Dictionary<string, object?>? provider, out string? matchedName)
     {
         provider = null;
@@ -1124,10 +1037,6 @@ public partial class TransmorgerDatabase
         return false;
     }
 
-    /// <summary>Adds phone numbers from participant details to patient records.</summary>
-    /// <param name="tmpDir">Directory containing JSON files.</param>
-    /// <param name="patientsByName">Dictionary of patients keyed by name.</param>
-    /// <param name="participantDetails">Cached participant details data.</param>
     private static void AddPhoneNumbersFromParticipantDetails(string tmpDir, Dictionary<string, Dictionary<string, object?>> patientsByName, List<Dictionary<string, object?>>? participantDetails)
     {
         if (participantDetails == null)
@@ -1189,9 +1098,6 @@ public partial class TransmorgerDatabase
         }
     }
 
-    /// <summary>Adds phone numbers with failed meeting details to patient records from SMS stats.</summary>
-    /// <param name="tmpDir">Directory containing JSON files.</param>
-    /// <param name="patientsByName">Dictionary of patients keyed by name.</param>
     private static void AddPhoneNumbersFromSmsStats(string tmpDir, Dictionary<string, Dictionary<string, object?>> patientsByName)
     {
         var smsStats = ReadJsonFile(tmpDir, "Message_Failure-Sms_Stats.json") as List<Dictionary<string, object?>>;
@@ -1272,9 +1178,6 @@ public partial class TransmorgerDatabase
         }
     }
 
-    /// <summary>Adds email addresses with failed meeting details to patient records from Email stats.</summary>
-    /// <param name="tmpDir">Directory containing JSON files.</param>
-    /// <param name="patientsByName">Dictionary of patients keyed by name.</param>
     private static void AddEmailAddressesFromEmailStats(string tmpDir, Dictionary<string, Dictionary<string, object?>> patientsByName)
     {
         var emailStats = ReadJsonFile(tmpDir, "Message_Failure-Email_Stats.json") as List<Dictionary<string, object?>>;
@@ -1364,10 +1267,6 @@ public partial class TransmorgerDatabase
         }
     }
 
-    /// <summary>Adds delivery success data to phone numbers from Message Delivery Stats.</summary>
-    /// <param name="tmpDir">Directory containing JSON files.</param>
-    /// <param name="patientsByName">Dictionary of patients keyed by name.</param>
-    /// <param name="messageDeliveryStats">Cached message delivery stats data.</param>
     private static void AddDeliverySuccessFromMessageDeliveryStats(string tmpDir, Dictionary<string, Dictionary<string, object?>> patientsByName, List<Dictionary<string, object?>>? messageDeliveryStats)
     {
         if (messageDeliveryStats == null)
@@ -1461,10 +1360,6 @@ public partial class TransmorgerDatabase
         }
     }
 
-    /// <summary>Adds delivery success data to email addresses from Message Delivery Stats.</summary>
-    /// <param name="tmpDir">Directory containing JSON files.</param>
-    /// <param name="patientsByName">Dictionary of patients keyed by name.</param>
-    /// <param name="messageDeliveryStats">Cached message delivery stats data.</param>
     private static void AddEmailDeliverySuccessFromMessageDeliveryStats(string tmpDir, Dictionary<string, Dictionary<string, object?>> patientsByName, List<Dictionary<string, object?>>? messageDeliveryStats)
     {
         if (messageDeliveryStats == null)
@@ -1552,10 +1447,6 @@ public partial class TransmorgerDatabase
         }
     }
 
-    /// <summary>Adds meeting information to patient records from Visit Details Participant Details.</summary>
-    /// <param name="tmpDir">Directory containing JSON files.</param>
-    /// <param name="patientsByName">Dictionary of patients keyed by name.</param>
-    /// <param name="participantDetails">Cached participant details data.</param>
     private static void AddMeetingsFromParticipantDetails(string tmpDir, Dictionary<string, Dictionary<string, object?>> patientsByName, List<Dictionary<string, object?>>? participantDetails)
     {
         if (participantDetails == null)
@@ -1645,10 +1536,6 @@ public partial class TransmorgerDatabase
         }
     }
 
-    /// <summary>Combines date and time strings into a single formatted string.</summary>
-    /// <param name="date">Date string.</param>
-    /// <param name="time">Time string.</param>
-    /// <returns>Combined date and time string, or null if either is missing.</returns>
     private static string? CombineDateAndTime(string? date, string? time)
     {
         if (string.IsNullOrWhiteSpace(date) || string.IsNullOrWhiteSpace(time))
@@ -1659,10 +1546,6 @@ public partial class TransmorgerDatabase
         return $"{date} {time}";
     }
 
-    /// <summary>Combines name and version strings into a single formatted string.</summary>
-    /// <param name="name">Name string.</param>
-    /// <param name="version">Version string.</param>
-    /// <returns>Combined name and version string, or null if either is missing.</returns>
     private static string? CombineNameAndVersion(string? name, string? version)
     {
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(version))
@@ -1673,9 +1556,6 @@ public partial class TransmorgerDatabase
         return $"{name} {version}";
     }
 
-    /// <summary>Sanitizes a phone number to 10-digit format (area code + local number).</summary>
-    /// <param name="phoneNumber">Raw phone number string.</param>
-    /// <returns>10-digit phone number, or empty string if invalid.</returns>
     private static string SanitizePhoneNumber(string phoneNumber)
     {
         if (string.IsNullOrWhiteSpace(phoneNumber))
@@ -1703,37 +1583,23 @@ public partial class TransmorgerDatabase
         return digitCount == 10 ? new string(buffer.Slice(0, 10)) : string.Empty;
     }
 
-    /// <summary>Validates email address format.</summary>
-    /// <param name="email">Email address to validate.</param>
-    /// <returns>True if email follows standard format.</returns>
     private static bool IsValidEmail(string email)
     {
         return EmailRegex.IsMatch(email);
     }
 
-    /// <summary>Writes error messages to a file.</summary>
-    /// <param name="tmpDir">Directory to write the error file.</param>
-    /// <param name="fileName">Name of the error file.</param>
-    /// <param name="errors">List of error messages.</param>
     private static void WriteErrorFile(string tmpDir, string fileName, List<string> errors)
     {
         var filePath = Path.Combine(tmpDir, fileName);
         File.WriteAllLines(filePath, errors, Encoding.UTF8);
     }
 
-    /// <summary>Checks if a participant record represents a client (patient).</summary>
-    /// <param name="participant">Participant record dictionary.</param>
-    /// <returns>True if the participant is a CLIENT.</returns>
     private static bool IsClient(Dictionary<string, object?> participant)
     {
         var participantType = GetStringValue(participant, "Participant Type");
         return participantType?.Equals("CLIENT", StringComparison.OrdinalIgnoreCase) == true;
     }
 
-    /// <summary>Safely extracts a string value from a dictionary.</summary>
-    /// <param name="dict">Source dictionary.</param>
-    /// <param name="key">Key to look up.</param>
-    /// <returns>Trimmed string value, or null if not found.</returns>
     private static string? GetStringValue(Dictionary<string, object?> dict, string key)
     {
         if (dict.TryGetValue(key, out var value))
@@ -1754,10 +1620,6 @@ public partial class TransmorgerDatabase
         return null;
     }
 
-    /// <summary>Reads and deserializes a JSON file.</summary>
-    /// <param name="tmpDir">Directory containing the file.</param>
-    /// <param name="fileName">Name of the JSON file to read.</param>
-    /// <returns>Deserialized object, or empty list if file doesn't exist.</returns>
     private static object? ReadJsonFile(string tmpDir, string fileName)
     {
         var filePath = Path.Combine(tmpDir, fileName);
@@ -1771,9 +1633,6 @@ public partial class TransmorgerDatabase
         return JsonSerializer.Deserialize<List<Dictionary<string, object?>>>(json);
     }
 
-    /// <summary>Writes the complete database to transmorger.json.</summary>
-    /// <param name="tmpDir">Output directory.</param>
-    /// <param name="database">Complete database object to serialize.</param>
     private static void WriteDatabaseFile(string tmpDir, string masterDbDir, Dictionary<string, object?> database)
     {
         var jsonPath = Path.Combine(tmpDir, "transmorger.json");

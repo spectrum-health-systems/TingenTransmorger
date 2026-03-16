@@ -1,43 +1,43 @@
-// 260206_code
+﻿// 260206_code
 // 260206_documentation
+
+/* The database namespace needs to be refactored */
 
 using System.Text;
 using System.Text.Json;
 
 namespace TingenTransmorger.Database;
 
-/// <summary>Partial class for TransmorgerDatabase diagnostic methods.</summary>
 public partial class TransmorgerDatabase
 {
-    /// <summary>Diagnostic method to check database root properties.</summary>
     public string GetDatabaseStructureDiagnostic()
     {
         if (!_hasData)
             return "No data loaded";
-            
+
         var sb = new StringBuilder();
         sb.AppendLine("Database Root Properties:");
         foreach (var prop in _jsonRoot.EnumerateObject())
         {
             sb.AppendLine($"  - {prop.Name} ({prop.Value.ValueKind})");
-            
+
             if (prop.Value.ValueKind == JsonValueKind.Array)
             {
                 sb.AppendLine($"      Array Length: {prop.Value.GetArrayLength()}");
-                
+
                 // Show first item structure if array is not empty
                 if (prop.Value.GetArrayLength() > 0)
                 {
                     var firstItem = prop.Value[0];
                     sb.AppendLine($"      First item type: {firstItem.ValueKind}");
-                    
+
                     if (firstItem.ValueKind == JsonValueKind.Object)
                     {
                         sb.AppendLine("      First item properties:");
                         foreach (var itemProp in firstItem.EnumerateObject())
                         {
                             sb.AppendLine($"        - {itemProp.Name}: {itemProp.Value.ValueKind}");
-                            
+
                             // Show string values if short
                             if (itemProp.Value.ValueKind == JsonValueKind.String)
                             {
@@ -56,20 +56,20 @@ public partial class TransmorgerDatabase
                 sb.AppendLine("      Object properties:");
                 foreach (var objProp in prop.Value.EnumerateObject())
                 {
-                    var count = objProp.Value.ValueKind == JsonValueKind.Array 
-                        ? objProp.Value.GetArrayLength() 
+                    var count = objProp.Value.ValueKind == JsonValueKind.Array
+                        ? objProp.Value.GetArrayLength()
                         : 0;
                     sb.AppendLine($"        - {objProp.Name}: {objProp.Value.ValueKind} {(count > 0 ? $"[{count} items]" : "")}");
                 }
             }
-            
+
             if (prop.Name == "Summary" && prop.Value.ValueKind == JsonValueKind.Object)
             {
                 sb.AppendLine("    Summary Properties (detailed):");
                 foreach (var summaryProp in prop.Value.EnumerateObject())
                 {
-                    var count = summaryProp.Value.ValueKind == JsonValueKind.Array 
-                        ? summaryProp.Value.GetArrayLength() 
+                    var count = summaryProp.Value.ValueKind == JsonValueKind.Array
+                        ? summaryProp.Value.GetArrayLength()
                         : 0;
                     sb.AppendLine($"      - {summaryProp.Name} ({summaryProp.Value.ValueKind}) {(count > 0 ? $"[{count} items]" : "")}");
                 }
@@ -77,38 +77,37 @@ public partial class TransmorgerDatabase
         }
         return sb.ToString();
     }
-    
-    /// <summary>Diagnostic method to show first SMS failure record if any exist.</summary>
+
     public string GetFirstSmsFailureDiagnostic()
     {
         if (!_hasData)
             return "No data loaded";
-            
+
         var sb = new StringBuilder();
-        
+
         if (!_jsonRoot.TryGetProperty("Summary", out var summary))
         {
             sb.AppendLine("ERROR: No 'Summary' property found in database root");
             return sb.ToString();
         }
-        
+
         if (!summary.TryGetProperty("MessageFailure", out var messageFailure))
         {
             sb.AppendLine("ERROR: No 'MessageFailure' property found in Summary");
             return sb.ToString();
         }
-        
+
         sb.AppendLine($"MessageFailure type: {messageFailure.ValueKind}");
-        
+
         if (messageFailure.ValueKind == JsonValueKind.Array)
         {
             var arrayLength = messageFailure.GetArrayLength();
             sb.AppendLine($"MessageFailure array length: {arrayLength}");
-            
+
             if (arrayLength > 0)
             {
                 sb.AppendLine("\n=== First 3 clients ===");
-                
+
                 for (int i = 0; i < Math.Min(3, arrayLength); i++)
                 {
                     var client = messageFailure[i];
@@ -116,7 +115,7 @@ public partial class TransmorgerDatabase
                     foreach (var prop in client.EnumerateObject())
                     {
                         sb.AppendLine($"  - {prop.Name}: {prop.Value.ValueKind}");
-                        
+
                         // Show the actual value for string and number types
                         if (prop.Value.ValueKind == JsonValueKind.String)
                         {
@@ -133,13 +132,13 @@ public partial class TransmorgerDatabase
                         else if (prop.Value.ValueKind == JsonValueKind.Array)
                         {
                             sb.AppendLine($"      Array Length: {prop.Value.GetArrayLength()}");
-                            
+
                             // Show first item in array if it exists
                             if (prop.Value.GetArrayLength() > 0)
                             {
                                 var firstItem = prop.Value[0];
                                 sb.AppendLine($"      First item type: {firstItem.ValueKind}");
-                                
+
                                 if (firstItem.ValueKind == JsonValueKind.Object)
                                 {
                                     sb.AppendLine("      First item properties:");
@@ -169,19 +168,18 @@ public partial class TransmorgerDatabase
         {
             sb.AppendLine("ERROR: MessageFailure is not an array!");
         }
-        
+
         return sb.ToString();
     }
-    
-    /// <summary>Searches the database for SMS failure records with phone numbers.</summary>
+
     public string SearchForSmsFailureRecords()
     {
         if (!_hasData)
             return "No data loaded";
-            
+
         var sb = new StringBuilder();
         sb.AppendLine("=== Searching for SMS Failure Records with Phone Numbers ===\n");
-        
+
         // Check if there's a separate property for detailed SMS failures
         foreach (var rootProp in _jsonRoot.EnumerateObject())
         {
@@ -190,19 +188,19 @@ public partial class TransmorgerDatabase
                 rootProp.Name.Contains("Failure", StringComparison.OrdinalIgnoreCase))
             {
                 sb.AppendLine($"Found potentially relevant property: {rootProp.Name} ({rootProp.Value.ValueKind})");
-                
+
                 if (rootProp.Value.ValueKind == JsonValueKind.Array && rootProp.Value.GetArrayLength() > 0)
                 {
                     var firstItem = rootProp.Value[0];
                     sb.AppendLine($"  First item type: {firstItem.ValueKind}");
-                    
+
                     if (firstItem.ValueKind == JsonValueKind.Object)
                     {
                         sb.AppendLine("  First item properties:");
                         foreach (var itemProp in firstItem.EnumerateObject())
                         {
                             sb.AppendLine($"    - {itemProp.Name}: {itemProp.Value.ValueKind}");
-                            
+
                             if (itemProp.Name.Contains("Phone", StringComparison.OrdinalIgnoreCase) ||
                                 itemProp.Name.Contains("Client", StringComparison.OrdinalIgnoreCase) ||
                                 itemProp.Name.Contains("Record", StringComparison.OrdinalIgnoreCase))
@@ -234,11 +232,11 @@ public partial class TransmorgerDatabase
                         }
                     }
                 }
-                
+
                 sb.AppendLine();
             }
         }
-        
+
         // Check Summary for nested properties
         if (_jsonRoot.TryGetProperty("Summary", out var summary))
         {
@@ -249,7 +247,7 @@ public partial class TransmorgerDatabase
                     summaryProp.Name.Contains("Failure", StringComparison.OrdinalIgnoreCase))
                 {
                     sb.AppendLine($"\n  Found: Summary.{summaryProp.Name} ({summaryProp.Value.ValueKind})");
-                    
+
                     if (summaryProp.Value.ValueKind == JsonValueKind.Object)
                     {
                         sb.AppendLine("    Nested properties:");
@@ -261,33 +259,32 @@ public partial class TransmorgerDatabase
                 }
             }
         }
-        
+
         return sb.ToString();
     }
-    
-    /// <summary>Lists all root-level properties in the database to help identify SMS Stats location.</summary>
+
     public string ListAllRootProperties()
     {
         if (!_hasData)
             return "No data loaded";
-            
+
         var sb = new StringBuilder();
         sb.AppendLine("=== All Root-Level Database Properties ===\n");
-        
+
         foreach (var prop in _jsonRoot.EnumerateObject())
         {
             sb.AppendLine($"{prop.Name}:");
             sb.AppendLine($"  Type: {prop.Value.ValueKind}");
-            
+
             if (prop.Value.ValueKind == JsonValueKind.Array)
             {
                 sb.AppendLine($"  Array Length: {prop.Value.GetArrayLength()}");
-                
+
                 if (prop.Value.GetArrayLength() > 0)
                 {
                     var firstItem = prop.Value[0];
                     sb.AppendLine($"  First Item Type: {firstItem.ValueKind}");
-                    
+
                     if (firstItem.ValueKind == JsonValueKind.Object)
                     {
                         sb.Append("  First Item Properties: ");
@@ -310,32 +307,31 @@ public partial class TransmorgerDatabase
                 }
                 sb.AppendLine(string.Join(", ", propNames));
             }
-            
+
             sb.AppendLine();
         }
-        
+
         return sb.ToString();
     }
-    
-    /// <summary>Analyzes database for potential data duplication to identify size issues.</summary>
+
     public string AnalyzeDatabaseSizeIssues()
     {
         if (!_hasData)
             return "No data loaded";
-            
+
         var sb = new StringBuilder();
         sb.AppendLine("=== Database Size Analysis ===\n");
-        
+
         // Count patients
         if (_jsonRoot.TryGetProperty("Patients", out var patients) && patients.ValueKind == JsonValueKind.Array)
         {
             sb.AppendLine($"Total Patients: {patients.GetArrayLength()}");
-            
+
             int patientsWithDeliveryFailures = 0;
             int patientsWithDeliverySuccesses = 0;
             int totalDeliveryFailures = 0;
             int totalDeliverySuccesses = 0;
-            
+
             foreach (var patient in patients.EnumerateArray())
             {
                 if (patient.TryGetProperty("PhoneNumbers", out var phoneNumbers) && phoneNumbers.ValueKind == JsonValueKind.Array)
@@ -351,7 +347,7 @@ public partial class TransmorgerDatabase
                                 totalDeliveryFailures += failureCount;
                             }
                         }
-                        
+
                         if (phoneEntry.TryGetProperty("DeliverySuccess", out var successes) && successes.ValueKind == JsonValueKind.Array)
                         {
                             int successCount = successes.GetArrayLength();
@@ -364,24 +360,24 @@ public partial class TransmorgerDatabase
                     }
                 }
             }
-            
+
             sb.AppendLine($"Patients with Delivery Failures: {patientsWithDeliveryFailures}");
             sb.AppendLine($"Total Delivery Failure records (in patients): {totalDeliveryFailures}");
             sb.AppendLine($"Patients with Delivery Successes: {patientsWithDeliverySuccesses}");
             sb.AppendLine($"Total Delivery Success records (in patients): {totalDeliverySuccesses}\n");
         }
-        
+
         // Check for Summary sections that might duplicate data
         if (_jsonRoot.TryGetProperty("Summary", out var summary))
         {
             sb.AppendLine("Summary section exists:");
-            
+
             if (summary.TryGetProperty("MessageFailure", out var msgFailure))
             {
                 if (msgFailure.ValueKind == JsonValueKind.Array)
                 {
                     sb.AppendLine($"  MessageFailure array length: {msgFailure.GetArrayLength()}");
-                    
+
                     int totalRecords = 0;
                     foreach (var item in msgFailure.EnumerateArray())
                     {
@@ -397,7 +393,7 @@ public partial class TransmorgerDatabase
                     sb.AppendLine($"  MessageFailure type: {msgFailure.ValueKind}");
                 }
             }
-            
+
             if (summary.TryGetProperty("MessageDelivery", out var msgDelivery))
             {
                 if (msgDelivery.ValueKind == JsonValueKind.Array)
@@ -409,10 +405,10 @@ public partial class TransmorgerDatabase
                     sb.AppendLine($"  MessageDelivery type: {msgDelivery.ValueKind}");
                 }
             }
-            
+
             sb.AppendLine();
         }
-        
+
         // Check for other potential duplicate storage locations
         var rootProps = new List<string>();
         foreach (var prop in _jsonRoot.EnumerateObject())
@@ -426,7 +422,7 @@ public partial class TransmorgerDatabase
                 rootProps.Add($"  {prop.Name} ({prop.Value.ValueKind}) {(count > 0 ? $"[{count} items]" : "")}");
             }
         }
-        
+
         if (rootProps.Count > 0)
         {
             sb.AppendLine("Other message-related properties at root level:");
@@ -436,7 +432,7 @@ public partial class TransmorgerDatabase
             }
             sb.AppendLine();
         }
-        
+
         sb.AppendLine("*** POTENTIAL DUPLICATION ANALYSIS ***");
         sb.AppendLine("If data is stored BOTH in patient phone numbers AND in Summary/root sections,");
         sb.AppendLine("this would cause the database to be approximately double the necessary size.");
@@ -444,7 +440,7 @@ public partial class TransmorgerDatabase
         sb.AppendLine("RECOMMENDATION:");
         sb.AppendLine("The Summary.MessageDelivery section appears to be redundant.");
         sb.AppendLine("Consider removing it from the database build process to reduce file size by ~50%.");
-        
+
         return sb.ToString();
     }
 }

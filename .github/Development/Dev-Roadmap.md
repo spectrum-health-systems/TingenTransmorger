@@ -1,5 +1,8 @@
 # Tingen Transmorger: Development Roadmap (Development)
 
+- `MODIFIED` If a database is out of date, the background is now red
+- `MODIFIED` If a database is out of date, a message is displayed in the title bar
+
 ## Test
 
 - [ ] `private async Task StartApp()`

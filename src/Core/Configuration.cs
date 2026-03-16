@@ -1,47 +1,37 @@
 ﻿// 260204_code
-// 260204_documentation
+// 260311_documentation
 
 using System.IO;
 using System.Text.Json;
 
 namespace TingenTransmorger.Core;
 
-/// <summary>
-/// Represents the application's configuration and provides helpers to load, validate, and persist configuration
-/// settings to disk.
-/// </summary>
+/// <summary>Represents the application configuration, persisted as a JSON file on disk.</summary>
 /// <remarks>
-/// Configuration values are stored in a JSON file at "AppData/Config/transmorger.config". The <see cref="Verify"/>
-/// method performs interactive validation and may show message boxes or terminate the application if required settings
-/// are missing.
+/// The configuration file is located at <c>AppData/Config/transmorger.config</c> relative to the application working
+/// directory. A default configuration is created automatically if it does not exist.
 /// </remarks>
 class Configuration
 {
-    /// <summary>
-    /// Gets or sets the configuration mode name (for example, "Default" or "Admin").
-    /// </summary>
+    /// <summary>Gets or sets the application operating mode.</summary>
+    /// <value>A string identifying the current mode (e.g., <c>Standard</c>).</value>
     public string Mode { get; set; }
 
-    /// <summary>
-    /// Gets or sets a mapping of standard directory keys to their configured paths.
-    /// </summary>
+    /// <summary>Gets or sets the directory paths used in standard operating mode.</summary>
+    /// <value>
+    /// A dictionary mapping directory keys (e.g., <c>LocalDb</c>, <c>MasterDb</c>) to their corresponding file system
+    /// paths.
+    /// </value>
     public Dictionary<string, string> StandardDirectories { get; set; }
 
-    /// <summary>
-    /// Gets or sets administrator-only directory mappings used by advanced features.
-    /// </summary>
+    /// <summary>Gets or sets the directory paths used in administrative operations.</summary>
+    /// <value>
+    /// A dictionary mapping directory keys (e.g., <c>Tmp</c>, <c>Import</c>) to their corresponding file system paths.
+    /// </value>
     public Dictionary<string, string> AdminDirectories { get; set; }
 
-    /// <summary>
-    /// Writes the provided <see cref="Configuration"/> instance to the application configuration file located
-    /// at "AppData/Config/transmorger.config".
-    /// </summary>
-    /// <param name="config">
-    /// The configuration to write to disk.
-    /// </param>
-    /// <remarks>
-    /// The containing directory is expected to be "AppData/Config" under the application's current working directory.
-    /// </remarks>
+    /// <summary>Serializes a <see cref="Configuration"/> instance and writes it to the configuration file.</summary>
+    /// <param name="config">The <see cref="Configuration"/> instance to serialize and persist.</param>
     public static void WriteConfigFile(Configuration config)
     {
         var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "AppData", "Config", "transmorger.config");
@@ -51,16 +41,9 @@ class Configuration
         File.WriteAllText(configFilePath, configJson);
     }
 
-    /// <summary>
-    /// Loads the configuration from the application's configuration file. If the file does not exist, a default
-    /// configuration is created and written to disk.
-    /// </summary>
-    /// <remarks>
-    /// If the configuration file is absent this method creates the containing "AppData/Config" directory and writes a
-    /// default configuration file.
-    /// </remarks>
+    /// <summary>Loads the application configuration from disk, creating a default file if one does not exist.</summary>
     /// <returns>
-    /// The loaded <see cref="Configuration"/> instance.
+    /// The deserialized <see cref="Configuration"/> instance read from <c>AppData/Config/transmorger.config</c>.
     /// </returns>
     internal static Configuration Load()
     {
@@ -77,16 +60,9 @@ class Configuration
         return JsonSerializer.Deserialize<Configuration>(File.ReadAllText(configFilePath))!;
     }
 
-    /// <summary>
-    /// Creates a default configuration instance using the provided application data directory as the base for directory
-    /// paths.
-    /// </summary>
-    /// <param name="appDataDirName">
-    /// Base application data directory path.
-    /// </param>
-    /// <returns>
-    /// A new <see cref="Configuration"/> populated with default values.
-    /// </returns>
+    /// <summary>Creates a default <see cref="Configuration"/> instance with preset directory paths.</summary>
+    /// <param name="appDataDirName">The base application data directory path used to resolve default directory values.</param>
+    /// <returns>A new <see cref="Configuration"/> instance populated with default values.</returns>
     private static Configuration CreateDefault(string appDataDirName) => new Configuration
     {
         Mode                            = "Standard",

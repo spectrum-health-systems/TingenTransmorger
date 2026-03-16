@@ -2,7 +2,8 @@
 
   ![Logo](.github/Logo/TransmorgerLogo-256x256.png)
 
-  ![Release](https://img.shields.io/badge/version-0.9.29.0-teal)&nbsp;&nbsp;
+  ![Release](https://img.shields.io/badge/version-0.9.30.0-teal)&nbsp;&nbsp;
+  <!--![DevBranch](https://img.shields.io/badge/DEVELOPMENT_BRANCH-red)&nbsp;&nbsp;-->
   ![License](https://img.shields.io/badge/license-apache-blue)
 
   <h1>Tingen Transmorger</h1>

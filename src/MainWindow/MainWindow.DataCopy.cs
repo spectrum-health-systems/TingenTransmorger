@@ -1,5 +1,5 @@
 ﻿// 260227_code
-// 260227_documentation
+// 260311_documentation
 
 using System.Text;
 using System.Windows;
@@ -10,7 +10,8 @@ namespace TingenTransmorger;
  */
 public partial class MainWindow : Window
 {
-    /// <summary>Copy general meeting details to the clipboard.</summary>
+    /// <summary>Copies general meeting details from the UI to the clipboard as formatted text.</summary>
+    /// <remarks>Displays a confirmation on success or an error message if the clipboard operation fails.</remarks>
     private void CopyGeneralMeetingDetails()
     {
         try
@@ -45,7 +46,8 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Copy patient meeting details to the clipboard.</summary>
+    /// <summary>Copies patient participant details from the UI to the clipboard as formatted text.</summary>
+    /// <remarks>Displays a confirmation on success or an error message if the clipboard operation fails.</remarks>
     private void CopyPatientMeetingDetails()
     {
         try
@@ -77,7 +79,8 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>Copy provider meeting details to the clipboard.</summary>
+    /// <summary>Copies provider participant details from the UI to the clipboard as formatted text.</summary>
+    /// <remarks>Displays a confirmation on success or an error message if the clipboard operation fails.</remarks>
     private void CopyProviderMeetingDetails()
     {
         try

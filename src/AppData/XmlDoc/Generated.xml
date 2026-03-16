@@ -1,0 +1,1067 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TingenTransmorger</name>
+    </assembly>
+    <members>
+        <member name="T:TingenTransmorger.App">
+            <summary>
+            Interaction logic for App.xaml
+            </summary>
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:TingenTransmorger.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:TingenTransmorger.App.Main">
+            <summary>
+            Application Entry Point.
+            </summary>
+        </member>
+        <member name="T:TingenTransmorger.Core.Catalog">
+            <summary>Provides static string array catalogs for application message box content.</summary>
+            <remarks>
+            <para>
+            Each method returns a two-element <see cref="T:System.String"/> array where index <c>0</c> contains the message
+            box title and index <c>1</c> contains the message body.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:TingenTransmorger.Core.Catalog.msgbox_InvalidConfigurationSetting(System.String)">
+            <summary>Returns message box content for an invalid or undefined configuration setting.</summary>
+            <param name="setting">The name of the configuration setting that is undefined.</param>
+            <returns>
+            A two-element array containing the message box title at index <c>0</c> and an error description with remediation
+            instructions at index <c>1</c>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.Core.Catalog.msgbox_PathDoesNotExistWithCreatePrompt(System.String,System.String)">
+            <summary>Returns message box content for a directory path that does not exist, prompting the user to create it.</summary>
+            <param name="dirKey">The configuration key name identifying the missing directory.</param>
+            <param name="dirValue">The full directory path that does not exist.</param>
+            <returns>
+            A two-element array containing the message box title at index <c>0</c> and an error description with a
+            create-or-close prompt at index <c>1</c>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.Core.Catalog.msgbox_DatabaseRebuildCheck">
+            <summary>Returns message box content prompting the user to confirm a database rebuild.</summary>
+            <returns>
+            A two-element array containing the message box title at index <c>0</c> and a confirmation prompt at index <c>1</c>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.Core.Catalog.msgbox_DatabaseUpdateAvailable">
+            <summary>Returns message box content notifying the user that a newer database version is available.</summary>
+            <returns>
+            A two-element array containing the message box title at index <c>0</c> and an upgrade prompt at index <c>1</c>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.Core.Catalog.msgbox_DatabaseUpdateSuccess">
+            <summary>Returns message box content confirming that the database upgrade completed successfully.</summary>
+            <returns>
+            A two-element array containing the message box title at index <c>0</c> and a success message at index <c>1</c>.
+            </returns>
+        </member>
+        <member name="T:TingenTransmorger.Core.Configuration">
+            <summary>Represents the application configuration, persisted as a JSON file on disk.</summary>
+            <remarks>
+            The configuration file is located at <c>AppData/Config/transmorger.config</c> relative to the application working
+            directory. A default configuration is created automatically if it does not exist.
+            </remarks>
+        </member>
+        <member name="P:TingenTransmorger.Core.Configuration.Mode">
+            <summary>Gets or sets the application operating mode.</summary>
+            <value>A string identifying the current mode (e.g., <c>Standard</c>).</value>
+        </member>
+        <member name="P:TingenTransmorger.Core.Configuration.StandardDirectories">
+            <summary>Gets or sets the directory paths used in standard operating mode.</summary>
+            <value>
+            A dictionary mapping directory keys (e.g., <c>LocalDb</c>, <c>MasterDb</c>) to their corresponding file system
+            paths.
+            </value>
+        </member>
+        <member name="P:TingenTransmorger.Core.Configuration.AdminDirectories">
+            <summary>Gets or sets the directory paths used in administrative operations.</summary>
+            <value>
+            A dictionary mapping directory keys (e.g., <c>Tmp</c>, <c>Import</c>) to their corresponding file system paths.
+            </value>
+        </member>
+        <member name="M:TingenTransmorger.Core.Configuration.WriteConfigFile(TingenTransmorger.Core.Configuration)">
+            <summary>Serializes a <see cref="T:TingenTransmorger.Core.Configuration"/> instance and writes it to the configuration file.</summary>
+            <param name="config">The <see cref="T:TingenTransmorger.Core.Configuration"/> instance to serialize and persist.</param>
+        </member>
+        <member name="M:TingenTransmorger.Core.Configuration.Load">
+            <summary>Loads the application configuration from disk, creating a default file if one does not exist.</summary>
+            <returns>
+            The deserialized <see cref="T:TingenTransmorger.Core.Configuration"/> instance read from <c>AppData/Config/transmorger.config</c>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.Core.Configuration.CreateDefault(System.String)">
+            <summary>Creates a default <see cref="T:TingenTransmorger.Core.Configuration"/> instance with preset directory paths.</summary>
+            <param name="appDataDirName">The base application data directory path used to resolve default directory values.</param>
+            <returns>A new <see cref="T:TingenTransmorger.Core.Configuration"/> instance populated with default values.</returns>
+        </member>
+        <member name="T:TingenTransmorger.Core.Framework">
+            <summary>Provides methods for verifying application framework requirements at startup.</summary>
+        </member>
+        <member name="M:TingenTransmorger.Core.Framework.Verify(TingenTransmorger.Core.Configuration)">
+            <summary>Verifies that all directories defined in the configuration exist.</summary>
+            <remarks>Admin directories are also verified when <paramref name="config"/> has <c>Mode</c> set to <c>Admin</c>.</remarks>
+            <param name="config">The application configuration containing the directories to verify.</param>
+        </member>
+        <member name="M:TingenTransmorger.Core.Framework.VerifyDirectories(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>Verifies that each directory in a collection exists, prompting or stopping the application as needed.</summary>
+            <remarks>
+            <list type="bullet">
+            <item>Null or empty path values display an error message and stop the application.</item>
+            <item>Non-existent paths prompt the user to create the directory or exit.</item>
+            </list>
+            </remarks>
+            <param name="directories">Dictionary of configuration key/path pairs to verify.</param>
+        </member>
+        <member name="M:TingenTransmorger.Core.Framework.PromptToCreateDirectory(System.Collections.Generic.KeyValuePair{System.String,System.String})">
+            <summary>Prompts the user to create a missing directory, stopping the application if declined.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.StopApp(System.String)"/> if the user selects <b>No</b>.</remarks>
+            <param name="dir">The key/path pair describing the missing directory.</param>
+        </member>
+        <member name="M:TingenTransmorger.Core.Framework.NullEmptyWarning(System.Collections.Generic.KeyValuePair{System.String,System.String})">
+            <summary>Displays an error for a null or empty configuration directory value and stops the application.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.StopApp(System.String)"/> unconditionally after displaying the warning.</remarks>
+            <param name="dir">The key/path pair whose configured path is null or empty.</param>
+        </member>
+        <member name="T:TingenTransmorger.Database.DatabaseRebuildWindow">
+            <summary>
+            DatabaseRebuildWindow
+            </summary>
+        </member>
+        <member name="M:TingenTransmorger.Database.DatabaseRebuildWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:TingenTransmorger.Database.MessageHistoryWindow">
+            <summary>
+            MessageHistoryWindow
+            </summary>
+        </member>
+        <member name="M:TingenTransmorger.Database.MessageHistoryWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:TingenTransmorger.Database.TransmorgerDatabase.GetDatabaseDateRange">
+            <summary>Determines the date range of the database by finding the earliest and latest scheduled meeting start dates.</summary>
+            <remarks>Returns null if the database has no data, the MeetingDetail section is missing, or no parseable dates exist.</remarks>
+            <returns>A tuple containing the earliest start date and the latest start date, or null if no dates are found.</returns>
+        </member>
+        <member name="T:TingenTransmorger.MainWindow">
+            <summary>Entry class for Tingen Transmorger.</summary>
+            <remarks>
+            The MainWindow class is the entry point for the Tingen Transmorger application, and is split into multiple partial
+            classes. Initially this was done to keep the code organized and maintainable, but over time it has
+            become somewhat of a monster. Eventually this class should be refactored to separate classes.<br/>
+            <br/>
+            The MainWindow.xaml.cs partial class is responsible for the main application flow.
+            </remarks>
+            <summary>
+            MainWindow
+            </summary>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.EnterAdminMode(System.String,System.String,System.String)">
+            <summary>Prompts for a database rebuild confirmation and stops the application if the user declines.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.StopApp(System.String)"/> before returning if the user declines the rebuild prompt.</remarks>
+            <param name="importDir">Directory containing source Excel files to import.</param>
+            <param name="tmpDir">Temporary data directory.</param>
+            <param name="masterDbDir">Master database output directory.</param>
+            <returns><see langword="true"/> if the database was rebuilt successfully; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.RebuildDatabase(System.String,System.String,System.String)">
+            <summary>Applies the admin mode theme, hides the main window, and rebuilds the database.</summary>
+            <remarks>The main window remains hidden for the duration of the rebuild operation.</remarks>
+            <param name="importDir">Directory containing source Excel files to import.</param>
+            <param name="tmpDir">Temporary data directory.</param>
+            <param name="masterDbDir">Master database output directory.</param>
+            <returns><see langword="true"/> if the rebuild completed successfully; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.RebuildDatabasePrompt">
+            <summary>Displays a confirmation message box asking whether to rebuild the database.</summary>
+            <remarks>Uses message box content from <see cref="M:TingenTransmorger.Core.Catalog.msgbox_DatabaseRebuildCheck"/>.</remarks>
+            <returns><see langword="true"/> if the user selects Yes; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.CopyGeneralMeetingDetails">
+            <summary>Copies general meeting details from the UI to the clipboard as formatted text.</summary>
+            <remarks>Displays a confirmation on success or an error message if the clipboard operation fails.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.CopyPatientMeetingDetails">
+            <summary>Copies patient participant details from the UI to the clipboard as formatted text.</summary>
+            <remarks>Displays a confirmation on success or an error message if the clipboard operation fails.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.CopyProviderMeetingDetails">
+            <summary>Copies provider participant details from the UI to the clipboard as formatted text.</summary>
+            <remarks>Displays a confirmation on success or an error message if the clipboard operation fails.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.MeetingSelected">
+            <summary>Handles meeting selection, loading and displaying the appropriate detail view.</summary>
+            <remarks>
+            Collapses the detail panel and returns early if no meeting is selected or no detail record is found.<br/>
+            <br/>
+            Routes to provider or patient detail display based on the current user type label.
+            </remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayGeneralDetails(TingenTransmorger.Models.MeetingRow,System.Nullable{System.Text.Json.JsonElement},System.String)">
+            <summary>Populates general meeting detail UI fields from the selected meeting and its JSON record.</summary>
+            <remarks>Also calls <see cref="M:TingenTransmorger.MainWindow.DisplayMeetingError(TingenTransmorger.Models.MeetingRow)"/> to populate the error field.</remarks>
+            <param name="selectedMeeting">The selected meeting row from the meeting list grid.</param>
+            <param name="meetingDetail">The JSON element containing detailed meeting data.</param>
+            <param name="meetingId">The meeting ID used to populate the ID field directly.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayPatientMeetingResults(System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Populates the meeting grid and status summary fields from the patient's JSON data.</summary>
+            <remarks>
+            <list type="bullet">
+            <item>Deserializes and enriches each meeting entry with data from the meeting detail database.</item>
+            <item>Computes completed, cancelled, in-progress, expired, and scheduled meeting counts.</item>
+            <item>Sorts meetings by scheduled start date descending before binding to the grid.</item>
+            </list>
+            </remarks>
+            <param name="patientDetails">The JSON element containing the patient's meeting records.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayProviderMeetingDetails(TingenTransmorger.Models.MeetingRow)">
+            <summary>Populates provider participant names in the UI for the selected meeting.</summary>
+            <remarks>Splits names on semicolons or commas and displays '---' if no participants are found.</remarks>
+            <param name="selectedMeeting">The selected meeting row whose participant names will be displayed.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayPatientMeetingDetails(TingenTransmorger.Models.MeetingRow)">
+            <summary>Populates patient-specific meeting detail fields in the UI for the selected meeting.</summary>
+            <remarks>Searches patient meeting records in the database to find a match for the selected meeting.</remarks>
+            <param name="selectedMeeting">The selected meeting row whose patient details will be displayed.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayMeetingError(TingenTransmorger.Models.MeetingRow)">
+            <summary>Populates the meeting error field in the UI with the error kind and reason, if one exists.</summary>
+            <remarks>Displays '---' if no error record exists or both Kind and Reason are empty strings.</remarks>
+            <param name="selectedMeeting">The selected meeting row whose error data will be displayed.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetStringProperty(System.String,System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Extracts a named string property value from a <see cref="T:System.Text.Json.JsonElement"/>.</summary>
+            <remarks>Returns <see cref="F:System.String.Empty"/> if the property is absent or its value is null.</remarks>
+            <param name="propertyName">The name of the property to extract.</param>
+            <param name="meetingDetail">The JSON element to extract the property from.</param>
+            <returns>The property's string value, or <see cref="F:System.String.Empty"/> if absent or null.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ReplaceNullValues(System.String)">
+            <summary>Sanitizes a string value, replacing null literals and empty values with '---'.</summary>
+            <remarks>Uses a case-insensitive regex to detect and replace literal null tokens within the string.</remarks>
+            <param name="value">The string value to sanitize.</param>
+            <returns>The sanitized string value, or '---' if null, whitespace, or only null tokens.</returns>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._currentPatientName">
+            <summary>The name of the currently selected patient.</summary>
+            <value>Set when a patient is selected; defaults to <see cref="F:System.String.Empty"/>.</value>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._currentPatientId">
+            <summary>The ID of the currently selected patient.</summary>
+            <value>Set when a patient is selected; defaults to <see cref="F:System.String.Empty"/>.</value>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._smsDeliveries">
+            <summary>SMS delivery records for the current patient's phone numbers.</summary>
+            <value>Populated by <see cref="M:TingenTransmorger.MainWindow.GetSmsStats(System.Collections.Generic.List{System.String})"/>; cleared before each reload.</value>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._emailDeliveries">
+            <summary>Email delivery records for the current patient's email addresses.</summary>
+            <value>Populated by <see cref="M:TingenTransmorger.MainWindow.GetEmailStats(System.Collections.Generic.List{System.String})"/>; cleared before each reload.</value>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._smsFailures">
+            <summary>SMS failure records for the current patient's phone numbers.</summary>
+            <value>Populated by <see cref="M:TingenTransmorger.MainWindow.GetSmsStats(System.Collections.Generic.List{System.String})"/>; cleared before each reload.</value>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._emailFailures">
+            <summary>Email failure records for the current patient's email addresses.</summary>
+            <value>Populated by <see cref="M:TingenTransmorger.MainWindow.GetEmailStats(System.Collections.Generic.List{System.String})"/>; cleared before each reload.</value>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayPatientDetails(System.String,System.String)">
+            <summary>Loads and displays all patient detail sections in the UI for the specified patient.</summary>
+            <remarks>Caches the patient name and ID in instance fields before delegating to the display methods.</remarks>
+            <param name="patientName">The full name of the patient to display.</param>
+            <param name="patientId">The unique identifier of the patient to display.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayPatientPhoneNumber(System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Retrieves phone numbers from patient data, displays them, and updates the phone detail button color.</summary>
+            <remarks>Updates SMS delivery and failure statistics as a side effect via <see cref="M:TingenTransmorger.MainWindow.GetSmsStats(System.Collections.Generic.List{System.String})"/>.</remarks>
+            <param name="patientDetails">The JSON element containing the patient's details.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetPatientPhoneNumbers(System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Extracts and formats phone numbers from the patient's JSON data.</summary>
+            <remarks>Formats ten-digit numbers as ###-###-####; other lengths are included without formatting.</remarks>
+            <param name="patientDetails">The JSON element containing the patient's details.</param>
+            <returns>A list of phone number strings extracted and formatted from the patient's JSON data.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ShowPatientPhoneNumber(System.Collections.Generic.List{System.String})">
+            <summary>Displays the patient's phone numbers in the UI label, or a placeholder if none exist.</summary>
+            <remarks>Displays 'No phone numbers on file' if <paramref name="phoneNumbers"/> is empty.</remarks>
+            <param name="phoneNumbers">A list of formatted phone numbers for the patient.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetSmsStats(System.Collections.Generic.List{System.String})">
+            <summary>Clears and repopulates the SMS failure and delivery record lists for the given phone numbers.</summary>
+            <remarks>Only processes numbers with exactly ten digits after normalizing to digits only.</remarks>
+            <param name="phoneNumbers">A list of formatted phone numbers for the patient.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayPatientEmailAddress(System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Loads email addresses for the current patient and updates the email UI and detail button.</summary>
+            <remarks>Populates email statistics as a side effect via <see cref="M:TingenTransmorger.MainWindow.GetEmailStats(System.Collections.Generic.List{System.String})"/> and updates the button color.</remarks>
+            <param name="patientDetails">The JSON element containing the patient's details.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetPatientEmailAddresses(System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Extracts email addresses from the patient's JSON data.</summary>
+            <remarks>Only non-empty, non-whitespace addresses are included in the returned list.</remarks>
+            <param name="patientDetails">The JSON element containing the patient's details.</param>
+            <returns>A list of email address strings extracted from the patient's JSON data.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetEmailStats(System.Collections.Generic.List{System.String})">
+            <summary>Clears and repopulates the email failure and delivery record lists for the given addresses.</summary>
+            <remarks>Skips the placeholder value 'No email addresses on file' when processing.</remarks>
+            <param name="emailAddresses">A list of email addresses for the patient.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ShowPatientEmailAddress(System.Collections.Generic.List{System.String})">
+            <summary>Displays the patient's email addresses in the UI label, or a placeholder if none exist.</summary>
+            <remarks>Mutates <paramref name="emailAddresses"/> by appending a placeholder when the list is empty.</remarks>
+            <param name="emailAddresses">A list of email addresses for the patient.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ShowMessageDetails(System.String)">
+            <summary>Opens the message history window for either phone or email message records.</summary>
+            <remarks>No dialog is shown if <paramref name="messageType"/> does not match 'phone' or 'email'.</remarks>
+            <param name="messageType">The message channel to display; either 'phone' or 'email'.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetStringProperty(System.Text.Json.JsonElement,System.String)">
+            <summary>Extracts a named string property value from a <see cref="T:System.Text.Json.JsonElement"/>.</summary>
+            <remarks>Returns <see cref="F:System.String.Empty"/> if the property is absent or its value is null.</remarks>
+            <param name="element">The JSON element to extract the property from.</param>
+            <param name="propertyName">The name of the property to extract.</param>
+            <returns>The property's string value, or <see cref="F:System.String.Empty"/> if absent or null.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayProviderDetails(System.String,System.String)">
+            <summary>Loads and displays all provider detail sections in the UI for the specified provider.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.StopApp(System.String)"/> if no provider record is found in the database.</remarks>
+            <param name="providerName">The full name of the provider to display.</param>
+            <param name="providerId">The unique identifier of the provider to display.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplayProviderMeetingResults(System.String)">
+            <summary>Builds and displays the meeting list and status summary for the specified provider.</summary>
+            <remarks>
+            <list type="bullet">
+            <item>Sorts meetings by scheduled start date descending before binding to the data grid.</item>
+            <item>Computes completed, cancelled, in-progress, expired, and scheduled meeting counts.</item>
+            </list>
+            </remarks>
+            <param name="providerName">The full name of the provider whose meetings will be displayed.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.BuildMeetingList(System.Collections.Generic.List{TingenTransmorger.Models.MeetingRow},System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Populates a meeting row list from the provider's meeting ID array in the JSON record.</summary>
+            <remarks>Skips null or whitespace meeting IDs and any IDs with no corresponding detail record.</remarks>
+            <param name="meetingRows">The list to populate with resolved meeting row data.</param>
+            <param name="providerDetails">The JSON element containing the provider's meeting ID array.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetMeetingRowDetails(System.String,System.Nullable{System.Text.Json.JsonElement})">
+            <summary>Builds a <see cref="T:TingenTransmorger.Models.MeetingRow"/> from a meeting ID and its JSON detail record.</summary>
+            <remarks>Returns <see langword="null"/> if <paramref name="meetingDetail"/> is null.</remarks>
+            <param name="meetingId">The meeting ID to assign to the row.</param>
+            <param name="meetingDetail">The JSON element containing the meeting's detail fields.</param>
+            <returns>A populated <see cref="T:TingenTransmorger.Models.MeetingRow"/>, or <see langword="null"/> if the detail record is absent.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.UpdateSearchResults">
+            <summary>Refreshes the search results list using the current search type and search box text.</summary>
+            <remarks>Reads the current search type and search box text before invoking the update pipeline.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.GetSearchResults(System.String,System.String)">
+            <summary>Returns a filtered list of search results based on the active search type and text.</summary>
+            <remarks>
+            <list type="bullet">
+            <item>Returns an empty list and clears the UI if the search box is blank.</item>
+            <item>Treats a lone asterisk as a wildcard, returning all results for the active search type.</item>
+            <item>Routes to patient or provider search methods based on <paramref name="searchType"/>.</item>
+            </list>
+            </remarks>
+            <param name="searchType">The active search type; expected to contain 'patient' or 'provider'.</param>
+            <param name="searchText">The trimmed text from the search box.</param>
+            <returns>A list of matching patient or provider strings, or an empty list if the search text is blank.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.DisplaySearchResults(System.Collections.Generic.List{System.String})">
+            <summary>Clears and repopulates the search results list box with the given results.</summary>
+            <remarks>Does not add any items if <paramref name="searchResults"/> is empty.</remarks>
+            <param name="searchResults">The list of result strings to display.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.Display">
+            <summary>Loads and displays details for the currently selected patient or provider search result.</summary>
+            <remarks>Returns early if the results list is empty, otherwise routes to patient or provider display.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ExtractNameId(System.String)">
+            <summary>Parses a formatted search result string into a name and ID pair.</summary>
+            <remarks>Expects the format <c>Name (ID)</c>; splits on the last opening parenthesis.</remarks>
+            <param name="selectedItem">The formatted search result string to parse.</param>
+            <returns>A two-element array where index <c>0</c> is the name and index <c>1</c> is the ID.</returns>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.SetInitialUi">
+            <summary>Initializes the UI to its default state with patient search active.</summary>
+            <remarks>Sets the search toggle to 'Patient Search' and checks the search-by-name radio button.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ResetAllComponents">
+            <summary>Resets all UI component groups to their default visibility states.</summary>
+            <remarks>Delegates to individual Reset methods and collapses the meeting detail and detail panels.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ResetUserDetailUi">
+            <summary>Resets the user detail panel visibility to its default state.</summary>
+            <remarks>Shows the name/ID and contacts panels; collapses the user detail panel.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ResetMeetingResultUi">
+            <summary>Resets the meeting result panel visibility to its default state.</summary>
+            <remarks>Shows the meeting breakdown and data grid; collapses the meeting result panel.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ResetGeneralMeetingDetailUi">
+            <summary>Resets the general meeting detail panel visibility to its default state.</summary>
+            <remarks>Shows the top, left, center, and right column panels; collapses the detail border.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ResetPatientMeetingDetailUi">
+            <summary>Resets the patient meeting detail panel visibility to its default state.</summary>
+            <remarks>Shows the top, left, center, and right column panels; collapses the detail border.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ResetProviderMeetingDetailUi">
+            <summary>Resets the provider meeting detail panel visibility to its default state.</summary>
+            <remarks>Shows the top and participant names panels; collapses the detail border.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.SetAdminModeTheme">
+            <summary>Applies the admin mode visual theme to the main window.</summary>
+            <remarks>Sets the window border to purple and appends '- ADMIN MODE' to the window title.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.SetOutOfDateDatabaseTheme">
+            <summary>Applies the out-of-date database visual theme to the main window.</summary>
+            <remarks>Sets the window border to red and appends '- DATABASE IS OUT OF DATE' to the window title.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.SetPatientDetailUi(System.String,System.String)">
+            <summary>Configures the UI layout for displaying patient details.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.ResetAllComponents"/> before making patient-specific panels visible.</remarks>
+            <param name="patientName">The full name of the patient to display.</param>
+            <param name="patientId">The unique identifier of the patient to display.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.SetProviderDetailUi(System.String,System.String)">
+            <summary>Configures the UI layout for displaying provider details.</summary>
+            <remarks>Hides the contacts and patient meeting detail panels, which are not used for provider display.</remarks>
+            <param name="providerName">The full name of the provider to display.</param>
+            <param name="providerId">The unique identifier of the provider to display.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.SetUserDetail(System.String,System.String,System.String)">
+            <summary>Populates the user type, name, and ID labels in the detail panel.</summary>
+            <remarks>Used by both <see cref="M:TingenTransmorger.MainWindow.SetPatientDetailUi(System.String,System.String)"/> and <see cref="M:TingenTransmorger.MainWindow.SetProviderDetailUi(System.String,System.String)"/>.</remarks>
+            <param name="searchType">The user type label to display (e.g., 'PATIENT' or 'PROVIDER').</param>
+            <param name="userName">The name of the user to display.</param>
+            <param name="userId">The unique identifier of the user to display.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.SetSearchToggleUi">
+            <summary>Toggles the search type button between patient and provider search, then clears the UI.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.ClearUi"/> after toggling to reset the search state.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.ClearUi">
+            <summary>Clears the search box and results list, then resets all UI components.</summary>
+            <remarks>Calls <see cref="M:TingenTransmorger.MainWindow.ResetAllComponents"/> as part of the clear operation.</remarks>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.UpdateDetailsButtonColor(System.Boolean,System.Boolean,System.Windows.Controls.Button)">
+            <summary>Sets the color and enabled state of a message detail button based on failure and delivery data.</summary>
+            <remarks>
+            <list type="bullet">
+            <item><b>Yellow</b> — both failures and deliveries exist.</item>
+            <item><b>Green</b> — deliveries exist with no failures.</item>
+            <item><b>Red</b> — failures exist with no deliveries.</item>
+            <item><b>Gray</b> — no records exist; the button is also disabled.</item>
+            </list>
+            </remarks>
+            <param name="hasFailures">Whether the patient has message failure records for this contact.</param>
+            <param name="hasDeliveries">Whether the patient has message delivery records for this contact.</param>
+            <param name="theButton">The button whose color and enabled state will be updated.</param>
+        </member>
+        <member name="F:TingenTransmorger.MainWindow._tmDb">
+            <summary>The Transmorger database.</summary>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.#ctor">
+            <summary>Entry method for Tingen Transmorger.</summary>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.StopApp(System.String)">
+            <summary>Stop the application.</summary>
+            <remarks>
+            If you pass a message to <paramref name="msgExit"/>, it will be displayed to the user in a MessageBox
+            before the application exits.<br/>
+            <br/>
+            This method is public because it is called from other methods outside the <see cref="T:TingenTransmorger.MainWindow"/> class.
+            </remarks>
+            <param name="msgExit">Optional exit message to display.</param>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.StartApp">
+            <summary>Start the application.</summary>
+        </member>
+        <member name="M:TingenTransmorger.MainWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:TingenTransmorger.Models.MeetingRow">
+            <summary>Represents a single meeting record sourced from a TeleHealth Visit Details report.</summary>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.MeetingId">
+            <summary>Gets or sets the unique identifier for the meeting.</summary>
+            <value>A string containing the meeting ID, or <see cref="F:System.String.Empty"/> if not set.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.ScheduledStart">
+            <summary>Gets or sets the scheduled start time of the meeting.</summary>
+            <value>A string representation of the scheduled start time, or <see cref="F:System.String.Empty"/> if not set.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.ActualStart">
+            <summary>Gets or sets the actual start time of the meeting.</summary>
+            <value>A string representation of the actual start time, or <see cref="F:System.String.Empty"/> if not set.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.ScheduledEnd">
+            <summary>Gets or sets the scheduled end time of the meeting.</summary>
+            <value>A string representation of the scheduled end time, or <see cref="F:System.String.Empty"/> if not set.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.ActualEnd">
+            <summary>Gets or sets the actual end time of the meeting.</summary>
+            <value>A string representation of the actual end time, or <see cref="F:System.String.Empty"/> if not set.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.Arrived">
+            <summary>Gets or sets the time at which the participant arrived.</summary>
+            <value>A string representation of the arrival time, or <see cref="F:System.String.Empty"/> if not set.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.Dropped">
+            <summary>Gets or sets the time at which the participant dropped from the meeting.</summary>
+            <value>A string representation of the drop time, or <see cref="F:System.String.Empty"/> if not set.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.Duration">
+            <summary>Gets or sets the duration of the meeting.</summary>
+            <value>A string representation of the meeting duration, or <see cref="F:System.String.Empty"/> if not set.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.Status">
+            <summary>Gets or sets the status of the meeting.</summary>
+            <value>A string describing the meeting status, or <see cref="F:System.String.Empty"/> if not set.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.HasError">
+            <summary>Gets or sets a value indicating whether the meeting has an associated error.</summary>
+            <value><see langword="true"/> if the meeting has an error; otherwise, <see langword="false"/>.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.IsCancelled">
+            <summary>Gets or sets a value indicating whether the meeting was cancelled.</summary>
+            <value><see langword="true"/> if the meeting was cancelled; otherwise, <see langword="false"/>.</value>
+        </member>
+        <member name="P:TingenTransmorger.Models.MeetingRow.IsCompleted">
+            <summary>Gets or sets a value indicating whether the meeting was completed.</summary>
+            <value><see langword="true"/> if the meeting was completed; otherwise, <see langword="false"/>.</value>
+        </member>
+        <member name="T:TingenTransmorger.TeleHealthReport.ProcessWorkbook">
+            <summary>Provides methods for processing TeleHealth report Excel workbooks into JSON output files.</summary>
+        </member>
+        <member name="F:TingenTransmorger.TeleHealthReport.ProcessWorkbook.ExcelConfig">
+            <summary>Excel dataset configuration that treats the first row of each sheet as a header row.</summary>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ProcessWorkbook.MessageDelivery(System.String,System.String,System.Action{System.String})">
+            <summary>Processes Message Delivery Excel workbooks, writing a flat JSON report of delivery statistics.</summary>
+            <param name="importDir">Directory containing source Excel files.</param>
+            <param name="tmpDir">Temporary data directory for JSON output.</param>
+            <param name="statusCallback">Optional callback to report progress messages.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ProcessWorkbook.MessageFailure(System.String,System.String,System.Action{System.String})">
+            <summary>Processes Message Failure Excel workbooks, writing summary, SMS statistics, and email statistics JSON reports.</summary>
+            <param name="importDir">Directory containing source Excel files.</param>
+            <param name="tmpDir">Temporary data directory for JSON output.</param>
+            <param name="statusCallback">Optional callback to report progress messages.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ProcessWorkbook.VisitDetails(System.String,System.String,System.Action{System.String})">
+            <summary>Processes Visit Details Excel workbooks, writing meeting details and participant details JSON reports.</summary>
+            <param name="importDir">Directory containing source Excel files.</param>
+            <param name="tmpDir">Temporary data directory for JSON output.</param>
+            <param name="statusCallback">Optional callback to report progress messages.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ProcessWorkbook.VisitStats(System.String,System.String,System.Action{System.String})">
+            <summary>Processes Visit Statistics Excel workbooks, writing summary and meeting errors JSON reports.</summary>
+            <param name="importDir">Directory containing source Excel files.</param>
+            <param name="tmpDir">Temporary data directory for JSON output.</param>
+            <param name="statusCallback">Optional callback to report progress messages.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ProcessWorkbook.Process(System.String,System.String,System.Action{System.Data.DataTable,System.String},System.Action{System.String})">
+            <summary>Processes all Excel files in a directory that match a given pattern, invoking a handler for each worksheet.</summary>
+            <remarks>Temporary Excel lock files (those whose names begin with <c>~$</c>) are automatically skipped. </remarks>
+            <param name="importDir">Directory to search for Excel files.</param>
+            <param name="pattern">Glob pattern used to filter files (e.g., <c>*Visit_Stats*.xlsx</c>).</param>
+            <param name="worksheetHandler">Callback invoked for each worksheet <see cref="T:System.Data.DataTable"/> and its sheet name.</param>
+            <param name="statusCallback">Optional callback to report per-file progress messages.</param>
+        </member>
+        <member name="T:TingenTransmorger.TeleHealthReport.ProcessWorksheet">
+            <summary>Provides methods for processing individual worksheets from TeleHealth report workbooks.</summary>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ProcessWorksheet.Summary(System.Data.DataTable,System.Collections.Generic.Dictionary{System.String,System.Double},System.Nullable{System.ValueTuple{System.String,System.String}}@)">
+            <summary>Processes a summary-style worksheet, accumulating key-value metric pairs into a dictionary.</summary>
+            <remarks>
+            <para>
+            Expects a two-column <see cref="T:System.Data.DataTable"/> where the first column contains metric names and the second
+            contains numeric values. Rows with a <c>null</c> or empty metric key are skipped.
+            </para>
+            <para>
+            If <paramref name="headers"/> is <c>null</c>, it is initialized from the table's column names, falling back to
+            <b>Metric</b> and <b>Value</b> if names are unavailable.
+            </para>
+            <para>Duplicate metric keys are summed rather than overwritten.</para>
+            </remarks>
+            <param name="table">Source <see cref="T:System.Data.DataTable"/> containing at least two columns.</param>
+            <param name="metrics">Dictionary accumulating metric name/value pairs across one or more worksheets.</param>
+            <param name="headers">
+            Column header tuple <c>(metricColumn, valueColumn)</c>; initialized from <paramref name="table"/> on the first
+            call if <c>null</c>.
+            </param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ProcessWorksheet.Keyed(System.Data.DataTable,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Object}},System.Collections.Generic.List{System.String},System.String,System.Boolean)">
+            <summary>Processes a keyed worksheet, building a dictionary of row data indexed by a specified key column.</summary>
+            <remarks>
+            <para>
+            If <paramref name="aggregateNumeric"/> is <c>true</c>, numeric values in duplicate-key rows are summed into the
+            existing entry via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.MergeRows(System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object},System.String)"/>; otherwise, only the first occurrence of each key is
+            retained.
+            </para>
+            <para>Rows with a <c>null</c> or empty key value are skipped.</para>
+            </remarks>
+            <param name="table">Source <see cref="T:System.Data.DataTable"/> containing the report data.</param>
+            <param name="dataById">Dictionary to populate with row data keyed by <paramref name="keyColumn"/> values.</param>
+            <param name="headers">Ordered list of column headers to include; updated with any new columns from <paramref name="table"/>.</param>
+            <param name="keyColumn">Name of the column whose value is used as the row key.</param>
+            <param name="aggregateNumeric">
+            When <c>true</c>, numeric values for duplicate keys are summed; when <c>false</c>, duplicate keys are ignored.
+            </param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ProcessWorksheet.SimpleKeyed(System.Data.DataTable,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Object}},System.Collections.Generic.HashSet{System.String},System.String)">
+            <summary>Processes a keyed worksheet, retaining only the first row encountered for each unique key value.</summary>
+            <remarks>
+            <para>
+            Unlike <see cref="M:TingenTransmorger.TeleHealthReport.ProcessWorksheet.Keyed(System.Data.DataTable,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Object}},System.Collections.Generic.List{System.String},System.String,System.Boolean)"/>, this method uses a <see cref="T:System.Collections.Generic.HashSet`1"/> for header tracking and does not
+            aggregate numeric values — duplicate keys are silently ignored.
+            </para>
+            <para>Rows with a <c>null</c> or empty key value are skipped.</para>
+            </remarks>
+            <param name="table">Source <see cref="T:System.Data.DataTable"/> containing the report data.</param>
+            <param name="dataById">Dictionary to populate with row data keyed by <paramref name="keyColumn"/> values.</param>
+            <param name="headers">Set of column headers; updated with any new columns from <paramref name="table"/>.</param>
+            <param name="keyColumn">Name of the column whose value is used as the row key.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ProcessWorksheet.ClientStats(System.Data.DataTable,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}}},System.Collections.Generic.HashSet{System.String})">
+            <summary>Processes a worksheet containing per-client statistics, grouping rows by client name.</summary>
+            <remarks>
+            <para>
+            Requires a column named <b>Client Name</b>; the method returns without processing if that column is absent from
+            <paramref name="table"/>.
+            </para>
+            <para>
+            Each row is appended to the list associated with its client name in <paramref name="statsByClient"/>. A new list
+            is created automatically for first-seen client names.
+            </para>
+            </remarks>
+            <param name="table">Source <see cref="T:System.Data.DataTable"/> that must contain a <b>Client Name</b> column.</param>
+            <param name="statsByClient">Dictionary mapping client names to their accumulated list of row records.</param>
+            <param name="headers">Set of column headers; updated with any new columns from <paramref name="table"/>.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ProcessWorksheet.Flat(System.Data.DataTable,System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}},System.Collections.Generic.HashSet{System.String})">
+            <summary>Processes a worksheet into a flat list of row dictionaries, null-filling any missing headers.</summary>
+            <remarks>
+            <para>
+            All column names from <paramref name="table"/> are added to <paramref name="headers"/>, enabling a consistent
+            column set to be maintained across multiple worksheets.
+            </para>
+            <para>
+            For each row, columns present in the table are populated with their values; any headers in
+            <paramref name="headers"/> not found in the current table are set to <c>null</c>.
+            </para>
+            </remarks>
+            <param name="table">Source <see cref="T:System.Data.DataTable"/> containing the report data.</param>
+            <param name="allRecords">List to which all processed row dictionaries are appended.</param>
+            <param name="headers">Set of all column headers encountered across worksheets; updated with columns from <paramref name="table"/>.</param>
+        </member>
+        <member name="T:TingenTransmorger.TeleHealthReport.ReportProcessor">
+            <summary>Provides methods for processing TeleHealth report workbooks.</summary>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportProcessor.ProcessVisitStats(System.String,System.String,System.Action{System.String})">
+            <summary>Processes Visit Statistics reports with progress callback support.</summary>
+            <param name="importDir">Directory containing source Excel files.</param>
+            <param name="tmpDir">Temporary data directory.</param>
+            <param name="statusCallback">Optional callback to report status messages.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportProcessor.ProcessVisitDetails(System.String,System.String,System.Action{System.String})">
+            <summary>Processes Visit Details reports with progress callback support.</summary>
+            <param name="importDir">Directory containing source Excel files.</param>
+            <param name="tmpDir">Temporary data directory.</param>
+            <param name="statusCallback">Optional callback to report status messages.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportProcessor.ProcessMessageFailure(System.String,System.String,System.Action{System.String})">
+            <summary>Processes Visit Details reports with progress callback support.</summary>
+            <param name="importDir">Directory containing source Excel files.</param>
+            <param name="tmpDir">Temporary data directory.</param>
+            <param name="statusCallback">Optional callback to report status messages.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportProcessor.ProcessMessageDelivery(System.String,System.String,System.Action{System.String})">
+            <summary>Processes Message Delivery reports with progress callback support.</summary>
+            <param name="importDir">Directory containing source Excel files.</param>
+            <param name="tmpDir">Temporary data directory.</param>
+            <param name="statusCallback">Optional callback to report status messages.</param>
+        </member>
+        <member name="T:TingenTransmorger.TeleHealthReport.ReportUtility">
+            <summary>Provides utility methods for building, normalizing, and writing JSON report output files.</summary>
+            <remarks>
+            This class centralizes shared logic used across TeleHealth report generation, including:
+            <list type="bullet">
+            <item>Writing flat, keyed, summary, and client-grouped JSON files.</item>
+            <item>De-duplicating records before serialization.</item>
+            <item>Normalizing phone number values in record dictionaries.</item>
+            <item>Building and merging row dictionaries sourced from <see cref="T:System.Data.DataTable"/> instances.</item>
+            <item>Parsing object values as <see cref="T:System.Double"/> with culture and quote-trimming fallbacks.</item>
+            </list>
+            All members are <see langword="internal"/> and <see langword="static"/>; this class is not intended for
+            instantiation or external use.
+            </remarks>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteSummaryJson(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Double},System.Nullable{System.ValueTuple{System.String,System.String}})">
+            <summary>Writes summary details.</summary>
+            <remarks>
+            This is specifically designed for the following workbook/worksheets:
+            <list type="bullet">
+            <item>Visit_Stats/Summary</item>
+            <item>Message_Failure/Summary</item>
+            </list>
+            These worksheets consist of key-value pairs, where keys are metric names and values are their corresponding
+            double values. The headers parameter allows for custom column names in the output JSON, but if not provided, it
+            will default to "Metric" and "Value". The method transforms the dictionary into a list of records suitable for
+            JSON serialization, ensuring that the output is structured as an array of objects with consistent formatting.
+            </remarks>
+            <param name="targetDir">Target output directory.</param>
+            <param name="targetFileName">Target output file name.</param>
+            <param name="metrics">Dictionary of metric names and their corresponding double values.</param>
+            <param name="headers">Tuple containing the column header names for the metric key and value columns.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteKeyedJson(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.Dictionary{System.String,System.Object}})">
+            <summary>Writes dictionary-keyed data as a flat JSON array.</summary>
+            <remarks>
+            Extracts the values from the provided dictionary and writes them as a JSON array, discarding the outer string
+            keys. This is useful when the dictionary keys are used only for internal lookup and the output should be a flat
+            list of records.
+            </remarks>
+            <param name="targetDir">Target output directory.</param>
+            <param name="targetFileName">Target output file name.</param>
+            <param name="data">Dictionary of keyed records whose values will be written as a JSON array.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteClientStatsJson(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}}})">
+            <summary>Groups client statistics by client name and writes the result as a nested JSON file.</summary>
+            <remarks>
+            Transforms a flat dictionary of client-keyed record lists into a structured JSON output where each entry
+            contains a <c>Client Name</c> field and a nested <c>Records</c> array. The <c>Client Name</c> field is removed
+            from each individual record to avoid redundancy, since it is already present at the top level. Duplicate records
+            within each client's record list are removed before serialization via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.DeduplicateRecords(System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}})"/>.
+            </remarks>
+            <param name="targetDir">Target output directory.</param>
+            <param name="targetFileName">Target output file name.</param>
+            <param name="statsByClient">Dictionary mapping each client name to a list of records for that client.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteFlatJson(System.String,System.String,System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}})">
+            <summary>Writes a de-duplicated list of records as a flat JSON array.</summary>
+            <remarks>
+            Removes exact duplicate records before writing by delegating to <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.DeduplicateRecords(System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}})"/>, then
+            serializes the result as a flat JSON array via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteJson(System.String,System.String,System.Object)"/>. Use this method when the input may
+            contain duplicate entries that should not appear in the output file.
+            </remarks>
+            <param name="targetDir">Target output directory.</param>
+            <param name="targetFileName">Target output file name.</param>
+            <param name="records">List of records to de-duplicate and write as a JSON array.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.WriteJson(System.String,System.String,System.Object)">
+            <summary>Serializes data to a formatted JSON file at the specified path.</summary>
+            <remarks>
+            Phone number fields within the data are normalized before serialization via
+            <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumbersInData(System.Object)"/>, ensuring consistent formatting in the output file. The JSON output is
+            written with indentation enabled and encoded as UTF-8.
+            </remarks>
+            <param name="targetDir">Target output directory.</param>
+            <param name="targetFileName">Target output file name.</param>
+            <param name="data">Data object to serialize; may be a flat list, dictionary, or nested structure.</param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumbersInData(System.Object)">
+            <summary>
+            Normalizes phone numbers in the provided data object.
+            </summary>
+            <remarks>
+            Handles two data shapes:
+            <list type="bullet">
+            <item>
+            A <see cref="T:System.Collections.Generic.List`1"/> of <see cref="T:System.Collections.Generic.Dictionary`2"/> records — each dictionary is
+            normalized individually via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumbersInDictionary(System.Collections.Generic.Dictionary{System.String,System.Object})"/>.
+            </item>
+            <item>
+            A single <see cref="T:System.Collections.Generic.Dictionary`2"/> — normalized directly via
+            <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumbersInDictionary(System.Collections.Generic.Dictionary{System.String,System.Object})"/>.
+            </item>
+            </list>
+            If the data does not match either of these shapes, it is returned unchanged.
+            </remarks>
+            <param name="data">Data object to normalize; may be a flat list of records or a single record dictionary.</param>
+            <returns>
+            The normalized data object with phone number fields formatted consistently. If the input type is not recognized,
+            the original object is returned unmodified.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumbersInDictionary(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Normalizes phone number fields within a single record dictionary.
+            </summary>
+            <remarks>
+            Iterates over each key-value pair in the dictionary and applies normalization according to the following rules:
+            <list type="bullet">
+            <item>
+            If the value is a nested <see cref="T:System.Collections.Generic.List`1"/> of <see cref="T:System.Collections.Generic.Dictionary`2"/> records (e.g., a
+            <c>Records</c> array in SMS Stats), each nested dictionary is recursively normalized via this method.
+            </item>
+            <item>
+            If the key matches <c>Error Message</c> (case-insensitive), the value is preserved as-is to retain full error
+            text, including opt-out messages that may contain phone-number-like strings.
+            </item>
+            <item>
+            If the key is identified as a phone number field by <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.IsPhoneNumberField(System.String)"/>, the value is normalized
+            via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)"/>.
+            </item>
+            <item>
+            If the value is a non-empty string that resembles a phone number as determined by
+            <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.LooksLikePhoneNumber(System.String)"/>, it is also normalized via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)"/>.
+            </item>
+            <item>All other values are copied to the result dictionary unchanged.</item>
+            </list>
+            </remarks>
+            <param name="dict">Record dictionary whose phone number fields will be normalized.</param>
+            <returns>
+            A new dictionary with the same keys as the input, where phone number values have been normalized to a
+            consistent 10-digit format and all other values are preserved as-is.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.IsPhoneNumberField(System.String)">
+            <summary>Determines whether a field name is likely to contain a phone number.</summary>
+            <remarks>
+            Performs a case-insensitive substring match against common phone number field name patterns, including:
+            <list type="bullet">
+            <item><c>phone</c></item>
+            <item><c>mobile</c></item>
+            <item><c>cell</c></item>
+            <item><c>telephone</c></item>
+            <item><c>tel</c></item>
+            <item><c>number</c></item>
+            <item><c>to </c></item>
+            <item><c>from </c></item>
+            <item><c>recipient</c></item>
+            </list>
+            This method is used in conjunction with <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.LooksLikePhoneNumber(System.String)"/> to identify values that should be
+            normalized via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)"/>.
+            </remarks>
+            <param name="fieldName">Field name to evaluate.</param>
+            <returns>
+            <see langword="true"/> if the field name contains a recognized phone number keyword; otherwise,
+            <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.LooksLikePhoneNumber(System.String)">
+            <summary>Determines whether a string value resembles a formatted phone number.</summary>
+            <remarks>
+            Applies the following heuristics to evaluate the value:
+            <list type="bullet">
+            <item>The value must be at least 10 characters long and non-whitespace.</item>
+            <item>The value must contain between 10 and 11 digit characters.</item>
+            <item>
+            The value must contain at least one common phone number formatting character:
+            <c>-</c>, <c>(</c>, <c>)</c>, <c>+</c>, a space, or <c>.</c>
+            </item>
+            </list>
+            This method is used in conjunction with <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.IsPhoneNumberField(System.String)"/> to identify values that should be
+            normalized via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)"/>. Unlike <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.IsPhoneNumberField(System.String)"/>, which evaluates the
+            field name, this method evaluates the field value itself.
+            </remarks>
+            <param name="value">String value to evaluate.</param>
+            <returns>
+            <see langword="true"/> if the value contains 10–11 digits and at least one recognized phone number formatting
+            character; otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.UpdateHeaders(System.Data.DataTable,System.Collections.Generic.ICollection{System.String})">
+            <summary>Extracts column names from a <see cref="T:System.Data.DataTable"/> and adds them to the header collection.</summary>
+            <remarks>
+            Iterates over each column in the provided <paramref name="table"/> and performs two operations:
+            <list type="bullet">
+            <item>
+            Adds the column name to the returned <see cref="T:System.Collections.Generic.HashSet`1"/>, which uses
+            <see cref="P:System.StringComparer.OrdinalIgnoreCase"/> for case-insensitive membership checks.
+            </item>
+            <item>
+            Adds the column name to the shared <paramref name="headers"/> collection, with behavior that depends on the
+            runtime type of the collection:
+            <list type="bullet">
+            <item>
+            If <paramref name="headers"/> is a <see cref="T:System.Collections.Generic.HashSet`1"/>, the column name is added directly (the set
+            handles deduplication internally).
+            </item>
+            <item>
+            If <paramref name="headers"/> is a <see cref="T:System.Collections.Generic.List`1"/>, the column name is only added if it is not already
+            present, preventing duplicates.
+            </item>
+            </list>
+            </item>
+            </list>
+            A <see langword="null"/> column name is treated as an empty string.
+            </remarks>
+            <param name="table">Source <see cref="T:System.Data.DataTable"/> whose columns will be enumerated.</param>
+            <param name="headers">
+            Shared header collection to populate; supports both <see cref="T:System.Collections.Generic.HashSet`1"/> and <see cref="T:System.Collections.Generic.List`1"/>
+            implementations of <see cref="T:System.Collections.Generic.ICollection`1"/>.
+            </param>
+            <returns>
+            A case-insensitive <see cref="T:System.Collections.Generic.HashSet`1"/> containing all column names found in <paramref name="table"/>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.BuildRow(System.Data.DataTable,System.Collections.Generic.List{System.String})">
+            <summary>Builds an empty row dictionary pre-allocated to the number of headers.</summary>
+            <remarks>
+            Creates a new <see cref="T:System.Collections.Generic.Dictionary`2"/> with an initial capacity equal to the number of entries in
+            <paramref name="headers"/>, avoiding internal resizing when fields are subsequently populated. The returned
+            dictionary contains no entries and is intended to be filled by the caller.
+            </remarks>
+            <param name="table">Source <see cref="T:System.Data.DataTable"/> associated with the row being built.</param>
+            <param name="headers">List of column header names used to determine the initial capacity of the dictionary.</param>
+            <returns>
+            An empty <see cref="T:System.Collections.Generic.Dictionary`2"/> with a capacity equal to <c>headers.Count</c>, ready to be
+            populated with field values.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.MergeRows(System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object},System.String)">
+            <summary>Merges fields from a new row into an existing row, accumulating numeric values.</summary>
+            <remarks>
+            Iterates over each field in <paramref name="newRow"/> and merges it into <paramref name="existing"/> according
+            to the following rules:
+            <list type="bullet">
+            <item>
+            The field identified by <paramref name="keyColumn"/> is skipped, as it serves as the merge key and should not
+            be overwritten or accumulated.
+            </item>
+            <item>
+            If both the existing value and the new value can be parsed as doubles via <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.TryParseDouble(System.Object,System.Double@)"/>, their
+            values are summed and stored back into <paramref name="existing"/>.
+            </item>
+            <item>
+            If the new value is non-<see langword="null"/> and no existing value is present for the field, the new value is
+            copied into <paramref name="existing"/> as-is.
+            </item>
+            <item>All other field combinations are left unchanged in <paramref name="existing"/>.</item>
+            </list>
+            This method modifies <paramref name="existing"/> in place and does not return a value.
+            </remarks>
+            <param name="existing">The target row dictionary to merge values into; modified in place.</param>
+            <param name="newRow">The source row dictionary whose fields will be merged into <paramref name="existing"/>.</param>
+            <param name="keyColumn">
+            The name of the key column to skip during merging; comparison is case-insensitive.
+            </param>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.ParseDoubleValue(System.Object)">
+            <summary>Parses an object value as a double, with fallback quote-trimming on failure.</summary>
+            <remarks>
+            Attempts to convert the provided value to a double using the following strategy:
+            <list type="bullet">
+            <item>
+            If <paramref name="value"/> is <see langword="null"/>, returns <c>0</c> immediately.
+            </item>
+            <item>
+            Converts the value to its string representation and attempts to parse it using
+            <see cref="F:System.Globalization.NumberStyles.Any"/> and <see cref="P:System.Globalization.CultureInfo.InvariantCulture"/>.
+            </item>
+            <item>
+            If the initial parse fails, surrounding quotation marks are trimmed from the string and parsing
+            is attempted a second time under the same culture settings. This handles values that may have been
+            serialized with enclosing quotes (e.g., <c>"3.14"</c>).
+            </item>
+            <item>If both attempts fail, returns <c>0</c>.</item>
+            </list>
+            To also determine whether parsing succeeded, use <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.TryParseDouble(System.Object,System.Double@)"/> instead.
+            </remarks>
+            <param name="value">Value to parse; may be a string, boxed numeric type, or <see langword="null"/>.</param>
+            <returns>
+            The parsed <see cref="T:System.Double"/> value if successful; otherwise, <c>0</c>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.TryParseDouble(System.Object,System.Double@)">
+            <summary>Attempts to parse an object value as a double, trying invariant culture before reverting to current culture.</summary>
+            <remarks>
+            Attempts to convert the provided value to a double using the following strategy:
+            <list type="bullet">
+            <item>
+            If <paramref name="val"/> is <see langword="null"/>, sets <paramref name="result"/> to <c>0</c> and returns
+            <see langword="false"/> immediately.
+            </item>
+            <item>
+            Converts the value to its string representation; if the result is <see langword="null"/> or empty, returns
+            <see langword="false"/>.
+            </item>
+            <item>
+            Attempts to parse the string using <see cref="F:System.Globalization.NumberStyles.Any"/> and
+            <see cref="P:System.Globalization.CultureInfo.InvariantCulture"/>. If that fails, a second attempt is made using
+            <see cref="P:System.Globalization.CultureInfo.CurrentCulture"/> to accommodate locale-specific numeric formats.
+            </item>
+            </list>
+            Unlike <see cref="M:TingenTransmorger.TeleHealthReport.ReportUtility.ParseDoubleValue(System.Object)"/>, this method uses a standard <c>TryParse</c> pattern — it returns a
+            boolean indicating success or failure rather than silently returning <c>0</c> on failure.
+            </remarks>
+            <param name="val">Value to parse; may be a string, boxed numeric type, or <see langword="null"/>.</param>
+            <param name="result">
+            When this method returns <see langword="true"/>, contains the parsed <see cref="T:System.Double"/> value; otherwise,
+            contains <c>0</c>.
+            </param>
+            <returns>
+            <see langword="true"/> if <paramref name="val"/> was successfully parsed as a <see cref="T:System.Double"/>;
+            otherwise, <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.DeduplicateRecords(System.Collections.Generic.List{System.Collections.Generic.Dictionary{System.String,System.Object}})">
+            <summary>Removes exact duplicate records from a list by comparing their serialized JSON representations.</summary>
+            <remarks>
+            Iterates over each record in <paramref name="records"/> and serializes it to a JSON string via
+            <see cref="M:System.Text.Json.JsonSerializer.Serialize``1(``0,System.Text.Json.JsonSerializerOptions)"/>. A <see cref="T:System.Collections.Generic.HashSet`1"/> of
+            these serialized strings is used to detect duplicates — only the first occurrence of each unique JSON
+            representation is retained. Records are considered duplicates if their full key-value content is identical;
+            field ordering within each dictionary may affect comparison results.
+            </remarks>
+            <param name="records">List of records to evaluate for duplicates; the original list is not modified.</param>
+            <returns>
+            A new <see cref="T:System.Collections.Generic.List`1"/> containing only the first occurrence of each unique record, preserving the original
+            order of non-duplicate entries.
+            </returns>
+        </member>
+        <member name="M:TingenTransmorger.TeleHealthReport.ReportUtility.NormalizePhoneNumber(System.String)">
+            <summary>Normalizes a phone number string to a consistent 10-digit format.</summary>
+            <remarks>
+            Applies the following normalization rules in order:
+            <list type="bullet">
+            <item>
+            If <paramref name="phoneNumber"/> is <see langword="null"/> or whitespace, it is returned as-is, substituting
+            an empty string for <see langword="null"/>.
+            </item>
+            <item>All non-digit characters are stripped from the input string.</item>
+            <item>
+            If the resulting digit string is 11 characters long and begins with <c>1</c>, the leading digit is removed to
+            strip the US country code.
+            </item>
+            <item>
+            If the resulting digit string is exactly 10 characters, it is returned as the normalized value; otherwise, the
+            original input is returned unchanged to avoid corrupting unrecognized formats.
+            </item>
+            </list>
+            </remarks>
+            <param name="phoneNumber">Phone number string to normalize; may be <see langword="null"/>.</param>
+            <returns>
+            A 10-digit string if normalization succeeds; the original <paramref name="phoneNumber"/> if the digit count
+            does not equal 10 after stripping; or an empty string if the input is <see langword="null"/>.
+            </returns>
+        </member>
+    </members>
+</doc>

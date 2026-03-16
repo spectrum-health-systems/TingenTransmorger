@@ -90,6 +90,13 @@ public partial class MainWindow : Window
             StopApp("The database could not be loaded. The application will now exit.");
         }
 
+        var dateRange = _tmDb.GetDatabaseDateRange();
+
+        if (dateRange.HasValue)
+        {
+            Title += $" ({dateRange.Value.Start:MM/dd/yyyy} - {dateRange.Value.End:MM/dd/yyyy})";
+        }
+
         SetInitialUi();
     }
 

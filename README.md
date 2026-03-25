@@ -1,6 +1,6 @@
 <div align="center">
 
-  ![Logo](.github/Logo/TransmorgerLogo-256x256.png)
+  ![Logo](.github/Image/Logo/TransmorgerLogo-256x256.png)
 
   ![Release](https://img.shields.io/badge/version-0.9.31.0-teal)&nbsp;&nbsp;
   ![DevBranch](https://img.shields.io/badge/DEVELOPMENT_BRANCH-red)&nbsp;&nbsp;

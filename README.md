@@ -63,9 +63,9 @@
   The HTML indentations have to stay this way to work.
 -->
 
-<table cellspacing="0" cellpadding="0">
+<table>
 <tr>
-<td>
+<td img src="repository-data/image/document/readme/spacer.png" alt="blank-spacer" width="1000" height="1">
 
   ### CONTENTS
   [ABOUT](#about)<br>

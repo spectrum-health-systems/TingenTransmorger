@@ -35,7 +35,7 @@
 
   ![](.github/repository/readme/Transmorger-MainWindowScreenshot.png)
 
-  ##### The Tingen Transmorger main window
+  ### The Tingen Transmorger main window
 
 </div>
 
@@ -65,7 +65,7 @@
 
 <table>
 <tr>
-<td img src="repository-data/image/document/readme/spacer.png" alt="blank-spacer" width="1000" height="1">
+<td img src=".github/repository/readme/spacer.png" alt="blank-spacer" width="1000" height="1">
 
   ### CONTENTS
   [ABOUT](#about)<br>

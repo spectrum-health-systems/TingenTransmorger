@@ -31,8 +31,6 @@
   Optional screenshot
 -->
 
-<br>
-
 <div align="center">
 
   ![](.github/repository/readme/Transmorger-MainWindowScreenshot.png)

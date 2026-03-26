@@ -34,12 +34,11 @@
 <div align="center">
 
   ![](.github/repository/readme/Transmorger-MainWindowScreenshot.png)
-
-  ### The Tingen Transmorger main window
+  
+  ## The Tingen Transmorger main window
 
 </div>
 
-***
 
 <!--
   Optional menu.

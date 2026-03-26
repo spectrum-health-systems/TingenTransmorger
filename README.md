@@ -35,7 +35,7 @@
 
   ![](.github/repository/readme/Transmorger-MainWindowScreenshot.png)
 
-  The Tingen Transmorger main window
+  <h5>The Tingen Transmorger main window</h5>
 
 </div>
 
@@ -54,9 +54,6 @@
 [Changelog](docs/CHANGELOG.md)&nbsp;&bull;&nbsp;[Roadmap](docs/ROADMAP.md)&nbsp;&bull;&nbsp;[Known issues](docs/KNOWN-ISSUES.md)&nbsp;&bull;&nbsp;
 
 </h6>
-
-***
-
 
 <!-- 
   Table of contents.
